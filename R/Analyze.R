@@ -1,0 +1,7 @@
+source("Validitäts_Checks.R")
+source("Describe_Data.R")
+source("ANOVA.R")
+source("ANCOVA.R")
+source("Lineare_Regression.R")
+source("Hierarchische_Regression.R")
+source("Logistische_Regression.R")
