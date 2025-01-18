@@ -1,9 +1,10 @@
 source("R/InstallPackages.R")
 source("R/Read_Data.R")
 
-# daten <- daten %>% filter(Attention_test == 3)
+daten <- filter(daten, Anwendungsfeld == "Objektiv")
+ancova_model <- aov(Akzeptanz ~ Vertrauensmassnahmen + Einstellung_KI, data = daten)
 
-# ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und der normierten Kovariate
+# ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
 ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
 
 # Zusammenfassung des Modells anzeigen
@@ -20,9 +21,13 @@ TukeyHSD(ancova_model, which = c("Anwendungsfeld", "Vertrauensmassnahmen")) %>% 
 # Normalverteilung der Residuen prüfen
 shapiro.test(residuals(ancova_model)) %>% print()
 
+qqnorm(residuals(ancova_model))
+qqline(residuals(ancova_model))
+
 # Homogenität der Varianzen prüfen
 leveneTest(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten) %>% print()
-bartlett.test(residuals(ancova_model) ~ daten$Anwendungsfeld) %>% print()
+leveneTest(Akzeptanz ~ Anwendungsfeld, data = daten) %>% print()
+leveneTest(Akzeptanz ~ Vertrauensmassnahmen, data = daten) %>% print()
 
 # Lineare Beziehung zwischen der Kovariate und der abhängigen Variable prüfen
 plot(daten$Einstellung_KI, daten$Akzeptanz, main = "Einstellung_KI vs. Akzeptanz", xlab = "Einstellung_KI", ylab = "Akzeptanz")
