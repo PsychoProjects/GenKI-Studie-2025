@@ -1,13 +1,25 @@
 source("R/InstallPackages.R")
 
 # Daten laden 
-file_path <- file.path(getwd(), "Daten", "data_project_1027295_2025_01_07.csv")
+file_path <- file.path(getwd(), "Daten", "data_project_1027295_2025_01_17.csv")
 rohdaten <- read.csv(file_path, sep = ";")
 
-# Herausfiltern der Testpersonen, die nicht in der Studie berücksichtigt werden sollen
-rohdaten <- rohdaten %>% filter(Alter != 99, Alter >= 18, consent_data_usage == 1, seriousness_check == 1)
+anzahl <- c(nrow(rohdaten))
 
-# Spalten umbenennen, da Unipark die nicht korrekt exportiert hat
+# Herausfiltern der Testpersonen, die nicht in der Studie berücksichtigt werden sollen
+rohdaten <- rohdaten %>% filter(Alter >= 18)
+anzahl <- c(anzahl, nrow(rohdaten))
+rohdaten <- rohdaten %>% filter(consent_data_usage == 1)
+anzahl <- c(anzahl, nrow(rohdaten))
+rohdaten <- rohdaten %>% filter(seriousness_check == 1)
+anzahl <- c(anzahl, nrow(rohdaten))
+rohdaten <- rohdaten %>% filter(Attention_test == 3)
+anzahl <- c(anzahl, nrow(rohdaten))
+
+# Anzahl der ausgeschlossenen Testpersonen
+differenzen <- c(NA, diff(anzahl)) %>% print()
+
+# Spalten umbenennen, da Unipark die Bezeichnung nicht korrekt exportiert hat
 rohdaten <- rohdaten %>% mutate(Anwendungsfeld = rohdaten$c_0002)
 rohdaten <- rohdaten %>% mutate(Vertrauensmassnahmen = rohdaten$c_0003)
 
@@ -41,13 +53,11 @@ for (item in negative_items) {
 # Gesamtscore für ATTARI-12 berechnen und als neue Spalte hinzufügen
 daten$Einstellung_KI <- rowMeans(select(rohdaten, starts_with("ATTARI12")), na.rm = TRUE)
 
-# Spalte für den normierten Wert von Einstellung_KI für die Regressionsanalyse hinzufügen
-daten$Einstellung_KI_norm <- scale(daten$Einstellung_KI)
-
 daten <- daten %>% mutate(Alter = rohdaten$Alter)
 
 # Faktoren für die demographischen Variablen definieren
 daten$Geschlecht <- factor(rohdaten$Geschlecht, levels = c(1, 2, 3), labels = c("weiblich", "männlich", "divers"))
+
 daten$Bildungsabschluss <- factor(rohdaten$Bildungsabschluss, levels = c(1, 2, 3, 4, 5, 6), 
                                  labels = c("Ohne Schulabschluss", "Volks- oder Hauptschulabschluss", "Mittlere Reife (Realschulabschluss)", 
                                             "Abitur oder Fachabitur", "Hochschulabschluss", "Promotion oder Habilitation"))
@@ -60,10 +70,6 @@ daten$GenKI_Erfahrung <- factor(rohdaten$GenKI_Erfahrung, levels = c(1, 2, 3, 4,
 
 daten$Berufserfahrung <- factor(rohdaten$Berufserfahrung, levels = c(1, 2, 3, 4, 5), 
                                labels = c("keine", "weniger als 1 Jahr", "1-5 Jahre", "5-10 Jahre", "mehr als 10 Jahre"))
-
-
-daten <- daten %>% mutate(Attention_test = rohdaten$Attention_test)
-
 
 write.csv2(daten, "Daten/data_cleaned.csv", row.names = TRUE, quote = FALSE, fileEncoding = "UTF-16LE")
 
