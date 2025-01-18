@@ -1,11 +1,11 @@
 source("R/InstallPackages.R")
 source("R/Read_Data.R")
 
-cat("\n*** Deskriptive Statistiken\n")
+# Deskriptive Statistiken
 summary(daten) %>% print()
 skim(daten) %>% print()
 
-cat("\n***  Deskriptive Statistiken für jede Gruppe\n") 
+# Deskriptive Statistiken für jede Gruppe
 daten %>% group_by(Gruppe) %>% skim(Akzeptanz) %>% print()
 
 descriptive_stats <- daten %>%
@@ -14,19 +14,14 @@ descriptive_stats <- daten %>%
     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
     Median = median(Akzeptanz, na.rm = TRUE),
     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
+    Varianz = var(Akzeptanz, na.rm = TRUE),
     Minimum = min(Akzeptanz, na.rm = TRUE),
     Maximum = max(Akzeptanz, na.rm = TRUE),
     Anzahl = n()
   )
 print(descriptive_stats)
 
-cat("\n***  Anzahl der Teilnehmer nach Aufmerksamkeitstest\n")
-daten %>% group_by(Attention_test) %>% summarise(Anzahl = n()) %>% print()
-
-cat("\n*** Aufteilung nach Geschlecht\n")
-daten %>% group_by(Geschlecht) %>% count() %>% print()
-
-cat("\n***  Histogramm der Verteilung der Akzeptanz mit Normalverteilungsanpassung\n")
+# Histogramm der Verteilung der Akzeptanz mit Normalverteilungsanpassung
 ggplot(daten, aes(x = Akzeptanz)) +
   geom_histogram(aes(y = ..density..), bins = 20, fill = "lightblue", color = "black") +
   stat_function(fun = dnorm, 
@@ -36,7 +31,7 @@ ggplot(daten, aes(x = Akzeptanz)) +
        x = "Akzeptanz", y = "Dichte") +
   theme_minimal()
 
-cat("\n***  Histogramm der Verteilung der Akzeptanz getrennt nach Anwendungsfeld\n")
+# Histogramm der Verteilung der Akzeptanz getrennt nach Anwendungsfeld
 daten %>%
   group_by(Anwendungsfeld) %>%
   ggplot(aes(x = Akzeptanz)) +
@@ -49,7 +44,7 @@ daten %>%
        x = "Akzeptanz", y = "Dichte") +
   theme_minimal()
 
-cat("\n***  Histogramm der Verteilung der Akzeptanz getrennt nach Gruppe\n")
+# Histogramm der Verteilung der Akzeptanz getrennt nach Gruppe
 daten %>%
   group_by(Gruppe) %>%
   ggplot(aes(x = Akzeptanz)) +
@@ -62,16 +57,16 @@ daten %>%
        x = "Akzeptanz", y = "Dichte") +
   theme_minimal()
 
-cat("\n***  Grafische Darstellung der Beziehung zwischen Einstellung_KI und Akzeptanz\n")
+# Grafische Darstellung der Beziehung zwischen Einstellung_KI und Akzeptanz
 gp <- ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz)) +
   geom_point() +
   geom_smooth(method = "lm", col = "blue") +
-  labs(title = "Zusammenhang zwischen normierter Einstellung_KI und Akzeptanz",
-       x = "Normierte Einstellung_KI", y = "Akzeptanz") +
+  labs(title = "Zusammenhang zwischen Einstellung_KI und Akzeptanz",
+       x = "Einstellung_KI", y = "Akzeptanz") +
   theme_minimal()
 print(gp)
 
-cat("\n***  Interaktion zwischen Anwendungsfeld und Vertrauensmassnahmen\n")
+# Interaktion zwischen Anwendungsfeld und Vertrauensmassnahmen
 gp <- ggplot(daten, aes(x = Anwendungsfeld, y = Akzeptanz, fill = Vertrauensmassnahmen)) +
   stat_summary(fun = mean, geom = "bar", position = "dodge") +
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", position = position_dodge(width = 0.9), width = 0.2) +
@@ -80,17 +75,17 @@ gp <- ggplot(daten, aes(x = Anwendungsfeld, y = Akzeptanz, fill = Vertrauensmass
   theme_minimal()
 print(gp)
 
-cat("\n***  Interaktion zwischen Einstellung_KI, Anwendungsfeld und Vertrauensmassnahmen\n")
+# Interaktion zwischen Einstellung_KI, Anwendungsfeld und Vertrauensmassnahmen
 gp <- ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Vertrauensmassnahmen)) +
   geom_point() +
   geom_smooth(method = "lm") +
   facet_wrap(~ Anwendungsfeld) +
-  labs(title = "Interaktion zwischen normierter Einstellung_KI, Anwendungsfeld und Vertrauensmassnahmen",
-       x = "Normierte Einstellung_KI", y = "Akzeptanz") +
+  labs(title = "Interaktion zwischen Einstellung_KI, Anwendungsfeld und Vertrauensmassnahmen",
+       x = "Einstellung_KI", y = "Akzeptanz") +
   theme_minimal()
 print(gp)
 
-cat("\n***  Boxplot zur Visualisierung der Verteilung der Akzeptanz in den vier Gruppen\n")
+# Boxplot zur Visualisierung der Verteilung der Akzeptanz in den vier Gruppen
 box_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
   geom_boxplot() +
   scale_x_discrete(labels = c("O1", "o0", "s1", "S0")) +
@@ -99,7 +94,7 @@ box_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
   theme_minimal()
 print(box_plot)
 
-cat("\n***  Barplot zur Visualisierung der Mittelwerte und Konfidenzintervalle der Akzeptanz in den vier Gruppen\n")
+# Barplot zur Visualisierung der Mittelwerte und Konfidenzintervalle der Akzeptanz in den vier Gruppen
 bar_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
   stat_summary(fun = mean, geom = "bar", position = "dodge") +
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", position = position_dodge(width = 0.9), width = 0.2) +
@@ -108,6 +103,3 @@ bar_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
        x = "Gruppe", y = "Mittelwert von Akzeptanz") +
   theme_minimal()
 print(bar_plot)
-
-
-
