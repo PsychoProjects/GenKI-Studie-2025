@@ -21,13 +21,17 @@ gruppen_statistik <- gruppen_groessen %>%
 geschlechter_statisik <- daten %>% group_by(Geschlecht) %>%
   summarise(
     Anzahl = n(),
-    Anteil = n() / nrow(daten) * 100
+    Anteil = round(n() / nrow(daten) * 100, digits = 2)
   ) %>% print()
 
 daten %>% group_by(Geschlecht, Gruppe) %>% count() %>% print()
 
-# Aufteilung nach Bildungsabschluss
-daten %>% group_by(Bildungsabschluss) %>% count() %>% print()
+# Aufteilung nach Bildungsabschluss (Anzahl und Anteil)
+bildungsabschluss_statistik <- daten %>% group_by(Bildungsabschluss) %>%
+  summarise(
+    Anzahl = n(),
+    Anteil = round(n() / nrow(daten) * 100, digits = 2)
+  ) %>% print()
 
 # Statistiken zum Alter
 alter_statistik <- daten %>% 
@@ -45,7 +49,11 @@ altersgruppen <- cut(daten$Alter,
                      right = FALSE) %>% table() %>% print()
 
 # Aufteilung nach Berufsstatus
-berufsstatistik <- daten %>% group_by(Berufsstatus) %>% count() %>% print()
+berufsstatistik <- daten %>% group_by(Berufsstatus) %>% 
+  summarise(
+    Anzahl = n(),
+    Anteil = round(n() / nrow(daten) * 100, digits = 2)
+  ) %>% print()
 
 # Aufteilung nach Berufserfahrung
 berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>% count() %>% print()
