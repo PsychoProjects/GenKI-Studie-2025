@@ -4,7 +4,7 @@
 > source("Read_Data.R")
 
 > # Deskriptive Statistiken
-> summary(daten) %>% print()
+> summary(daten)
       lfdn          duration      Experimentalgruppe Attention_test   Anwendungsfeld    Vertrauensmassnahmen
  Min.   : 57.0   Min.   :  -1.0   Min.   :1.000      Min.   :3      Objektiv :185    Ohne Maßnahme:186      
  1st Qu.:216.0   1st Qu.: 221.0   1st Qu.:2.000      1st Qu.:3      Subjektiv:180    Mit Maßnahme :179      
@@ -27,7 +27,7 @@
  Hochschulabschluss                 :187                              sehr hoch  : 17    mehr als 10 Jahre :236   
  Promotion oder Habilitation        :  7                                                                          
 
-> skim(daten) %>% print()
+> skim(daten)
 ── Data Summary ────────────────────────
                            Values
 Name                       daten 
@@ -68,7 +68,7 @@ Group variables            None
 8 Alter                      0             1 3.92e+ 1  13.3   18     27      38       50       78    ▇▆▆▃▁
 
 > # Deskriptive Statistiken für jede Gruppe
-> daten %>% group_by(Gruppe) %>% skim(Akzeptanz) %>% print()
+> daten %>% group_by(Gruppe) %>% skim(Akzeptanz)
 ── Data Summary ────────────────────────
                            Values    
 Name                       Piped data

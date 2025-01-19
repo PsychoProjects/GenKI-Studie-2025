@@ -4,16 +4,11 @@
 > source("Read_Data.R")
 
 > # Anzahl Teilnehmer (gesamt)
-> nrow(daten) %>% print()
+> nrow(daten)
 [1] 365
 
 > # Anzahl Teilnehmer (je Gruppe)
-> gruppen_groessen <- table(daten$Gruppe) %>% as.data.frame() %>% print()
-                       Var1 Freq
-1   Objektiv - Mit Maßnahme  103
-2  Objektiv - Ohne Maßnahme   82
-3  Subjektiv - Mit Maßnahme   76
-4 Subjektiv - Ohne Maßnahme  104
+> gruppen_groessen <- table(daten$Gruppe) %>% as.data.frame()
 
 > gruppen_statistik <- gruppen_groessen %>% 
 +   summarise(
@@ -40,7 +35,7 @@
 2 männlich      193  52.9 
 3 divers          2   0.55
 
-> daten %>% group_by(Geschlecht, Gruppe) %>% count() %>% print()
+> daten %>% group_by(Geschlecht, Gruppe) %>% count()
 # A tibble: 10 × 3
 # Groups:   Geschlecht, Gruppe [10]
    Geschlecht Gruppe                        n

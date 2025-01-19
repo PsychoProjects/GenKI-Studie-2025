@@ -7,7 +7,7 @@
 
 *** Statistiken nach Geschlecht
 
-> daten %>% group_by(Geschlecht) %>% count() %>% print()
+> daten %>% group_by(Geschlecht) %>% count()
 # A tibble: 3 × 2
 # Groups:   Geschlecht [3]
   Geschlecht     n
@@ -16,7 +16,7 @@
 2 männlich     193
 3 divers         2
 
-> daten %>% group_by(Geschlecht, Gruppe) %>% skim(Akzeptanz) %>% print()
+> daten %>% group_by(Geschlecht, Gruppe) %>% skim(Akzeptanz)
 ── Data Summary ────────────────────────
                            Values            
 Name                       Piped data        
@@ -45,7 +45,7 @@ Group variables            Geschlecht, Gruppe
 
 *** Statistiken nach Bildungsabschluss
 
-> daten %>% group_by(Bildungsabschluss) %>% count() %>% print()
+> daten %>% group_by(Bildungsabschluss) %>% count()
 # A tibble: 5 × 2
 # Groups:   Bildungsabschluss [5]
   Bildungsabschluss                       n
@@ -56,7 +56,7 @@ Group variables            Geschlecht, Gruppe
 4 Hochschulabschluss                    187
 5 Promotion oder Habilitation             7
 
-> daten %>% group_by(Bildungsabschluss, Gruppe) %>% skim(Akzeptanz) %>% print()
+> daten %>% group_by(Bildungsabschluss, Gruppe) %>% skim(Akzeptanz)
 ── Data Summary ────────────────────────
                            Values                   
 Name                       Piped data               
