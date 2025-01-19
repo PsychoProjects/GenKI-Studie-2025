@@ -1,4 +1,4 @@
-source("R/InstallPackages.R")
+source("InstallPackages.R")
 
 # Parameter
 effect_size <- 0.2 # Cohen's f

@@ -1,5 +1,5 @@
-source("R/InstallPackages.R")
-source("R/Read_Data.R")
+source("InstallPackages.R")
+source("Read_Data.R")
 
 # ANOVA zur Überprüfung der Manipulationswirkung auf Akzeptanz
 #   sollte signifikant sein

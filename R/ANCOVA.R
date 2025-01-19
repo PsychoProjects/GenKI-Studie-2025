@@ -1,8 +1,5 @@
-source("R/InstallPackages.R")
-source("R/Read_Data.R")
-
-daten <- filter(daten, Anwendungsfeld == "Objektiv")
-ancova_model <- aov(Akzeptanz ~ Vertrauensmassnahmen + Einstellung_KI, data = daten)
+source("InstallPackages.R")
+source("Read_Data.R")
 
 # ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
 ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)

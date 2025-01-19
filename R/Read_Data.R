@@ -1,7 +1,7 @@
-source("R/InstallPackages.R")
+source("InstallPackages.R")
 
 # Daten laden 
-file_path <- file.path(getwd(), "Daten", "data_project_1027295_2025_01_17.csv")
+file_path <- file.path(getwd(), "../Daten", "data_project_1027295_2025_01_17.csv")
 rohdaten <- read.csv(file_path, sep = ";")
 
 anzahl <- c(nrow(rohdaten))
@@ -17,7 +17,7 @@ rohdaten <- rohdaten %>% filter(Attention_test == 3)
 anzahl <- c(anzahl, nrow(rohdaten))
 
 # Anzahl der ausgeschlossenen Testpersonen
-differenzen <- c(NA, diff(anzahl)) %>% print()
+differenzen <- c(NA, diff(anzahl))
 
 # Spalten umbenennen, da Unipark die Bezeichnung nicht korrekt exportiert hat
 rohdaten <- rohdaten %>% mutate(Anwendungsfeld = rohdaten$c_0002)
@@ -71,5 +71,5 @@ daten$GenKI_Erfahrung <- factor(rohdaten$GenKI_Erfahrung, levels = c(1, 2, 3, 4,
 daten$Berufserfahrung <- factor(rohdaten$Berufserfahrung, levels = c(1, 2, 3, 4, 5), 
                                labels = c("keine", "weniger als 1 Jahr", "1-5 Jahre", "5-10 Jahre", "mehr als 10 Jahre"))
 
-write.csv2(daten, "Daten/data_cleaned.csv", row.names = TRUE, quote = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(daten, "../Daten/data_cleaned.csv", row.names = TRUE, quote = FALSE, fileEncoding = "UTF-16LE")
 

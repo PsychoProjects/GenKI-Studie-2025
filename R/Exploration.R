@@ -1,5 +1,5 @@
-source("R/InstallPackages.R")
-source("R/Read_Data.R")
+source("InstallPackages.R")
+source("Read_Data.R")
 
 cat("\n*** Statistiken nach Geschlecht\n")
 daten %>% group_by(Geschlecht) %>% count() %>% print()

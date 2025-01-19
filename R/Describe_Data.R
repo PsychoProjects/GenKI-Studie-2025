@@ -1,5 +1,5 @@
-source("R/InstallPackages.R")
-source("R/Read_Data.R")
+source("InstallPackages.R")
+source("Read_Data.R")
 
 # Deskriptive Statistiken
 summary(daten) %>% print()

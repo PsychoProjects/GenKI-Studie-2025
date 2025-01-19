@@ -1,8 +1,8 @@
-source("R/InstallPackages.R")
-source("R/Read_Data.R")
+source("InstallPackages.R")
+source("Read_Data.R")
 
 # Anzahl Teilnehmer (gesamt)
-daten %>% count() %>% print()
+nrow(daten) %>% print()
 
 # Anzahl Teilnehmer (je Gruppe)
 gruppen_groessen <- table(daten$Gruppe) %>% as.data.frame() %>% print()
