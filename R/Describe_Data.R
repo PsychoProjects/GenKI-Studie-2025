@@ -2,11 +2,11 @@ source("InstallPackages.R")
 source("Read_Data.R")
 
 # Deskriptive Statistiken
-summary(daten) %>% print()
-skim(daten) %>% print()
+summary(daten)
+skim(daten)
 
 # Deskriptive Statistiken für jede Gruppe
-daten %>% group_by(Gruppe) %>% skim(Akzeptanz) %>% print()
+daten %>% group_by(Gruppe) %>% skim(Akzeptanz)
 
 descriptive_stats <- daten %>%
   group_by(Gruppe) %>%
@@ -18,8 +18,7 @@ descriptive_stats <- daten %>%
     Minimum = min(Akzeptanz, na.rm = TRUE),
     Maximum = max(Akzeptanz, na.rm = TRUE),
     Anzahl = n()
-  )
-print(descriptive_stats)
+  ) %>% print()
 
 # Histogramm der Verteilung der Akzeptanz mit Normalverteilungsanpassung
 ggplot(daten, aes(x = Akzeptanz)) +

@@ -2,10 +2,10 @@ source("InstallPackages.R")
 source("Read_Data.R")
 
 # Anzahl Teilnehmer (gesamt)
-nrow(daten) %>% print()
+nrow(daten)
 
 # Anzahl Teilnehmer (je Gruppe)
-gruppen_groessen <- table(daten$Gruppe) %>% as.data.frame() %>% print()
+gruppen_groessen <- table(daten$Gruppe) %>% as.data.frame()
 
 gruppen_statistik <- gruppen_groessen %>% 
   summarise(
@@ -24,7 +24,7 @@ geschlechter_statisik <- daten %>% group_by(Geschlecht) %>%
     Anteil = round(n() / nrow(daten) * 100, digits = 2)
   ) %>% print()
 
-daten %>% group_by(Geschlecht, Gruppe) %>% count() %>% print()
+daten %>% group_by(Geschlecht, Gruppe) %>% count()
 
 # Aufteilung nach Bildungsabschluss (Anzahl und Anteil)
 bildungsabschluss_statistik <- daten %>% group_by(Bildungsabschluss) %>%
