@@ -31,10 +31,14 @@ daten$Anwendungsfeld <- factor(rohdaten$c_0002, levels = c(0, 1), labels = c("Ob
 daten$Vertrauensmassnahmen <- factor(rohdaten$c_0003, levels = c(0, 1), labels = c("Ohne Maßnahme", "Mit Maßnahme"))
 daten$Gruppe <- paste(daten$Anwendungsfeld, daten$Vertrauensmassnahmen, sep = " - ") # für die Darstellung in Grafiken
 
+#Akzeptanzwerte übernehmen
+daten <- cbind(daten, select(rohdaten, starts_with("Akzeptanz")))
+               
 # Spalte 'Akzeptanz' erstellen als Mittelwert der einzelnen Akzeptanzwerte abhängig vom Anwendungsfeld
-daten$Akzeptanz <- ifelse(daten$Anwendungsfeld == "Objektiv", 
-                         rowMeans(select(rohdaten, Akzeptanz_O1, Akzeptanz_O2, Akzeptanz_O3), na.rm = TRUE),
-                         rowMeans(select(rohdaten, Akzeptanz_S1, Akzeptanz_S2, Akzeptanz_S3), na.rm = TRUE))
+daten$Akzeptanz <- ifelse(
+  daten$Anwendungsfeld == "Objektiv", 
+  rowMeans(select(rohdaten, Akzeptanz_O1, Akzeptanz_O2, Akzeptanz_O3), na.rm = TRUE),
+  rowMeans(select(rohdaten, Akzeptanz_S1, Akzeptanz_S2, Akzeptanz_S3), na.rm = TRUE))
 
 # Spalte für den normierten Wert von Akzeptanz für die Regressionsanalyse hinzufügen
 daten$Akzeptanz_norm <- scale(daten$Akzeptanz)
