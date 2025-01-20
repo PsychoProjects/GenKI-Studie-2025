@@ -75,5 +75,7 @@ daten$GenKI_Erfahrung <- factor(rohdaten$GenKI_Erfahrung, levels = c(1, 2, 3, 4,
 daten$Berufserfahrung <- factor(rohdaten$Berufserfahrung, levels = c(1, 2, 3, 4, 5), 
                                labels = c("keine", "weniger als 1 Jahr", "1-5 Jahre", "5-10 Jahre", "mehr als 10 Jahre"))
 
+daten$objektiv_subjektiv <- factor(rohdaten$v_114, levels = c(1, 2), labels = c("Objektiv", "Subjektiv"))
+
 write.csv2(daten, "../Daten/data_cleaned.csv", row.names = TRUE, quote = FALSE, fileEncoding = "UTF-16LE")
 

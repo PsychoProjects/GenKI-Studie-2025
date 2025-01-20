@@ -3,10 +3,8 @@
 
 > source("Read_Data.R")
 
-> cat("\n*** Statistiken nach Geschlecht\n")
-
-*** Statistiken nach Geschlecht
-
+> ### Analysen zur Verteilung bezüglich der Geschlechter
+> # Statistiken nach Geschlecht
 > daten %>% group_by(Geschlecht) %>% count()
 # A tibble: 3 × 2
 # Groups:   Geschlecht [3]
@@ -21,14 +19,14 @@
                            Values            
 Name                       Piped data        
 Number of rows             365               
-Number of columns          17                
+Number of columns          24                
 _______________________                      
 Column type frequency:                       
   numeric                  1                 
 ________________________                     
 Group variables            Geschlecht, Gruppe
 
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
    skim_variable Geschlecht Gruppe                    n_missing complete_rate mean     sd   p0  p25  p50  p75 p100 hist 
  1 Akzeptanz     weiblich   Objektiv - Mit Maßnahme           0             1 3.77  0.826 1.33 3.33 4    4.33 5    ▁▂▅▇▇
  2 Akzeptanz     weiblich   Objektiv - Ohne Maßnahme          0             1 3.74  0.644 1.67 3.33 4    4    5    ▁▂▅▇▁
@@ -41,10 +39,8 @@ Group variables            Geschlecht, Gruppe
  9 Akzeptanz     divers     Objektiv - Ohne Maßnahme          0             1 4.33 NA     4.33 4.33 4.33 4.33 4.33 ▁▁▇▁▁
 10 Akzeptanz     divers     Subjektiv - Ohne Maßnahme         0             1 3    NA     3    3    3    3    3    ▁▁▇▁▁
 
-> cat("\n*** Statistiken nach Bildungsabschluss\n")
-
-*** Statistiken nach Bildungsabschluss
-
+> ### Analysen zur Verteilung bezüglich der Bildungsabschlüsse
+> # Statistiken nach Bildungsabschluss
 > daten %>% group_by(Bildungsabschluss) %>% count()
 # A tibble: 5 × 2
 # Groups:   Bildungsabschluss [5]
@@ -61,45 +57,65 @@ Group variables            Geschlecht, Gruppe
                            Values                   
 Name                       Piped data               
 Number of rows             365                      
-Number of columns          17                       
+Number of columns          24                       
 _______________________                             
 Column type frequency:                              
   numeric                  1                        
 ________________________                            
 Group variables            Bildungsabschluss, Gruppe
 
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-   skim_variable Bildungsabschluss                   Gruppe                    n_missing complete_rate mean     sd   p0  p25
- 1 Akzeptanz     Volks- oder Hauptschulabschluss     Objektiv - Mit Maßnahme           0             1 4.33 NA     4.33 4.33
- 2 Akzeptanz     Mittlere Reife (Realschulabschluss) Objektiv - Mit Maßnahme           0             1 4.12  0.665 3    3.83
- 3 Akzeptanz     Mittlere Reife (Realschulabschluss) Objektiv - Ohne Maßnahme          0             1 3.6   0.723 2.67 3   
- 4 Akzeptanz     Mittlere Reife (Realschulabschluss) Subjektiv - Mit Maßnahme          0             1 2.28  1.06  1    1.33
- 5 Akzeptanz     Mittlere Reife (Realschulabschluss) Subjektiv - Ohne Maßnahme         0             1 2.95  1.03  1.33 2.33
- 6 Akzeptanz     Abitur oder Fachabitur              Objektiv - Mit Maßnahme           0             1 3.76  0.876 1.33 3.25
- 7 Akzeptanz     Abitur oder Fachabitur              Objektiv - Ohne Maßnahme          0             1 3.8   0.585 2    3.33
- 8 Akzeptanz     Abitur oder Fachabitur              Subjektiv - Mit Maßnahme          0             1 2.71  0.929 1    2.33
- 9 Akzeptanz     Abitur oder Fachabitur              Subjektiv - Ohne Maßnahme         0             1 2.71  1.04  1    2   
-10 Akzeptanz     Hochschulabschluss                  Objektiv - Mit Maßnahme           0             1 3.88  0.738 2    3.33
-11 Akzeptanz     Hochschulabschluss                  Objektiv - Ohne Maßnahme          0             1 3.78  0.780 1.33 3.33
-12 Akzeptanz     Hochschulabschluss                  Subjektiv - Mit Maßnahme          0             1 2.68  1.09  1    1.75
-13 Akzeptanz     Hochschulabschluss                  Subjektiv - Ohne Maßnahme         0             1 2.47  0.996 1    2   
-14 Akzeptanz     Promotion oder Habilitation         Objektiv - Mit Maßnahme           0             1 3    NA     3    3   
-15 Akzeptanz     Promotion oder Habilitation         Subjektiv - Mit Maßnahme          0             1 2.5   0.236 2.33 2.42
-16 Akzeptanz     Promotion oder Habilitation         Subjektiv - Ohne Maßnahme         0             1 2.58  0.957 2    2   
-    p50  p75 p100 hist 
- 1 4.33 4.33 4.33 ▁▁▇▁▁
- 2 4.33 4.67 4.67 ▃▁▃▁▇
- 3 4    4    4.33 ▇▁▁▇▃
- 4 2.5  3.17 3.33 ▇▁▃▃▇
- 5 3    3.83 4    ▂▂▂▂▇
- 6 3.83 4.33 5    ▂▂▃▇▇
- 7 4    4    5    ▁▁▅▇▁
- 8 3    3    5    ▂▂▇▂▁
- 9 3    3.33 5    ▅▂▇▅▁
-10 4    4.33 5    ▁▂▃▇▃
-11 4    4.33 5    ▁▁▃▇▆
-12 2.67 3.67 5    ▇▅▇▆▂
-13 2    3    5    ▆▇▇▃▁
-14 3    3    3    ▁▁▇▁▁
-15 2.5  2.58 2.67 ▇▁▁▁▇
-16 2.17 2.75 4    ▇▁▁▁▂
+── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   skim_variable Bildungsabschluss                   Gruppe                    n_missing complete_rate mean     sd   p0  p25  p50  p75 p100 hist 
+ 1 Akzeptanz     Volks- oder Hauptschulabschluss     Objektiv - Mit Maßnahme           0             1 4.33 NA     4.33 4.33 4.33 4.33 4.33 ▁▁▇▁▁
+ 2 Akzeptanz     Mittlere Reife (Realschulabschluss) Objektiv - Mit Maßnahme           0             1 4.12  0.665 3    3.83 4.33 4.67 4.67 ▃▁▃▁▇
+ 3 Akzeptanz     Mittlere Reife (Realschulabschluss) Objektiv - Ohne Maßnahme          0             1 3.6   0.723 2.67 3    4    4    4.33 ▇▁▁▇▃
+ 4 Akzeptanz     Mittlere Reife (Realschulabschluss) Subjektiv - Mit Maßnahme          0             1 2.28  1.06  1    1.33 2.5  3.17 3.33 ▇▁▃▃▇
+ 5 Akzeptanz     Mittlere Reife (Realschulabschluss) Subjektiv - Ohne Maßnahme         0             1 2.95  1.03  1.33 2.33 3    3.83 4    ▂▂▂▂▇
+ 6 Akzeptanz     Abitur oder Fachabitur              Objektiv - Mit Maßnahme           0             1 3.76  0.876 1.33 3.25 3.83 4.33 5    ▂▂▃▇▇
+ 7 Akzeptanz     Abitur oder Fachabitur              Objektiv - Ohne Maßnahme          0             1 3.8   0.585 2    3.33 4    4    5    ▁▁▅▇▁
+ 8 Akzeptanz     Abitur oder Fachabitur              Subjektiv - Mit Maßnahme          0             1 2.71  0.929 1    2.33 3    3    5    ▂▂▇▂▁
+ 9 Akzeptanz     Abitur oder Fachabitur              Subjektiv - Ohne Maßnahme         0             1 2.71  1.04  1    2    3    3.33 5    ▅▂▇▅▁
+10 Akzeptanz     Hochschulabschluss                  Objektiv - Mit Maßnahme           0             1 3.88  0.738 2    3.33 4    4.33 5    ▁▂▃▇▃
+11 Akzeptanz     Hochschulabschluss                  Objektiv - Ohne Maßnahme          0             1 3.78  0.780 1.33 3.33 4    4.33 5    ▁▁▃▇▆
+12 Akzeptanz     Hochschulabschluss                  Subjektiv - Mit Maßnahme          0             1 2.68  1.09  1    1.75 2.67 3.67 5    ▇▅▇▆▂
+13 Akzeptanz     Hochschulabschluss                  Subjektiv - Ohne Maßnahme         0             1 2.47  0.996 1    2    2    3    5    ▆▇▇▃▁
+14 Akzeptanz     Promotion oder Habilitation         Objektiv - Mit Maßnahme           0             1 3    NA     3    3    3    3    3    ▁▁▇▁▁
+15 Akzeptanz     Promotion oder Habilitation         Subjektiv - Mit Maßnahme          0             1 2.5   0.236 2.33 2.42 2.5  2.58 2.67 ▇▁▁▁▇
+16 Akzeptanz     Promotion oder Habilitation         Subjektiv - Ohne Maßnahme         0             1 2.58  0.957 2    2    2.17 2.75 4    ▇▁▁▁▂
+
+> ### Analysen zur Einschätzung der Objektivität bzw. Subjektivität der Anwendungsfelder
+> # Korrelationsanalyse zwischen Anwendungsfeld und objektiv-subjektiv-Einschätzung
+> cor.test(as.numeric(daten$Anwendungsfeld), as.numeric(daten$objektiv_subjektiv), method = "kendall")
+
+	Kendall's rank correlation tau
+
+data:  as.numeric(daten$Anwendungsfeld) and as.numeric(daten$objektiv_subjektiv)
+z = 13.749, p-value < 2.2e-16
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.7206614 
+
+
+> # Anzahl übereinstimmender Werte ermitteln
+> fn_analyse_uebereinstimmung <- function(daten) {
++   daten %>% summarise(
++     gleich = sum(Anwendungsfeld == objektiv_subjektiv),
++     ungleich = sum(Anwendungsfeld != objektiv_subjektiv),
++     uebereinstimmung = round((gleich / nrow(daten)) * 100.0,2))
++ }
+
+> # Gesamt
+> fn_analyse_uebereinstimmung(daten)
+  gleich ungleich uebereinstimmung
+1    314       51            86.03
+
+> # Objektive Anwendungsfelder
+> fn_analyse_uebereinstimmung(daten %>% filter(Anwendungsfeld == "Objektiv"))
+  gleich ungleich uebereinstimmung
+1    162       23            87.57
+
+> # Subjektive Anwendungsfelder
+> fn_analyse_uebereinstimmung(daten %>% filter(Anwendungsfeld == "Subjektiv"))
+  gleich ungleich uebereinstimmung
+1    152       28            84.44
