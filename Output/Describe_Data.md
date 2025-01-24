@@ -5,87 +5,101 @@
 
 > # Deskriptive Statistiken
 > summary(daten)
-      lfdn          duration      Experimentalgruppe Attention_test   Anwendungsfeld    Vertrauensmassnahmen
- Min.   : 57.0   Min.   :  -1.0   Min.   :1.000      Min.   :3      Objektiv :185    Ohne Maßnahme:186      
- 1st Qu.:216.0   1st Qu.: 221.0   1st Qu.:2.000      1st Qu.:3      Subjektiv:180    Mit Maßnahme :179      
- Median :352.0   Median : 287.0   Median :2.000      Median :3                                              
- Mean   :354.9   Mean   : 371.4   Mean   :2.477      Mean   :3                                              
- 3rd Qu.:502.0   3rd Qu.: 401.0   3rd Qu.:3.000      3rd Qu.:3                                              
- Max.   :638.0   Max.   :2205.0   Max.   :4.000      Max.   :3                                              
-    Gruppe            Akzeptanz      Akzeptanz_norm.V1   Akzeptanz_binär Einstellung_KI      Alter          Geschlecht 
- Length:365         Min.   :1.000   Min.   :-2.0888891   niedrig:163     Min.   :1.167   Min.   :18.00   weiblich:170  
- Class :character   1st Qu.:2.667   1st Qu.:-0.5277824   hoch   :202     1st Qu.:3.333   1st Qu.:27.00   männlich:193  
- Mode  :character   Median :3.333   Median : 0.0966603                   Median :3.750   Median :38.00   divers  :  2  
-                    Mean   :3.230   Mean   : 0.0000000                   Mean   :3.653   Mean   :39.16                 
-                    3rd Qu.:4.000   3rd Qu.: 0.7211030                   3rd Qu.:4.083   3rd Qu.:50.00                 
-                    Max.   :5.000   Max.   : 1.6577670                   Max.   :5.000   Max.   :78.00                 
-                           Bildungsabschluss             Berufsstatus    GenKI_Erfahrung           Berufserfahrung
- Ohne Schulabschluss                :  0     nicht erwerbstätig: 12   sehr gering: 48    keine             :  7   
- Volks- oder Hauptschulabschluss    :  1     erwerbstätig      :282   gering     : 94    weniger als 1 Jahr:  6   
- Mittlere Reife (Realschulabschluss): 26     im Studium        : 62   mittel     :139    1-5 Jahre         : 74   
- Abitur oder Fachabitur             :144     in der Ausbildung :  9   hoch       : 67    5-10 Jahre        : 42   
- Hochschulabschluss                 :187                              sehr hoch  : 17    mehr als 10 Jahre :236   
- Promotion oder Habilitation        :  7                                                                          
+      lfdn          duration      Experimentalgruppe Attention_test   Anwendungsfeld    Vertrauensmassnahmen    Gruppe           Akzeptanz_O1   
+ Min.   : 57.0   Min.   :  -1.0   Min.   :1.000      Min.   :3      Objektiv :191    Ohne Maßnahme:190       Length:375         Min.   :-77.00  
+ 1st Qu.:221.0   1st Qu.: 221.0   1st Qu.:2.000      1st Qu.:3      Subjektiv:184    Mit Maßnahme :185       Class :character   1st Qu.:-77.00  
+ Median :360.0   Median : 285.0   Median :2.000      Median :3                                               Mode  :character   Median :  2.00  
+ Mean   :362.7   Mean   : 368.1   Mean   :2.475      Mean   :3                                                                  Mean   :-35.67  
+ 3rd Qu.:511.0   3rd Qu.: 396.0   3rd Qu.:3.000      3rd Qu.:3                                                                  3rd Qu.:  4.00  
+ Max.   :662.0   Max.   :2205.0   Max.   :4.000      Max.   :3                                                                  Max.   :  5.00  
+  Akzeptanz_O2     Akzeptanz_O3     Akzeptanz_S1     Akzeptanz_S2     Akzeptanz_S3      Akzeptanz      Akzeptanz_norm.V1   Akzeptanz_binär
+ Min.   :-77.00   Min.   :-77.00   Min.   :-77.00   Min.   :-77.00   Min.   :-77.00   Min.   :1.000   Min.   :-2.0687225   niedrig:168    
+ 1st Qu.:-77.00   1st Qu.:-77.00   1st Qu.:-77.00   1st Qu.:-77.00   1st Qu.:-77.00   1st Qu.:2.667   1st Qu.:-0.5202775   hoch   :207    
+ Median :  1.00   Median :  1.00   Median :-77.00   Median :-77.00   Median :-77.00   Median :3.333   Median : 0.0991005                  
+ Mean   :-35.86   Mean   :-35.98   Mean   :-37.83   Mean   :-37.96   Mean   :-38.03   Mean   :3.227   Mean   : 0.0000000                  
+ 3rd Qu.:  4.00   3rd Qu.:  4.00   3rd Qu.:  3.00   3rd Qu.:  2.00   3rd Qu.:  2.00   3rd Qu.:4.000   3rd Qu.: 0.7184785                  
+ Max.   :  5.00   Max.   :  5.00   Max.   :  5.00   Max.   :  5.00   Max.   :  5.00   Max.   :5.000   Max.   : 1.6475454                  
+ Einstellung_KI      Alter          Geschlecht                            Bildungsabschluss             Berufsstatus    GenKI_Erfahrung
+ Min.   :1.167   Min.   :18.00   weiblich:175   Ohne Schulabschluss                :  0     nicht erwerbstätig: 12   sehr gering: 49   
+ 1st Qu.:3.333   1st Qu.:27.00   männlich:198   Volks- oder Hauptschulabschluss    :  1     erwerbstätig      :291   gering     : 95   
+ Median :3.750   Median :38.00   divers  :  2   Mittlere Reife (Realschulabschluss): 27     im Studium        : 63   mittel     :145   
+ Mean   :3.651   Mean   :39.14                  Abitur oder Fachabitur             :144     in der Ausbildung :  9   hoch       : 69   
+ 3rd Qu.:4.083   3rd Qu.:50.00                  Hochschulabschluss                 :196                              sehr hoch  : 17   
+ Max.   :5.000   Max.   :78.00                  Promotion oder Habilitation        :  7                                                
+           Berufserfahrung objektiv_subjektiv
+ keine             :  7    Objektiv :196     
+ weniger als 1 Jahr:  6    Subjektiv:179     
+ 1-5 Jahre         : 75                      
+ 5-10 Jahre        : 43                      
+ mehr als 10 Jahre :244                      
+                                             
 
 > skim(daten)
 ── Data Summary ────────────────────────
                            Values
 Name                       daten 
-Number of rows             365   
-Number of columns          17    
+Number of rows             375   
+Number of columns          24    
 _______________________          
 Column type frequency:           
   character                1     
-  factor                   8     
-  numeric                  8     
+  factor                   9     
+  numeric                  14    
 ________________________         
 Group variables            None  
 
-── Variable type: character ──────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min max empty n_unique whitespace
 1 Gruppe                0             1  23  25     0        4          0
 
-── Variable type: factor ─────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: factor ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable        n_missing complete_rate ordered n_unique top_counts                         
-1 Anwendungsfeld               0             1 FALSE          2 Obj: 185, Sub: 180                 
-2 Vertrauensmassnahmen         0             1 FALSE          2 Ohn: 186, Mit: 179                 
-3 Akzeptanz_binär              0             1 FALSE          2 hoc: 202, nie: 163                 
-4 Geschlecht                   0             1 FALSE          3 män: 193, wei: 170, div: 2         
-5 Bildungsabschluss            0             1 FALSE          5 Hoc: 187, Abi: 144, Mit: 26, Pro: 7
-6 Berufsstatus                 0             1 FALSE          4 erw: 282, im : 62, nic: 12, in : 9 
-7 GenKI_Erfahrung              0             1 FALSE          5 mit: 139, ger: 94, hoc: 67, seh: 48
-8 Berufserfahrung              0             1 FALSE          5 meh: 236, 1-5: 74, 5-1: 42, kei: 7 
+1 Anwendungsfeld               0             1 FALSE          2 Obj: 191, Sub: 184                 
+2 Vertrauensmassnahmen         0             1 FALSE          2 Ohn: 190, Mit: 185                 
+3 Akzeptanz_binär              0             1 FALSE          2 hoc: 207, nie: 168                 
+4 Geschlecht                   0             1 FALSE          3 män: 198, wei: 175, div: 2         
+5 Bildungsabschluss            0             1 FALSE          5 Hoc: 196, Abi: 144, Mit: 27, Pro: 7
+6 Berufsstatus                 0             1 FALSE          4 erw: 291, im : 63, nic: 12, in : 9 
+7 GenKI_Erfahrung              0             1 FALSE          5 mit: 145, ger: 95, hoc: 69, seh: 49
+8 Berufserfahrung              0             1 FALSE          5 meh: 244, 1-5: 75, 5-1: 43, kei: 7 
+9 objektiv_subjektiv           0             1 FALSE          2 Obj: 196, Sub: 179                 
 
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-  skim_variable      n_missing complete_rate     mean      sd    p0     p25      p50     p75    p100 hist 
-1 lfdn                       0             1 3.55e+ 2 167.    57    216     352      502      638    ▇▇▇▇▇
-2 duration                   0             1 3.71e+ 2 308.    -1    221     287      401     2205    ▇▂▁▁▁
-3 Experimentalgruppe         0             1 2.48e+ 0   1.06   1      2       2        3        4    ▆▇▁▇▆
-4 Attention_test             0             1 3   e+ 0   0      3      3       3        3        3    ▁▁▇▁▁
-5 Akzeptanz                  0             1 3.23e+ 0   1.07   1      2.67    3.33     4        5    ▃▃▇▇▅
-6 Akzeptanz_norm             0             1 2.00e-17   1     -2.09  -0.528   0.0967   0.721    1.66 ▃▃▇▇▅
-7 Einstellung_KI             0             1 3.65e+ 0   0.631  1.17   3.33    3.75     4.08     5    ▁▁▃▇▃
-8 Alter                      0             1 3.92e+ 1  13.3   18     27      38       50       78    ▇▆▆▃▁
+── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   skim_variable      n_missing complete_rate      mean      sd     p0     p25      p50     p75    p100 hist 
+ 1 lfdn                       0             1  3.63e+ 2 172.     57    221     360      511      662    ▇▇▇▇▇
+ 2 duration                   0             1  3.68e+ 2 304.     -1    221     285      396     2205    ▇▂▁▁▁
+ 3 Experimentalgruppe         0             1  2.47e+ 0   1.06    1      2       2        3        4    ▆▇▁▇▆
+ 4 Attention_test             0             1  3   e+ 0   0       3      3       3        3        3    ▁▁▇▁▁
+ 5 Akzeptanz_O1               0             1 -3.57e+ 1  40.6   -77    -77       2        4        5    ▇▁▁▁▇
+ 6 Akzeptanz_O2               0             1 -3.59e+ 1  40.4   -77    -77       1        4        5    ▇▁▁▁▇
+ 7 Akzeptanz_O3               0             1 -3.60e+ 1  40.3   -77    -77       1        4        5    ▇▁▁▁▇
+ 8 Akzeptanz_S1               0             1 -3.78e+ 1  40.0   -77    -77     -77        3        5    ▇▁▁▁▇
+ 9 Akzeptanz_S2               0             1 -3.80e+ 1  39.8   -77    -77     -77        2        5    ▇▁▁▁▇
+10 Akzeptanz_S3               0             1 -3.80e+ 1  39.8   -77    -77     -77        2        5    ▇▁▁▁▇
+11 Akzeptanz                  0             1  3.23e+ 0   1.08    1      2.67    3.33     4        5    ▃▃▇▇▅
+12 Akzeptanz_norm             0             1  6.98e-17   1      -2.07  -0.520   0.0991   0.718    1.65 ▃▃▇▇▅
+13 Einstellung_KI             0             1  3.65e+ 0   0.625   1.17   3.33    3.75     4.08     5    ▁▁▃▇▃
+14 Alter                      0             1  3.91e+ 1  13.1    18     27      38       50       78    ▇▇▆▃▁
 
 > # Deskriptive Statistiken für jede Gruppe
 > daten %>% group_by(Gruppe) %>% skim(Akzeptanz)
 ── Data Summary ────────────────────────
                            Values    
 Name                       Piped data
-Number of rows             365       
-Number of columns          17        
+Number of rows             375       
+Number of columns          24        
 _______________________              
 Column type frequency:               
   numeric                  1         
 ________________________             
 Group variables            Gruppe    
 
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable Gruppe                    n_missing complete_rate mean    sd   p0  p25  p50  p75 p100 hist 
-1 Akzeptanz     Objektiv - Mit Maßnahme           0             1 3.84 0.793 1.33 3.33 4    4.33    5 ▁▂▅▇▇
-2 Akzeptanz     Objektiv - Ohne Maßnahme          0             1 3.77 0.716 1.33 3.33 4    4.25    5 ▁▁▃▇▅
-3 Akzeptanz     Subjektiv - Mit Maßnahme          0             1 2.66 1.01  1    2    2.67 3.33    5 ▅▃▇▃▁
-4 Akzeptanz     Subjektiv - Ohne Maßnahme         0             1 2.61 1.01  1    2    2.67 3.33    5 ▅▆▇▅▁
+1 Akzeptanz     Objektiv - Mit Maßnahme           0             1 3.86 0.787 1.33 3.33 4    4.33    5 ▁▂▃▇▇
+2 Akzeptanz     Objektiv - Ohne Maßnahme          0             1 3.77 0.730 1.33 3.33 4    4.33    5 ▁▁▃▇▅
+3 Akzeptanz     Subjektiv - Mit Maßnahme          0             1 2.63 1.01  1    2    2.67 3.25    5 ▅▃▇▃▁
+4 Akzeptanz     Subjektiv - Ohne Maßnahme         0             1 2.60 1.01  1    2    2.67 3.33    5 ▆▆▇▅▁
 
 > descriptive_stats <- daten %>%
 +   group_by(Gruppe) %>%
@@ -97,16 +111,14 @@ Group variables            Gruppe
 +     Minimum = min(Akzeptanz, na.rm = TRUE),
 +     Maximum = max(Akzeptanz, na.rm = TRUE),
 +     Anzahl = n()
-+   )
-
-> print(descriptive_stats)
++   ) %>% print()
 # A tibble: 4 × 8
   Gruppe                    Mittelwert Median Standardabweichung Varianz Minimum Maximum Anzahl
   <chr>                          <dbl>  <dbl>              <dbl>   <dbl>   <dbl>   <dbl>  <int>
-1 Objektiv - Mit Maßnahme         3.84   4                 0.793   0.629    1.33       5    103
-2 Objektiv - Ohne Maßnahme        3.77   4                 0.716   0.513    1.33       5     82
-3 Subjektiv - Mit Maßnahme        2.66   2.67              1.01    1.01     1          5     76
-4 Subjektiv - Ohne Maßnahme       2.61   2.67              1.01    1.03     1          5    104
+1 Objektiv - Mit Maßnahme         3.86   4                 0.787   0.619    1.33       5    107
+2 Objektiv - Ohne Maßnahme        3.77   4                 0.730   0.533    1.33       5     84
+3 Subjektiv - Mit Maßnahme        2.63   2.67              1.01    1.02     1          5     78
+4 Subjektiv - Ohne Maßnahme       2.60   2.67              1.01    1.02     1          5    106
 
 > # Histogramm der Verteilung der Akzeptanz mit Normalverteilungsanpassung
 > ggplot(daten, aes(x = Akzeptanz)) +

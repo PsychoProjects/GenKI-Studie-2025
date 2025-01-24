@@ -5,7 +5,7 @@
 
 > # Anzahl Teilnehmer (gesamt)
 > nrow(daten)
-[1] 365
+[1] 375
 
 > # Anzahl Teilnehmer (je Gruppe)
 > gruppen_groessen <- table(daten$Gruppe) %>% as.data.frame()
@@ -20,7 +20,7 @@
 +     Relation = max(Freq) / min(Freq)
 +   ) %>% print()
   Mittelwert Median Standardabweichung Minimum Maximum Relation
-1      91.25   92.5           14.36141      76     104 1.368421
+1      93.75     95           14.93039      78     107 1.371795
 
 > # Aufteilung nach Geschlecht
 > geschlechter_statisik <- daten %>% group_by(Geschlecht) %>%
@@ -31,23 +31,23 @@
 # A tibble: 3 × 3
   Geschlecht Anzahl Anteil
   <fct>       <int>  <dbl>
-1 weiblich      170  46.6 
-2 männlich      193  52.9 
-3 divers          2   0.55
+1 weiblich      175  46.7 
+2 männlich      198  52.8 
+3 divers          2   0.53
 
 > daten %>% group_by(Geschlecht, Gruppe) %>% count()
 # A tibble: 10 × 3
 # Groups:   Geschlecht, Gruppe [10]
    Geschlecht Gruppe                        n
    <fct>      <chr>                     <int>
- 1 weiblich   Objektiv - Mit Maßnahme      53
- 2 weiblich   Objektiv - Ohne Maßnahme     42
- 3 weiblich   Subjektiv - Mit Maßnahme     34
- 4 weiblich   Subjektiv - Ohne Maßnahme    41
- 5 männlich   Objektiv - Mit Maßnahme      50
- 6 männlich   Objektiv - Ohne Maßnahme     39
+ 1 weiblich   Objektiv - Mit Maßnahme      54
+ 2 weiblich   Objektiv - Ohne Maßnahme     43
+ 3 weiblich   Subjektiv - Mit Maßnahme     36
+ 4 weiblich   Subjektiv - Ohne Maßnahme    42
+ 5 männlich   Objektiv - Mit Maßnahme      53
+ 6 männlich   Objektiv - Ohne Maßnahme     40
  7 männlich   Subjektiv - Mit Maßnahme     42
- 8 männlich   Subjektiv - Ohne Maßnahme    62
+ 8 männlich   Subjektiv - Ohne Maßnahme    63
  9 divers     Objektiv - Ohne Maßnahme      1
 10 divers     Subjektiv - Ohne Maßnahme     1
 
@@ -61,10 +61,10 @@
   Bildungsabschluss                   Anzahl Anteil
   <fct>                                <int>  <dbl>
 1 Volks- oder Hauptschulabschluss          1   0.27
-2 Mittlere Reife (Realschulabschluss)     26   7.12
-3 Abitur oder Fachabitur                 144  39.4 
-4 Hochschulabschluss                     187  51.2 
-5 Promotion oder Habilitation              7   1.92
+2 Mittlere Reife (Realschulabschluss)     27   7.2 
+3 Abitur oder Fachabitur                 144  38.4 
+4 Hochschulabschluss                     196  52.3 
+5 Promotion oder Habilitation              7   1.87
 
 > # Statistiken zum Alter
 > alter_statistik <- daten %>% 
@@ -76,7 +76,7 @@
 +     Maximum = max(Alter, na.rm = TRUE),
 +   ) %>% print()
   Mittelwert Median Standardabweichung Minimum Maximum
-1   39.16164     38           13.27741      18      78
+1   39.13867     38           13.12005      18      78
 
 > # Aufteilung nach Altersgruppen
 > altersgruppen <- cut(daten$Alter, 
@@ -84,7 +84,7 @@
 +                      right = FALSE) %>% table() %>% print()
 .
   [0,18)  [18,20)  [20,30)  [30,40)  [40,50)  [50,60)  [60,70)  [70,80)  [80,90) [90,100) 
-       0       11      100       82       75       71       25        1        0        0 
+       0       11      100       89       78       71       25        1        0        0 
 
 > # Aufteilung nach Berufsstatus
 > berufsstatistik <- daten %>% group_by(Berufsstatus) %>% 
@@ -95,10 +95,10 @@
 # A tibble: 4 × 3
   Berufsstatus       Anzahl Anteil
   <fct>               <int>  <dbl>
-1 nicht erwerbstätig     12   3.29
-2 erwerbstätig          282  77.3 
-3 im Studium             62  17.0 
-4 in der Ausbildung       9   2.47
+1 nicht erwerbstätig     12    3.2
+2 erwerbstätig          291   77.6
+3 im Studium             63   16.8
+4 in der Ausbildung       9    2.4
 
 > # Aufteilung nach Berufserfahrung
 > berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>% count() %>% print()
@@ -108,6 +108,6 @@
   <fct>              <int>
 1 keine                  7
 2 weniger als 1 Jahr     6
-3 1-5 Jahre             74
-4 5-10 Jahre            42
-5 mehr als 10 Jahre    236
+3 1-5 Jahre             75
+4 5-10 Jahre            43
+5 mehr als 10 Jahre    244

@@ -4,16 +4,16 @@
 > source("Read_Data.R")
 
 > # ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
-> ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
+> ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
 
 > # Zusammenfassung des Modells anzeigen
 > summary(ancova_model)
                                      Df Sum Sq Mean Sq F value Pr(>F)    
-Anwendungsfeld                        1 127.28  127.28 196.942 <2e-16 ***
-Vertrauensmassnahmen                  1   0.31    0.31   0.487  0.486    
-Einstellung_KI                        1  54.64   54.64  84.547 <2e-16 ***
-Anwendungsfeld:Vertrauensmassnahmen   1   0.01    0.01   0.008  0.929    
-Residuals                           360 232.66    0.65                   
+Anwendungsfeld                        1 137.15  137.15 210.576 <2e-16 ***
+Vertrauensmassnahmen                  1   0.30    0.30   0.465  0.496    
+Einstellung_KI                        1  54.83   54.83  84.180 <2e-16 ***
+Anwendungsfeld:Vertrauensmassnahmen   1   0.02    0.02   0.027  0.869    
+Residuals                           370 240.99    0.65                   
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
@@ -23,10 +23,10 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 
 Parameter                           | Eta2 (partial) |       95% CI
 -------------------------------------------------------------------
-Anwendungsfeld                      |           0.35 | [0.29, 1.00]
-Vertrauensmassnahmen                |       1.35e-03 | [0.00, 1.00]
+Anwendungsfeld                      |           0.36 | [0.30, 1.00]
+Vertrauensmassnahmen                |       1.26e-03 | [0.00, 1.00]
 Einstellung_KI                      |           0.19 | [0.13, 1.00]
-Anwendungsfeld:Vertrauensmassnahmen |       2.20e-05 | [0.00, 1.00]
+Anwendungsfeld:Vertrauensmassnahmen |       7.41e-05 | [0.00, 1.00]
 
 - One-sided CIs: upper bound fixed at [1.00].
 > omega_squared(ancova_model)
@@ -34,9 +34,9 @@ Anwendungsfeld:Vertrauensmassnahmen |       2.20e-05 | [0.00, 1.00]
 
 Parameter                           | Omega2 (partial) |       95% CI
 ---------------------------------------------------------------------
-Anwendungsfeld                      |             0.35 | [0.29, 1.00]
+Anwendungsfeld                      |             0.36 | [0.30, 1.00]
 Vertrauensmassnahmen                |             0.00 | [0.00, 1.00]
-Einstellung_KI                      |             0.19 | [0.13, 1.00]
+Einstellung_KI                      |             0.18 | [0.13, 1.00]
 Anwendungsfeld:Vertrauensmassnahmen |             0.00 | [0.00, 1.00]
 
 - One-sided CIs: upper bound fixed at [1.00].
@@ -49,11 +49,11 @@ Fit: aov(formula = Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellu
 
 $Anwendungsfeld
                         diff       lwr       upr p adj
-Subjektiv-Objektiv -1.181131 -1.346647 -1.015615     0
+Subjektiv-Objektiv -1.209737 -1.373667 -1.045807     0
 
 $Vertrauensmassnahmen
-                                 diff        lwr       upr     p adj
-Mit Maßnahme-Ohne Maßnahme 0.05819465 -0.1073363 0.2237256 0.4897747
+                                 diff        lwr      upr     p adj
+Mit Maßnahme-Ohne Maßnahme 0.05634024 -0.1075755 0.220256 0.4995397
 
 
 > ### Prüfung der Voraussetzungen für die ANCOVA
@@ -63,7 +63,7 @@ Mit Maßnahme-Ohne Maßnahme 0.05819465 -0.1073363 0.2237256 0.4897747
 	Shapiro-Wilk normality test
 
 data:  residuals(ancova_model)
-W = 0.99165, p-value = 0.03761
+W = 0.99308, p-value = 0.0821
 
 
 > qqnorm(residuals(ancova_model))
@@ -74,24 +74,24 @@ W = 0.99165, p-value = 0.03761
 > leveneTest(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
 Levene's Test for Homogeneity of Variance (center = median)
        Df F value    Pr(>F)    
-group   3  7.8076 4.607e-05 ***
-      361                      
+group   3  7.7782 4.753e-05 ***
+      371                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 > leveneTest(Akzeptanz ~ Anwendungsfeld, data = daten)
 Levene's Test for Homogeneity of Variance (center = median)
-       Df F value   Pr(>F)    
-group   1   21.19 5.76e-06 ***
-      363                     
+       Df F value    Pr(>F)    
+group   1  21.808 4.211e-06 ***
+      373                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 > leveneTest(Akzeptanz ~ Vertrauensmassnahmen, data = daten)
 Levene's Test for Homogeneity of Variance (center = median)
        Df F value Pr(>F)
-group   1  0.0055 0.9408
-      363               
+group   1  0.0058 0.9395
+      373               
 
 > # Lineare Beziehung zwischen der Kovariate und der abhängigen Variable prüfen
 > plot(daten$Einstellung_KI, daten$Akzeptanz, main = "Einstellung_KI vs. Akzeptanz", xlab = "Einstellung_KI", ylab = "Akzeptanz")
@@ -105,11 +105,11 @@ group   1  0.0055 0.9408
 	Pearson's product-moment correlation
 
 data:  daten$Einstellung_KI and residuals(model)
-t = 6.2332e-15, df = 363, p-value = 1
+t = -1.3945e-15, df = 373, p-value = 1
 alternative hypothesis: true correlation is not equal to 0
 95 percent confidence interval:
- -0.1026506  0.1026506
+ -0.101271  0.101271
 sample estimates:
-         cor 
-3.271575e-16 
+          cor 
+-7.220575e-17 
 

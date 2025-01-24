@@ -1,7 +1,7 @@
 source("InstallPackages.R")
 
 # Daten laden 
-file_path <- file.path(getwd(), "../Daten", "data_project_1027295_2025_01_17.csv")
+file_path <- file.path(getwd(), "../Daten", "data_project_1027295_2025_01_24.csv")
 rohdaten <- read.csv(file_path, sep = ";")
 
 anzahl <- c(nrow(rohdaten))
