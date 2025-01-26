@@ -9,7 +9,9 @@ summary(ancova_model)
 
 # Effektgröße berechnen
 eta_squared(ancova_model, partial = TRUE)
-omega_squared(ancova_model)
+
+# Correlation zwischen Akzeptanz und Einstellung_KI ermitteln (H4)
+cor.test(daten$Einstellung_KI, daten$Akzeptanz)
 
 # Post-hoc Tests für die kategorialen Prädiktoren (falls nötig) mit Tukey HSD durchführen
 TukeyHSD(ancova_model, which = c("Anwendungsfeld", "Vertrauensmassnahmen"))
