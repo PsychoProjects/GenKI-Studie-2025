@@ -1,15 +1,8 @@
 source("InstallPackages.R")
 source("Read_Data.R")
 
-# Deskriptive Statistiken
-summary(daten)
-skim(daten)
-
 # Deskriptive Statistiken für jede Gruppe
-daten %>% group_by(Gruppe) %>% skim(Akzeptanz)
-
-descriptive_stats <- daten %>%
-  group_by(Gruppe) %>%
+daten %>% group_by(Gruppe) %>%
   summarise(
     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
     Median = median(Akzeptanz, na.rm = TRUE),
@@ -18,8 +11,33 @@ descriptive_stats <- daten %>%
     Minimum = min(Akzeptanz, na.rm = TRUE),
     Maximum = max(Akzeptanz, na.rm = TRUE),
     Anzahl = n()
-  ) %>% print()
+  ) 
 
+# Deskriptive Statistiken für jedes Anwendungsfeld
+daten %>% group_by(Anwendungsfeld) %>%
+  summarise(
+    Mittelwert = mean(Akzeptanz, na.rm = TRUE),
+    Median = median(Akzeptanz, na.rm = TRUE),
+    Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
+    Varianz = var(Akzeptanz, na.rm = TRUE),
+    Minimum = min(Akzeptanz, na.rm = TRUE),
+    Maximum = max(Akzeptanz, na.rm = TRUE),
+    Anzahl = n()
+  ) 
+
+# Deskrptive Statistiken für die Maßnahmen
+daten %>% group_by(Vertrauensmassnahmen) %>%
+  summarise(
+    Mittelwert = mean(Akzeptanz, na.rm = TRUE),
+    Median = median(Akzeptanz, na.rm = TRUE),
+    Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
+    Varianz = var(Akzeptanz, na.rm = TRUE),
+    Minimum = min(Akzeptanz, na.rm = TRUE),
+    Maximum = max(Akzeptanz, na.rm = TRUE),
+    Anzahl = n()
+  ) 
+
+### Grafische Aufbereitung
 # Histogramm der Verteilung der Akzeptanz mit Normalverteilungsanpassung
 ggplot(daten, aes(x = Akzeptanz)) +
   geom_histogram(aes(y = ..density..), bins = 20, fill = "lightblue", color = "black") +
