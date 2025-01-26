@@ -56,6 +56,10 @@ berufsstatistik <- daten %>% group_by(Berufsstatus) %>%
   ) %>% print()
 
 # Aufteilung nach Berufserfahrung
-berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>% count() %>% print()
+berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>% 
+  summarise(
+    Anzahl = n(),
+    Anteil = round(n() / nrow(daten) * 100, digits = 2)
+  ) %>% print()
 
 
