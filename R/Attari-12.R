@@ -16,7 +16,7 @@ daten %>% summarise(
 
 # Histogramm der Verteilung der Einstellung_KI mit Normalverteilungsanpassung
 ggplot(daten, aes(x = Einstellung_KI)) +
-  geom_histogram(aes(y = ..density..), bins = 10, fill = "lightblue", color = "black") +
+  geom_histogram(aes(y = after_stat(density)), bins = 10, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.2, fill = "red") +
   labs(title = "Verteilung der Einstellung KI",
        x = "Einstellung",
@@ -33,7 +33,7 @@ daten %>% group_by(Geschlecht) %>%
 
 # Histogramm der Verteilung der Einstellung_KI mit Normalverteilungsanpassung gruppiert nach Geschlecht
 ggplot(daten, aes(x = Einstellung_KI, fill = Geschlecht)) +
-  geom_histogram(aes(y = ..density..), bins = 10, color = "black", position = "dodge") +
+  geom_histogram(aes(y = after_stat(density)), bins = 10, color = "black", position = "dodge") +
   geom_density(alpha = 0.2, position = "dodge") +
   labs(title = "Verteilung der Einstellung KI",
        x = "Einstellung",
