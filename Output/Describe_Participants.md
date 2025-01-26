@@ -101,13 +101,16 @@
 4 in der Ausbildung       9    2.4
 
 > # Aufteilung nach Berufserfahrung
-> berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>% count() %>% print()
-# A tibble: 5 × 2
-# Groups:   Berufserfahrung [5]
-  Berufserfahrung        n
-  <fct>              <int>
-1 keine                  7
-2 weniger als 1 Jahr     6
-3 1-5 Jahre             75
-4 5-10 Jahre            43
-5 mehr als 10 Jahre    244
+> berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>% 
++   summarise(
++     Anzahl = n(),
++     Anteil = round(n() / nrow(daten) * 100, digits = 2)
++   ) %>% print()
+# A tibble: 5 × 3
+  Berufserfahrung    Anzahl Anteil
+  <fct>               <int>  <dbl>
+1 keine                   7   1.87
+2 weniger als 1 Jahr      6   1.6 
+3 1-5 Jahre              75  20   
+4 5-10 Jahre             43  11.5 
+5 mehr als 10 Jahre     244  65.1 

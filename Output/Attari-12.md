@@ -67,7 +67,7 @@ Column type frequency:
 ________________________             
 Group variables            None      
 
-── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable  n_missing complete_rate mean    sd   p0  p25  p50  p75 p100 hist 
 1 Einstellung_KI         0             1 3.65 0.625 1.17 3.33 3.75 4.08    5 ▁▁▃▇▃
 
@@ -99,7 +99,7 @@ Column type frequency:
 ________________________             
 Group variables            Geschlecht
 
-── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable  Geschlecht n_missing complete_rate mean    sd   p0  p25  p50  p75 p100 hist 
 1 Einstellung_KI weiblich           0             1 3.52 0.627 1.17 3.21 3.58 3.92  5   ▁▁▅▇▂
 2 Einstellung_KI männlich           0             1 3.77 0.597 1.83 3.5  3.83 4.17  5   ▁▂▅▇▃
