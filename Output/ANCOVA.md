@@ -30,19 +30,90 @@ Einstellung_KI                      |           0.19 | [0.13, 1.00]
 Anwendungsfeld:Vertrauensmassnahmen |       7.41e-05 | [0.00, 1.00]
 
 - One-sided CIs: upper bound fixed at [1.00].
+> # Robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)
+> robust_ancova <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
+
+> anova_robust <- Anova(robust_ancova, type = "III", white.adjust = TRUE)
+
+> # Ausgabe der robusten ANCOVA
+> print(anova_robust)
+Analysis of Deviance Table (Type III tests)
+
+Response: Akzeptanz
+                                     Df        F    Pr(>F)    
+(Intercept)                           1  37.3356 2.522e-09 ***
+Anwendungsfeld                        1 116.0092 < 2.2e-16 ***
+Vertrauensmassnahmen                  1   0.0009    0.9766    
+Einstellung_KI                        1  82.8353 < 2.2e-16 ***
+Anwendungsfeld:Vertrauensmassnahmen   1   0.0269    0.8697    
+Residuals                           370                       
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> # Funktion für das Bootstrapping der ANCOVA-Koeffizienten
+> boot_ancova <- function(data, indices) {
++   sampled_data <- data[indices, ]  # Ziehe Bootstrap-Stichprobe
++   model <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = sampled_data)
++   return(coef(model))  # Rückgabe der Koeffizienten
++ }
+
+> # Bootstrapping mit 1000 Wiederholungen
+> set.seed(123)  # Für Reproduzierbarkeit
+
+> boot_results <- boot(data = daten, statistic = boot_ancova, R = 1000)
+
+> # Ausgabe der Bootstrapped-Konfidenzintervalle
+> boot.ci(boot_results, type = "perc")
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = boot_results, type = "perc")
+
+Intervals : 
+Level     Percentile     
+95%   ( 1.103,  2.080 )  
+Calculations and Intervals on Original Scale
+
+> # Visualisierung der Bootstrap-Schätzwerte
+> hist(boot_results$t[, 2], main = "Bootstrap-Verteilung für Anwendungsfeld", xlab = "Koeffizient", col = "lightblue", border = "black")
+
+> ###
 > # Correlation zwischen Akzeptanz und Einstellung_KI ermitteln (H4)
-> cor.test(daten$Einstellung_KI, daten$Akzeptanz)
+> daten %>% with(cor.test(Einstellung_KI, Akzeptanz, method = "kendall"))
 
-	Pearson's product-moment correlation
+	Kendall's rank correlation tau
 
-data:  daten$Einstellung_KI and daten$Akzeptanz
-t = 7.2942, df = 373, p-value = 1.818e-12
-alternative hypothesis: true correlation is not equal to 0
-95 percent confidence interval:
- 0.2614022 0.4388872
+data:  Einstellung_KI and Akzeptanz
+z = 6.8454, p-value = 7.627e-12
+alternative hypothesis: true tau is not equal to 0
 sample estimates:
-    cor 
-0.35332 
+      tau 
+0.2525058 
+
+
+> daten %>% filter(Anwendungsfeld == "Objektiv") %>% with(cor.test(Einstellung_KI, Akzeptanz, method = "kendall"))
+
+	Kendall's rank correlation tau
+
+data:  Einstellung_KI and Akzeptanz
+z = 7.9842, p-value = 1.415e-15
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.4212254 
+
+
+> daten %>% filter(Anwendungsfeld == "Subjektiv") %>% with(cor.test(Einstellung_KI, Akzeptanz, method = "kendall"))
+
+	Kendall's rank correlation tau
+
+data:  Einstellung_KI and Akzeptanz
+z = 4.2613, p-value = 2.033e-05
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.2266471 
 
 
 > # Post-hoc Tests für die kategorialen Prädiktoren (falls nötig) mit Tukey HSD durchführen
