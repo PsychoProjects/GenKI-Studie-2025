@@ -4,21 +4,23 @@
 > source("Read_Data.R")
 [1] "Daten werden geladen..."
 
+> ### Standard-ANCOVA
 > # ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
 > ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
 
-> # Zusammenfassung des Modells anzeigen
-> summary(ancova_model)
-                                     Df Sum Sq Mean Sq F value Pr(>F)    
-Anwendungsfeld                        1 137.15  137.15 210.576 <2e-16 ***
-Vertrauensmassnahmen                  1   0.30    0.30   0.465  0.496    
-Einstellung_KI                        1  54.83   54.83  84.180 <2e-16 ***
-Anwendungsfeld:Vertrauensmassnahmen   1   0.02    0.02   0.027  0.869    
-Residuals                           370 240.99    0.65                   
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> # Zusammenfassung des Modells 
+> model_parameters(ancova_model, eta_squared = "partial")
+Parameter                           | Sum_Squares |  df | Mean_Square |      F |      p
+---------------------------------------------------------------------------------------
+Anwendungsfeld                      |      137.15 |   1 |      137.15 | 210.58 | < .001
+Vertrauensmassnahmen                |        0.30 |   1 |        0.30 |   0.47 | 0.496 
+Einstellung_KI                      |       54.83 |   1 |       54.83 |  84.18 | < .001
+Anwendungsfeld:Vertrauensmassnahmen |        0.02 |   1 |        0.02 |   0.03 | 0.869 
+Residuals                           |      240.99 | 370 |        0.65 |        |       
 
-> # Effektgröße berechnen
+Anova Table (Type 1 tests)
+
+> # Effektgrößen 
 > eta_squared(ancova_model, partial = TRUE)
 # Effect Size for ANOVA (Type I)
 
@@ -30,26 +32,34 @@ Einstellung_KI                      |           0.19 | [0.13, 1.00]
 Anwendungsfeld:Vertrauensmassnahmen |       7.41e-05 | [0.00, 1.00]
 
 - One-sided CIs: upper bound fixed at [1.00].
-> # Robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)
+> ### Robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)
 > robust_ancova <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
 
-> anova_robust <- Anova(robust_ancova, type = "III", white.adjust = TRUE)
+> anova_robust <- car::Anova(robust_ancova, type = "III", white.adjust = TRUE)
 
-> # Ausgabe der robusten ANCOVA
-> print(anova_robust)
-Analysis of Deviance Table (Type III tests)
+> # Zusammenfassung des Modells 
+> model_parameters(robust_ancova, eta_squared = "partial")
+Parameter                                                        | Coefficient |   SE |         95% CI | t(370) |      p
+------------------------------------------------------------------------------------------------------------------------
+(Intercept)                                                      |        1.58 | 0.26 | [ 1.07,  2.08] |   6.18 | < .001
+Anwendungsfeld [Subjektiv]                                       |       -1.20 | 0.12 | [-1.43, -0.97] | -10.19 | < .001
+Vertrauensmassnahmen [Mit Maßnahme]                              |    2.71e-03 | 0.12 | [-0.23,  0.23] |   0.02 | 0.982 
+Einstellung KI                                                   |        0.61 | 0.07 | [ 0.48,  0.75] |   9.17 | < .001
+Anwendungsfeld [Subjektiv] × Vertrauensmassnahmen [Mit Maßnahme] |       -0.03 | 0.17 | [-0.36,  0.30] |  -0.17 | 0.869 
 
-Response: Akzeptanz
-                                     Df        F    Pr(>F)    
-(Intercept)                           1  37.3356 2.522e-09 ***
-Anwendungsfeld                        1 116.0092 < 2.2e-16 ***
-Vertrauensmassnahmen                  1   0.0009    0.9766    
-Einstellung_KI                        1  82.8353 < 2.2e-16 ***
-Anwendungsfeld:Vertrauensmassnahmen   1   0.0269    0.8697    
-Residuals                           370                       
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> # Effektgrößen
+> eta_squared(robust_ancova, partial = TRUE)
+# Effect Size for ANOVA (Type I)
 
+Parameter                           | Eta2 (partial) |       95% CI
+-------------------------------------------------------------------
+Anwendungsfeld                      |           0.36 | [0.30, 1.00]
+Vertrauensmassnahmen                |       1.26e-03 | [0.00, 1.00]
+Einstellung_KI                      |           0.19 | [0.13, 1.00]
+Anwendungsfeld:Vertrauensmassnahmen |       7.41e-05 | [0.00, 1.00]
+
+- One-sided CIs: upper bound fixed at [1.00].
+> ### Bootstrapping
 > # Funktion für das Bootstrapping der ANCOVA-Koeffizienten
 > boot_ancova <- function(data, indices) {
 +   sampled_data <- data[indices, ]  # Ziehe Bootstrap-Stichprobe
@@ -63,7 +73,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 > boot_results <- boot(data = daten, statistic = boot_ancova, R = 1000)
 
 > # Ausgabe der Bootstrapped-Konfidenzintervalle
-> boot.ci(boot_results, type = "perc")
+> print(boot.ci(boot_results, type = "perc"))
 BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
 Based on 1000 bootstrap replicates
 
@@ -74,6 +84,85 @@ Intervals :
 Level     Percentile     
 95%   ( 1.103,  2.080 )  
 Calculations and Intervals on Original Scale
+
+> # Prädiktornamen aus dem Modell extrahieren
+> predictor_names <- names(coef(lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)))
+
+> # Ausgabe der Bootstrapped-Konfidenzintervalle für alle Prädiktoren mit Namen
+> boot_ci_results <- lapply(1:length(boot_results$t0), function(i) {
++   ci <- boot.ci(boot_results, type = "perc", index = i)
++   list(
++     Prädiktor = predictor_names[i],
++     Untergrenze = ci$percent[4],
++     Obergrenze = ci$percent[5]
++   )
++ }) %>% print()
+[[1]]
+[[1]]$Prädiktor
+[1] "(Intercept)"
+
+[[1]]$Untergrenze
+[1] 1.102873
+
+[[1]]$Obergrenze
+[1] 2.080137
+
+
+[[2]]
+[[2]]$Prädiktor
+[1] "AnwendungsfeldSubjektiv"
+
+[[2]]$Untergrenze
+[1] -1.435143
+
+[[2]]$Obergrenze
+[1] -0.9961955
+
+
+[[3]]
+[[3]]$Prädiktor
+[1] "VertrauensmassnahmenMit Maßnahme"
+
+[[3]]$Untergrenze
+[1] -0.1803191
+
+[[3]]$Obergrenze
+[1] 0.1834547
+
+
+[[4]]
+[[4]]$Prädiktor
+[1] "Einstellung_KI"
+
+[[4]]$Untergrenze
+[1] 0.4845193
+
+[[4]]$Obergrenze
+[1] 0.7446094
+
+
+[[5]]
+[[5]]$Prädiktor
+[1] "AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme"
+
+[[5]]$Untergrenze
+[1] -0.3685968
+
+[[5]]$Obergrenze
+[1] 0.3242357
+
+
+
+> # Konfidenzintervalle als Dataframe anzeigen
+> boot_ci_df <- do.call(rbind, lapply(boot_ci_results, as.data.frame))
+
+> print(boot_ci_df)
+                                                 Prädiktor Untergrenze Obergrenze
+1                                              (Intercept)   1.1028726  2.0801370
+2                                  AnwendungsfeldSubjektiv  -1.4351428 -0.9961955
+3                         VertrauensmassnahmenMit Maßnahme  -0.1803191  0.1834547
+4                                           Einstellung_KI   0.4845193  0.7446094
+5 AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme  -0.3685968  0.3242357
 
 > # Visualisierung der Bootstrap-Schätzwerte
 > hist(boot_results$t[, 2], main = "Bootstrap-Verteilung für Anwendungsfeld", xlab = "Koeffizient", col = "lightblue", border = "black")
@@ -169,9 +258,7 @@ Levene's Test for Homogeneity of Variance (center = median)
 group   1  0.0058 0.9395
       373               
 
-> # Lineare Beziehung zwischen der Kovariate und der abhängigen Variable prüfen
-> model <- aov(Akzeptanz ~ Einstellung_KI, data = daten)
-
+> # Die Kovariate sollte nicht mit den Residuen korrelieren
 > cor.test(daten$Einstellung_KI, residuals(model))
 
 	Pearson's product-moment correlation

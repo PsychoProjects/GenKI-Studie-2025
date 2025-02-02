@@ -21,6 +21,7 @@ load_packages(
     "lmtest",
     "magrittr",
     "moments",
+    "parameters",
     "pROC",
     "psych",
     "pwr",

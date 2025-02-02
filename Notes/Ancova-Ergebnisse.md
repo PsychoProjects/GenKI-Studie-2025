@@ -1,55 +1,66 @@
-## Ergebnisse
+## 5. Ergebnisse
 
-### Prüfung der Voraussetzungen für die ANCOVA
-Vor der Durchführung der **Analysis of Covariance (ANCOVA)** wurden die **zentrale Modellannahmen** überprüft:
+### 5.1 Prüfung der Voraussetzungen
 
-#### 1. Normalverteilung der Residuen
-Die Annahme der Normalverteilung der Residuen wurde mithilfe des **Shapiro-Wilk-Tests** überprüft. Die Ergebnisse zeigten, dass die Residuen **nicht signifikant von einer Normalverteilung abweichen** (*W* = 0,993, *p* = 0,082). 
-Zusätzlich wurde ein **QQ-Plot der Residuen** erstellt, der visuell die Annahme der Normalverteilung bestätigte.
+Die Prüfung der Normalverteilung der Residuen mittels des Shapiro-Wilk-Tests ergab keine signifikante Abweichung von der Normalverteilung, *W* = 0,993, *p* = 0,082, sodass die Annahme der Normalverteilung der Residuen als gegeben betrachtet werden kann.
 
-#### 2. Homogenität der Varianzen (Levene-Test)
-Die Homogenität der Varianzen wurde mit dem **Levene-Test** überprüft.
-- Die Gesamtprüfung der Varianzhomogenität zeigte eine signifikante Verletzung (*F*(3, 371) = 7,778, *p* < 0,001).
-- Die Prüfung der Varianzhomogenität für die unabhängige Variable **Vertrauensmaßnahmen** zeigte keine signifikante Abweichung (*F*(1, 373) = 0,006, *p* = 0,939).
-- Für die Variable **Anwendungsfeld** wurde jedoch eine **signifikante Verletzung der Varianzhomogenität festgestellt** (*F*(1, 373) = 21,81, *p* < 0,001).
+Die Homoskedastizität wurde mit Levene-Tests untersucht. Die Varianzhomogenität über die Interaktion der Faktoren Anwendungsfeld und Vertrauensmaßnahmen war verletzt, *F*(3, 371) = 7,78, *p* < 0,001. Ebenso zeigte sich eine signifikante Varianzheterogenität zwischen den Gruppen des Faktors Anwendungsfeld, *F*(1, 373) = 21,81, *p* < 0,001. Für den Faktor Vertrauensmaßnahmen wurde hingegen keine signifikante Verletzung festgestellt, *F*(1, 373) = 0,006, *p* = 0,939.
 
-Da die ANCOVA eine **Varianzhomogenität** der Residuen voraussetzt, wurde zur Korrektur eine **robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)** sowie eine **Bootstrapped ANCOVA (1000 Wiederholungen)** durchgeführt.
+Da eine signifikante Varianzheterogenität vorliegt, wurden robuste Verfahren zur Absicherung der Ergebnisse herangezogen und die Ergebnisse der ANCOVA durch Bootstrap-Verfahren.
 
-#### 3. Lineare Beziehung zwischen Kovariate und abhängiger Variable
-Die Kovariate *Einstellung_KI* zeigte in der Gesamtstichprobe zunächst **keine signifikante einfache Korrelation mit der abhängigen Variable Akzeptanz** (*r* = -0,007, *p* = 1,000).
-Jedoch ergab eine **separate Analyse der Gruppen** eine **signifikante Korrelation innerhalb der Anwendungsfelder**:
-- **Objektiv-Gruppe:** *r* = 0,56, *p* < 0,001
-- **Subjektiv-Gruppe:** *r* = 0,34, *p* < 0,001
+### 5.2 Standard-ANCOVA
 
-Dies deutet darauf hin, dass sich die Effekte in der Gesamtstichprobe ausgleichen, aber in den Subgruppen dennoch bestehen. **Im ANCOVA-Modell erwies sich die Kovariate als hochsignifikant**, sodass sie als erklärende Variable beibehalten wurde.
+Eine Kovarianzanalyse (ANCOVA) wurde durchgeführt, um den Einfluss der Faktoren Anwendungsfeld und Vertrauensmaßnahmen sowie der Kovariate Einstellung gegenüber KI auf die Akzeptanz zu untersuchen. Die Ergebnisse sind in Tabelle 1 zusammengefasst.
 
----
+**Tabelle 1**
+Ergebnisse der Standard-ANCOVA
 
-### Ergebnisse der ANCOVA
+| Prädiktor                                         | *F*(1, 370) | *p*    | *η²p* |
+| ------------------------------------------------- | ----------- | ------ | ----- |
+| Anwendungsfeld                                    | 210,58      | <0,001 | 0,36  |
+| Einstellung gegenüber KI                          | 84,18       | <0,001 | 0,19  |
+| Vertrauensmaßnahmen                               | 0,47        | 0,496  | 0,001 |
+| Interaktion: Anwendungsfeld × Vertrauensmaßnahmen | 0,03        | 0,869  | 0,000 |
 
-Eine **robuste ANCOVA** mit heteroskedastizitätsrobusten Standardfehlern (HC3) wurde berechnet, um den Einfluss von **Anwendungsfeld, Vertrauensmaßnahmen und der Kovariate Einstellung_KI auf Akzeptanz** zu untersuchen.
+### 5.3 Bootstrapping
 
-Das Modell erklärte **44,4 % der Varianz** (*R*² = 0,444), was auf eine **mittlere bis starke Effektstärke** hinweist.
+Zur weiteren Absicherung der Schätzergebnisse wurde ein Bootstrapping mit 1.000 Wiederholungen durchgeführt. Die Bootstrapped-Konfidenzintervalle für die einzelnen Prädiktoren zeigen, dass das Anwendungsfeld einen stabilen Effekt auf die Akzeptanz hat, 95%-KI [-1,44, -1,00]. Ebenso zeigt sich für die Einstellung gegenüber KI ein verlässlicher positiver Effekt, 95%-KI [0,48, 0,74]. Dagegen umfassen die Konfidenzintervalle für Vertrauensmaßnahmen, 95%-KI [-0,18, 0,18], sowie für die Interaktion von Anwendungsfeld und Vertrauensmaßnahmen, 95%-KI [-0,37, 0,32], den Nullpunkt, was auf Unsicherheit hinsichtlich ihrer Effekte hinweist.
 
-#### Haupteffekte
-- **Anwendungsfeld** hatte einen **signifikanten Effekt auf Akzeptanz** (*b* = -1,23, 95 %-KI [-1,48, -0,99], *p* < 0,001), wobei die **Subjektiv-Gruppe eine geringere Akzeptanz aufwies als die Objektiv-Gruppe**.
-- Die **Kovariate Einstellung_KI zeigte ebenfalls einen signifikanten Effekt** (*b* = 0,61, 95 %-KI [0,48, 0,75], *p* < 0,001), was bedeutet, dass eine **positivere Einstellung gegenüber KI mit einer höheren Akzeptanz assoziiert ist**.
+Zusätzlich werden die Bootstrapped-Konfidenzintervalle in Tabelle 2 dargestellt.
 
-#### Interaktionseffekte und Vertrauensmaßnahmen
-- Der Effekt der *Vertrauensmaßnahmen* war nicht signifikant (*b* = -0,00, 95 %-KI [-0,18, 0,18], *p* = 0,977).
-- Die **Interaktion zwischen Anwendungsfeld und Vertrauensmaßnahmen** zeigte ebenfalls **keinen signifikanten Effekt** (*b* = 0,03, 95 %-KI [-0,30, 0,34], *p* = 0,870).
+**Tabelle 2**
+Bootstrapped 95%-Konfidenzintervalle für die Koeffizienten
 
-#### Bootstrapped ANCOVA zur Bestätigung der Ergebnisse
-Um die Robustheit der Ergebnisse sicherzustellen, wurde eine **Bootstrapped ANCOVA mit 1000 Wiederholungen** durchgeführt.
-Die Konfidenzintervalle bestätigten die ursprünglichen Effekte, was darauf hindeutet, dass die Ergebnisse **nicht durch Varianzheterogenität verzerrt wurden**.
+| Prädiktor                                         | Untergrenze | Obergrenze |
+| ------------------------------------------------- | ----------- | ---------- |
+| Anwendungsfeld (Subjektiv)                        | -1,44       | -1,00      |
+| Einstellung gegenüber KI                          | 0,48        | 0,74       |
+| Vertrauensmaßnahmen (Mit Maßnahme)                | -0,18       | 0,18       |
+| Interaktion: Anwendungsfeld × Vertrauensmaßnahmen | -0,37       | 0,32       |
 
----
+### 5.4 Robuste ANCOVA
 
-### Zusammenfassung und Interpretation
-✅ **Die Haupteffekte für Anwendungsfeld und Einstellung_KI waren signifikant** und wurden durch Bootstrapping bestätigt.
-❌ **Vertrauensmaßnahmen hatten keinen signifikanten Effekt auf Akzeptanz.**
-❌ **Keine Interaktionseffekte** zwischen den unabhängigen Variablen.
-✅ **Die Verwendung der Kovariate Einstellung_KI war gerechtfertigt**, da sie einen signifikanten Einfluss auf die Akzeptanz zeigte.
+Aufgrund der festgestellten Varianzheterogenität wurde eine robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3) durchgeführt. Die Ergebnisse der robusten ANCOVA zeigten, dass der Haupteffekt des Anwendungsfelds weiterhin hochsignifikant blieb, *t*(370) = -10,19, *p* < 0,001, *η²p* = 0,36. Ebenso war der Effekt der Einstellung gegenüber KI signifikant, *t*(370) = 9,17, *p* < 0,001, *η²p* = 0,19. Vertrauensmaßnahmen zeigten erneut keinen signifikanten Effekt, *t*(370) = 0,02, *p* = 0,982, *η²p* = 0,001. Auch die Interaktion zwischen Anwendungsfeld und Vertrauensmaßnahmen blieb nicht signifikant, *t*(370) = -0,17, *p* = 0,869, *η²p* = 0,000.
 
-➡ **Die Ergebnisse unterstützen die Annahme, dass eine positivere Einstellung gegenüber KI die Akzeptanz erhöht, während Vertrauensmaßnahmen allein keinen signifikanten Einfluss hatten.**
+Diese Ergebnisse bestätigen die Robustheit der Standard-ANCOVA-Ergebnisse, da die Effektgrößen und Signifikanzniveaus weitgehend übereinstimmen. Damit können die Ergebnisse der Standard-ANCOVA als valide betrachtet werden. Die detaillierten Ergebnisse sind in Tabelle 3 zusammengefasst.
+
+**Tabelle 3**
+Ergebnisse der robusten ANCOVA
+
+| Prädiktor                                         | *t*(370) | *p*    | *η²p* |
+| ------------------------------------------------- | -------- | ------ | ----- |
+| Anwendungsfeld                                    | -10,19   | <0,001 | 0,36  |
+| Einstellung gegenüber KI                          | 9,17     | <0,001 | 0,19  |
+| Vertrauensmaßnahmen                               | 0,02     | 0,982  | 0,001 |
+| Interaktion: Anwendungsfeld × Vertrauensmaßnahmen | -0,17    | 0,869  | 0,000 |
+
+### 5.5 Effektstärken
+
+Die Effektstärken wurden mittels partieller Eta-Quadrat-Werte (*η²p*) bestimmt. Der Haupteffekt des Anwendungsfelds zeigte eine große Effektstärke (*η²p* = 0,36), was darauf hinweist, dass dieser Faktor einen substanziellen Anteil der Varianz in der Akzeptanz erklärt. Der Effekt der Einstellung gegenüber KI war mit einer mittleren Effektstärke (*η²p* = 0,19) ebenfalls relevant. Der Effekt der Vertrauensmaßnahmen war vernachlässigbar (*η²p* = 0,001), ebenso wie die Interaktion der Faktoren (*η²p* = 0,000), was darauf hindeutet, dass Vertrauensmaßnahmen keinen relevanten Einfluss auf die Akzeptanz hatten.
+
+### 5.6 Korrelationen
+
+Zusätzlich wurde die Korrelation zwischen der Einstellung gegenüber KI und der Akzeptanz mittels Kendalls *τ* berechnet. Die Ergebnisse zeigten eine signifikante positive Korrelation für die gesamte Stichprobe, *τ* = 0,25, *z* = 6,85, *p* < 0,001. Für die Teilgruppe mit objektivem Anwendungsfeld war die Korrelation stärker, *τ* = 0,42, *z* = 7,98, *p* < 0,001, während für die subjektive Anwendungsbedingung eine schwächere, aber signifikante Korrelation vorlag, *τ* = 0,23, *z* = 4,26, *p* < 0,001.
+
+Die aktualisierten Analysen bestätigen somit, dass das Anwendungsfeld einen starken Einfluss auf die Akzeptanz hat, während Vertrauensmaßnahmen keinen signifikanten Beitrag zur Vorhersage leisten. Die robuste ANCOVA und die Bootstrapping-Analysen liefern konsistente Belege für die Stabilität der Haupteffekte.
 
