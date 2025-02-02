@@ -2,13 +2,16 @@
 run_script <- function(filename) {
   sourcefilename <- paste0(filename, ".R")
  
-  destfilename <- paste0(filename, ".md")
-  destfilename <- file.path(getwd(), "../Output", destfilename)
+  destFilename <- paste0(filename, ".md")
+  destFilename <- file.path(getwd(), "../Output", destFilename)
   
-  print(destfilename)
+  pdfFilename <- paste0(filename, ".pdf")
+  pdfFilename <- file.path(getwd(), "../Output", pdfFilename)
   
-  sink(destfilename)
+  pdf(pdfFilename, width = 16, height = 10)
+  sink(destFilename)
   source(sourcefilename, echo=TRUE, max.deparse.length=1024)
   sink()
+  dev.off()
 }
 

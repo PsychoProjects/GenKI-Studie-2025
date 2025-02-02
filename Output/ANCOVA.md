@@ -2,6 +2,7 @@
 > source("InstallPackages.R")
 
 > source("Read_Data.R")
+[1] "Daten werden geladen..."
 
 > # ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
 > ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
@@ -29,17 +30,21 @@ Einstellung_KI                      |           0.19 | [0.13, 1.00]
 Anwendungsfeld:Vertrauensmassnahmen |       7.41e-05 | [0.00, 1.00]
 
 - One-sided CIs: upper bound fixed at [1.00].
-> omega_squared(ancova_model)
-# Effect Size for ANOVA (Type I)
+> # Correlation zwischen Akzeptanz und Einstellung_KI ermitteln (H4)
+> cor.test(daten$Einstellung_KI, daten$Akzeptanz)
 
-Parameter                           | Omega2 (partial) |       95% CI
----------------------------------------------------------------------
-Anwendungsfeld                      |             0.36 | [0.30, 1.00]
-Vertrauensmassnahmen                |             0.00 | [0.00, 1.00]
-Einstellung_KI                      |             0.18 | [0.13, 1.00]
-Anwendungsfeld:Vertrauensmassnahmen |             0.00 | [0.00, 1.00]
+	Pearson's product-moment correlation
 
-- One-sided CIs: upper bound fixed at [1.00].
+data:  daten$Einstellung_KI and daten$Akzeptanz
+t = 7.2942, df = 373, p-value = 1.818e-12
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.2614022 0.4388872
+sample estimates:
+    cor 
+0.35332 
+
+
 > # Post-hoc Tests für die kategorialen Prädiktoren (falls nötig) mit Tukey HSD durchführen
 > TukeyHSD(ancova_model, which = c("Anwendungsfeld", "Vertrauensmassnahmen"))
   Tukey multiple comparisons of means
@@ -94,10 +99,6 @@ group   1  0.0058 0.9395
       373               
 
 > # Lineare Beziehung zwischen der Kovariate und der abhängigen Variable prüfen
-> plot(daten$Einstellung_KI, daten$Akzeptanz, main = "Einstellung_KI vs. Akzeptanz", xlab = "Einstellung_KI", ylab = "Akzeptanz")
-
-> abline(lm(Akzeptanz ~ Einstellung_KI, data = daten), col = "red")
-
 > model <- aov(Akzeptanz ~ Einstellung_KI, data = daten)
 
 > cor.test(daten$Einstellung_KI, residuals(model))
@@ -113,3 +114,18 @@ sample estimates:
           cor 
 -7.220575e-17 
 
+
+> # grafische Darstellung Korrelation zwischen Einstellung_KI und Akzeptanz
+> ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Anwendungsfeld, shape = Anwendungsfeld, linetype = Anwendungsfeld)) +
++   geom_point(alpha = 0.7, size = 2) +  # Punkte etwas größer für bessere Sichtbarkeit
++   geom_smooth(method = "lm", se = FALSE) +
++   scale_color_manual(values = c("Objektiv" = "red", "Subjektiv" = "blue")) +
++   scale_shape_manual(values = c("Objektiv" = 4, "Subjektiv" = 3)) +  # 4 = X, 3 = +
++   scale_linetype_manual(values = c("Objektiv" = "dotted", "Subjektiv" = "solid")) +  # Unterschiedliche Linien
++   labs(title = "Zusammenhang zwischen Einstellung_KI und Akzeptanz nach Anwendungsfeld",
++        x = "Einstellung_KI",
++        y = "Akzeptanz",
++        color = "Anwendungsfeld",
++        shape = "Anwendungsfeld",
++        linetype = "Anwendungsfeld") +
++   theme_minimal()
