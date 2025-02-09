@@ -55,7 +55,7 @@ boot_ci_results <- lapply(1:length(boot_results$t0), function(i) {
 
 # Konfidenzintervalle als Dataframe anzeigen
 boot_ci_df <- do.call(rbind, lapply(boot_ci_results, as.data.frame))
-print(boot_ci_df)
+kable(boot_ci_df, digits = 2, caption = "Bootstrapped Konfidenzintervalle")
 
 # Visualisierung der Bootstrap-Schätzwerte
 hist(boot_results$t[, 2], main = "Bootstrap-Verteilung für Anwendungsfeld", xlab = "Koeffizient", col = "lightblue", border = "black")

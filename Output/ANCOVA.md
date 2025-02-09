@@ -117,13 +117,18 @@ Calculations and Intervals on Original Scale
 > # Konfidenzintervalle als Dataframe anzeigen
 > boot_ci_df <- do.call(rbind, lapply(boot_ci_results, as.data.frame))
 
-> print(boot_ci_df)
-                                                 Prädiktor Untergrenze Obergrenze
-1                                              (Intercept)   1.1028726  2.0801370
-2                                  AnwendungsfeldSubjektiv  -1.4351428 -0.9961955
-3                         VertrauensmassnahmenMit Maßnahme  -0.1803191  0.1834547
-4                                           Einstellung_KI   0.4845193  0.7446094
-5 AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme  -0.3685968  0.3242357
+> kable(boot_ci_df, digits = 2, caption = "Bootstrapped Konfidenzintervalle")
+
+
+Table: Bootstrapped Konfidenzintervalle
+
+|Prädiktor                                                | Untergrenze| Obergrenze|
+|:--------------------------------------------------------|-----------:|----------:|
+|(Intercept)                                              |        1.10|       2.08|
+|AnwendungsfeldSubjektiv                                  |       -1.44|      -1.00|
+|VertrauensmassnahmenMit Maßnahme                         |       -0.18|       0.18|
+|Einstellung_KI                                           |        0.48|       0.74|
+|AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme |       -0.37|       0.32|
 
 > # Visualisierung der Bootstrap-Schätzwerte
 > hist(boot_results$t[, 2], main = "Bootstrap-Verteilung für Anwendungsfeld", xlab = "Koeffizient", col = "lightblue", border = "black")
