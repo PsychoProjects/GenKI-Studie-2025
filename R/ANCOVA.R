@@ -47,7 +47,7 @@ boot_ci_results <- lapply(1:length(boot_results$t0), function(i) {
     Untergrenze = ci$percent[4],
     Obergrenze = ci$percent[5]
   )
-}) %>% print()
+})
 
 # Konfidenzintervalle als Dataframe anzeigen
 boot_ci_df <- do.call(rbind, lapply(boot_ci_results, as.data.frame))

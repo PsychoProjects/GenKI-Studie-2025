@@ -96,62 +96,7 @@ Calculations and Intervals on Original Scale
 +     Untergrenze = ci$percent[4],
 +     Obergrenze = ci$percent[5]
 +   )
-+ }) %>% print()
-[[1]]
-[[1]]$Prädiktor
-[1] "(Intercept)"
-
-[[1]]$Untergrenze
-[1] 1.102873
-
-[[1]]$Obergrenze
-[1] 2.080137
-
-
-[[2]]
-[[2]]$Prädiktor
-[1] "AnwendungsfeldSubjektiv"
-
-[[2]]$Untergrenze
-[1] -1.435143
-
-[[2]]$Obergrenze
-[1] -0.9961955
-
-
-[[3]]
-[[3]]$Prädiktor
-[1] "VertrauensmassnahmenMit Maßnahme"
-
-[[3]]$Untergrenze
-[1] -0.1803191
-
-[[3]]$Obergrenze
-[1] 0.1834547
-
-
-[[4]]
-[[4]]$Prädiktor
-[1] "Einstellung_KI"
-
-[[4]]$Untergrenze
-[1] 0.4845193
-
-[[4]]$Obergrenze
-[1] 0.7446094
-
-
-[[5]]
-[[5]]$Prädiktor
-[1] "AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme"
-
-[[5]]$Untergrenze
-[1] -0.3685968
-
-[[5]]$Obergrenze
-[1] 0.3242357
-
-
++ })
 
 > # Konfidenzintervalle als Dataframe anzeigen
 > boot_ci_df <- do.call(rbind, lapply(boot_ci_results, as.data.frame))
@@ -260,30 +205,3 @@ group   1  0.0058 0.9395
 
 > # Die Kovariate sollte nicht mit den Residuen korrelieren
 > cor.test(daten$Einstellung_KI, residuals(model))
-
-	Pearson's product-moment correlation
-
-data:  daten$Einstellung_KI and residuals(model)
-t = -1.3945e-15, df = 373, p-value = 1
-alternative hypothesis: true correlation is not equal to 0
-95 percent confidence interval:
- -0.101271  0.101271
-sample estimates:
-          cor 
--7.220575e-17 
-
-
-> # grafische Darstellung Korrelation zwischen Einstellung_KI und Akzeptanz
-> ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Anwendungsfeld, shape = Anwendungsfeld, linetype = Anwendungsfeld)) +
-+   geom_point(alpha = 0.7, size = 2) +  # Punkte etwas größer für bessere Sichtbarkeit
-+   geom_smooth(method = "lm", se = FALSE) +
-+   scale_color_manual(values = c("Objektiv" = "red", "Subjektiv" = "blue")) +
-+   scale_shape_manual(values = c("Objektiv" = 4, "Subjektiv" = 3)) +  # 4 = X, 3 = +
-+   scale_linetype_manual(values = c("Objektiv" = "dotted", "Subjektiv" = "solid")) +  # Unterschiedliche Linien
-+   labs(title = "Zusammenhang zwischen Einstellung_KI und Akzeptanz nach Anwendungsfeld",
-+        x = "Einstellung_KI",
-+        y = "Akzeptanz",
-+        color = "Anwendungsfeld",
-+        shape = "Anwendungsfeld",
-+        linetype = "Anwendungsfeld") +
-+   theme_minimal()
