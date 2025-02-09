@@ -5,6 +5,10 @@ source("Read_Data.R")
 # ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
 ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
 
+# Koeefizienten des Modells ausgeben
+coef_df <- coef(ancova_model)
+kable(coef_df, digits = 2, caption = "ANCOVA Koeffizienten")
+
 # Zusammenfassung des Modells 
 model_parameters(ancova_model, eta_squared = "partial")
 
@@ -76,9 +80,6 @@ qqline(residuals(ancova_model))
 leveneTest(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
 leveneTest(Akzeptanz ~ Anwendungsfeld, data = daten)
 leveneTest(Akzeptanz ~ Vertrauensmassnahmen, data = daten)
-
-# Die Kovariate sollte nicht mit den Residuen korrelieren
-cor.test(daten$Einstellung_KI, residuals(model))
 
 # grafische Darstellung Korrelation zwischen Einstellung_KI und Akzeptanz
 ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Anwendungsfeld, shape = Anwendungsfeld, linetype = Anwendungsfeld)) +

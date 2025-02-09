@@ -8,6 +8,22 @@
 > # ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
 > ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
 
+> # Koeefizienten des Modells ausgeben
+> coef_df <- coef(ancova_model)
+
+> kable(coef_df, digits = 2, caption = "ANCOVA Koeffizienten")
+
+
+Table: ANCOVA Koeffizienten
+
+|                                                         |     x|
+|:--------------------------------------------------------|-----:|
+|(Intercept)                                              |  1.58|
+|AnwendungsfeldSubjektiv                                  | -1.20|
+|VertrauensmassnahmenMit Maßnahme                         |  0.00|
+|Einstellung_KI                                           |  0.61|
+|AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme | -0.03|
+
 > # Zusammenfassung des Modells 
 > model_parameters(ancova_model, eta_squared = "partial")
 Parameter                           | Sum_Squares |  df | Mean_Square |      F |      p
@@ -203,5 +219,17 @@ Levene's Test for Homogeneity of Variance (center = median)
 group   1  0.0058 0.9395
       373               
 
-> # Die Kovariate sollte nicht mit den Residuen korrelieren
-> cor.test(daten$Einstellung_KI, residuals(model))
+> # grafische Darstellung Korrelation zwischen Einstellung_KI und Akzeptanz
+> ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Anwendungsfeld, shape = Anwendungsfeld, linetype = Anwendungsfeld)) +
++   geom_point(alpha = 0.7, size = 2) +  # Punkte etwas größer für bessere Sichtbarkeit
++   geom_smooth(method = "lm", se = FALSE) +
++   scale_color_manual(values = c("Objektiv" = "red", "Subjektiv" = "blue")) +
++   scale_shape_manual(values = c("Objektiv" = 4, "Subjektiv" = 3)) +  # 4 = X, 3 = +
++   scale_linetype_manual(values = c("Objektiv" = "dotted", "Subjektiv" = "solid")) +  # Unterschiedliche Linien
++   labs(title = "Zusammenhang zwischen Einstellung_KI und Akzeptanz nach Anwendungsfeld",
++        x = "Einstellung_KI",
++        y = "Akzeptanz",
++        color = "Anwendungsfeld",
++        shape = "Anwendungsfeld",
++        linetype = "Anwendungsfeld") +
++   theme_minimal()
