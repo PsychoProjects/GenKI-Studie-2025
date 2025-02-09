@@ -11,23 +11,9 @@ print("Daten werden geladen...")
 file_path <- file.path(getwd(), "../Daten", "data_project_1027295_2025_01_24.csv")
 rohdaten <- read.csv(file_path, sep = ";")
 
-### Herausfiltern der Testpersonen, die nicht in der Studie berücksichtigt werden sollen
-anzahl <- c(nrow(rohdaten))
-rohdaten <- rohdaten %>% filter(Alter >= 18)
-anzahl <- c(anzahl, nrow(rohdaten))
-rohdaten <- rohdaten %>% filter(consent_data_usage == 1)
-anzahl <- c(anzahl, nrow(rohdaten))
-rohdaten <- rohdaten %>% filter(seriousness_check == 1)
-anzahl <- c(anzahl, nrow(rohdaten))
-rohdaten <- rohdaten %>% filter(Attention_test == 3)
-anzahl <- c(anzahl, nrow(rohdaten))
-
-# Anzahl der ausgeschlossenen Testpersonen
-differenzen <- c(NA, diff(anzahl))
-
 ### Zusammenstellen des Auswertungsdatensatzes
 # nur die für die Analyse relevanten Spalten auswählen und ergänzen
-daten <- rohdaten %>% select(lfdn, duration, Experimentalgruppe = c_0001, Attention_test)
+daten <- rohdaten %>% select(lfdn, duration, Experimentalgruppe = c_0001, Attention_test, consent_data_usage, seriousness_check)
 
 # Anwendungsfeld und Vertrauensmassnahmen als Faktoren definieren
 daten$Anwendungsfeld <- factor(rohdaten$c_0002, 
@@ -92,6 +78,32 @@ daten$objektiv_subjektiv <- factor(rohdaten$v_114,
   levels = c(1, 2), 
   labels = c("Objektiv", "Subjektiv"))
 
+### Daten ausschließen, die nicht den Bedingungen entsprechen
+# die Anzahl wird für die Berichterstattung benötigt
+anzahl <- c(nrow(daten))
+
+daten$skipped <- FALSE
+
+# skipped auf true setzen, wenn die Bedinungen nicht erfüllt sind
+daten$skipped <- ifelse(daten$Alter < 18, TRUE, daten$skipped)
+anzahl <- c(anzahl, nrow(daten[daten$skipped == FALSE,]))
+
+daten$skipped <- ifelse(daten$consent_data_usage != 1, TRUE, daten$skipped)
+anzahl <- c(anzahl, nrow(daten[daten$skipped == FALSE,]))
+
+daten$skipped <- ifelse(daten$seriousness_check != 1, TRUE, daten$skipped)
+anzahl <- c(anzahl, nrow(daten[daten$skipped == FALSE,]))
+
+daten$skipped <- ifelse(daten$Attention_test != 3, TRUE, daten$skipped)
+anzahl <- c(anzahl, nrow(daten[daten$skipped == FALSE,]))
+
+# Anzahl der ausgeschlossenen Testpersonen
+differenzen <- c(NA, diff(anzahl))
+
 ### Speichern des aufbereiteten Datensatzes
 write.csv2(daten, "../Daten/data_cleaned.csv", row.names = TRUE, quote = FALSE, fileEncoding = "UTF-16LE")
+
+### Filtern des Datensatzes auf die nicht ausgeschlossenen Testpersonen
+daten_skipped <- daten %>% filter(skipped == TRUE)
+daten <- daten %>% filter(skipped == FALSE)
 
