@@ -28,9 +28,11 @@ daten$Vertrauensmassnahmen <- factor(rohdaten$c_0003,
 daten$Gruppe <- paste(daten$Anwendungsfeld, daten$Vertrauensmassnahmen, sep = " - ") 
 
 ### Akzeptanzwerte
-# Akzeptanzwerte übernehmen
-daten <- cbind(daten, select(rohdaten, starts_with("Akzeptanz")))
-               
+# Akzeptanzwerte übernehmen und -77 durch NA ersetzen 
+daten <- cbind(daten, select(rohdaten, starts_with("Akzeptanz_")))
+daten <- daten %>%
+  mutate(across(starts_with("Akzeptanz_"), ~ replace(.x, .x == -77, NA)))
+
 # Spalte 'Akzeptanz' erstellen als Mittelwert der einzelnen Akzeptanzwerte abhängig vom Anwendungsfeld
 daten$Akzeptanz <- ifelse(
   daten$Anwendungsfeld == "Objektiv", 
