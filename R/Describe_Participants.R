@@ -15,23 +15,27 @@ gruppen_statistik <- gruppen_groessen %>%
     Minimum = min(Freq),
     Maximum = max(Freq),
     Relation = max(Freq) / min(Freq)
-  ) %>% print()
+  ) 
+kable(gruppen_statistik, caption = "Statistiken zur Gruppengröße", digits = 2)
 
 # Aufteilung nach Geschlecht
 geschlechter_statisik <- daten %>% group_by(Geschlecht) %>%
   summarise(
     Anzahl = n(),
     Anteil = round(n() / nrow(daten) * 100, digits = 2)
-  ) %>% print()
+  ) 
+kable(geschlechter_statisik, caption = "Statistiken zur Geschlechterverteilung", digits = 2)
 
-daten %>% group_by(Geschlecht, Gruppe) %>% count()
+t_geschl_gruppe <- daten %>% group_by(Geschlecht, Gruppe) %>% count()
+kable(t_geschl_gruppe, caption = "Kreuztabelle Geschlecht und Gruppe", digits = 2)
 
 # Aufteilung nach Bildungsabschluss (Anzahl und Anteil)
 bildungsabschluss_statistik <- daten %>% group_by(Bildungsabschluss) %>%
   summarise(
     Anzahl = n(),
     Anteil = round(n() / nrow(daten) * 100, digits = 2)
-  ) %>% print()
+  ) 
+kable(bildungsabschluss_statistik, caption = "Statistiken zum Bildungsabschluss", digits = 2)
 
 # Statistiken zum Alter
 alter_statistik <- daten %>% 
@@ -41,25 +45,32 @@ alter_statistik <- daten %>%
     Standardabweichung = sd(Alter, na.rm = TRUE),
     Minimum = min(Alter, na.rm = TRUE),
     Maximum = max(Alter, na.rm = TRUE),
-  ) %>% print()
+  ) 
+kable(alter_statistik, caption = "Statistiken zum Alter", digits = 2)
 
 # Aufteilung nach Altersgruppen
 altersgruppen <- cut(daten$Alter, 
                      breaks = c(0, 18, 20, 30, 40, 50, 60, 70, 80, 90, 100), 
-                     right = FALSE) %>% table() %>% print()
+                     right = FALSE) %>% table() 
+altersgruppen_df <- as.data.frame(altersgruppen)
+altersgruppen_df$Anteil <- (altersgruppen_df$Freq / sum(altersgruppen_df$Freq)) * 100
+
+kable(altersgruppen_df, caption = "Statistiken zu den Altersgruppen", digits = 2)
 
 # Aufteilung nach Berufsstatus
 berufsstatistik <- daten %>% group_by(Berufsstatus) %>% 
   summarise(
     Anzahl = n(),
     Anteil = round(n() / nrow(daten) * 100, digits = 2)
-  ) %>% print()
+  )
+kable(berufsstatistik, caption = "Statistiken zum Berufsstatus", digits = 2)
 
 # Aufteilung nach Berufserfahrung
 berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>% 
   summarise(
     Anzahl = n(),
     Anteil = round(n() / nrow(daten) * 100, digits = 2)
-  ) %>% print()
+  ) 
+kable(berufserfahrungsstatistik, caption = "Statistiken zur Berufserfahrung", digits = 2)
 
 
