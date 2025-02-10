@@ -38,15 +38,17 @@ daten$Akzeptanz <- ifelse(
   rowMeans(select(rohdaten, Akzeptanz_S1, Akzeptanz_S2, Akzeptanz_S3), na.rm = TRUE))
 
 ### ATTARI-12: Einstellung gegenüber KI
+daten <- cbind(daten, select(rohdaten, starts_with("ATTARI12_")))
+
 # Negative Items des ATTARI müssen umkodiert werden
 negative_items <- c("ATTARI12_2", "ATTARI12_4", "ATTARI12_7", "ATTARI12_8", "ATTARI12_10", "ATTARI12_12")
 
 for (item in negative_items) {
-  rohdaten[[item]] <- 6 - rohdaten[[item]]
+  daten[[item]] <- 6 - daten[[item]]
 }
 
 # Gesamtscore für ATTARI-12 berechnen und als neue Spalte hinzufügen
-daten$Einstellung_KI <- rowMeans(select(rohdaten, starts_with("ATTARI12")), na.rm = TRUE)
+daten$Einstellung_KI <- rowMeans(select(daten, starts_with("ATTARI12")), na.rm = TRUE)
 
 ### weitere Demographische Variablen
 daten <- daten %>% mutate(Alter = rohdaten$Alter)

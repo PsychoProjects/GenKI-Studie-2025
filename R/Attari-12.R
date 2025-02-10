@@ -2,7 +2,7 @@ source("InstallPackages.R")
 source("Read_Data.R")
 
 # Cronbachs Alpha sollte hoch (>=0.9) sein (Stein et al. 2024)
-attari_daten <- rohdaten %>% select(starts_with("ATTARI"))
+attari_daten <- daten %>% select(starts_with("ATTARI"))
 ca <- alpha(attari_daten)
 
 # Konfidenzintervall ergänzen
