@@ -72,6 +72,17 @@ Table: Gesamtergebnis der Reliabilitätsanalyse für objektive Anwendungsfelder
 |:--|---------:|---------:|-------:|---------:|----:|----:|----:|----:|--------:|--------:|--------:|---:|
 |   |      0.71|      0.71|    0.63|      0.45| 2.44| 0.04| 3.82| 0.76|     0.47|     0.63|     0.78| 190|
 
+> kable(ca$item.stats, digits = 2, caption = "Item-Statistiken der Reliabilitätsanalyse für objektive Anwendungsfelder")
+
+
+Table: Item-Statistiken der Reliabilitätsanalyse für objektive Anwendungsfelder
+
+|             |   n| raw.r| std.r| r.cor| r.drop| mean|   sd|
+|:------------|---:|-----:|-----:|-----:|------:|----:|----:|
+|Akzeptanz_O1 | 191|  0.81|  0.83|  0.70|   0.59| 4.15| 0.89|
+|Akzeptanz_O2 | 191|  0.79|  0.78|  0.61|   0.50| 3.77| 0.99|
+|Akzeptanz_O3 | 191|  0.78|  0.77|  0.58|   0.49| 3.54| 1.00|
+
 > ## Subjektive Anwendungsfelder
 > subj_daten <- daten %>% filter(Anwendungsfeld == "Subjektiv") %>% select(starts_with("Akzeptanz_S"))
 
@@ -92,6 +103,17 @@ Table: Gesamtergebnis der Reliabilitätsanalyse für subjektive Anwendungsfelder
 |   | raw_alpha| std.alpha| G6(smc)| average_r|  S/N|  ase| mean|   sd| median_r| CI_lower| CI_upper|  df|
 |:--|---------:|---------:|-------:|---------:|----:|----:|----:|----:|--------:|--------:|--------:|---:|
 |   |      0.83|      0.83|    0.77|      0.61| 4.76| 0.02| 2.61| 1.01|     0.62|     0.78|     0.87| 183|
+
+> kable(ca$item.stats, digits = 2, caption = "Item-Statistiken der Reliabilitätsanalyse für subjektive Anwendungsfelder")
+
+
+Table: Item-Statistiken der Reliabilitätsanalyse für subjektive Anwendungsfelder
+
+|             |   n| raw.r| std.r| r.cor| r.drop| mean|   sd|
+|:------------|---:|-----:|-----:|-----:|------:|----:|----:|
+|Akzeptanz_S1 | 184|  0.89|  0.89|  0.82|   0.74| 2.84| 1.19|
+|Akzeptanz_S2 | 184|  0.86|  0.86|  0.75|   0.68| 2.57| 1.16|
+|Akzeptanz_S3 | 184|  0.83|  0.83|  0.69|   0.63| 2.43| 1.16|
 
 > # Korrelation zwischen den Akzeptanz-Items sollte hoch sein
 > correlation_matrix <- cor(obj_daten, use = "complete.obs")

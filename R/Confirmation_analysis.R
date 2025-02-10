@@ -32,6 +32,7 @@ ca_stats <- ca$total %>% mutate(
   df = nrow(obj_daten) - 1
 )
 kable(ca_stats, digits = 2, caption = "Gesamtergebnis der Reliabilitätsanalyse für objektive Anwendungsfelder")
+kable(ca$item.stats, digits = 2, caption = "Item-Statistiken der Reliabilitätsanalyse für objektive Anwendungsfelder")
 
 ## Subjektive Anwendungsfelder
 subj_daten <- daten %>% filter(Anwendungsfeld == "Subjektiv") %>% select(starts_with("Akzeptanz_S"))
@@ -43,6 +44,7 @@ ca_stats <- ca$total %>% mutate(
   df = nrow(subj_daten) - 1
 )
 kable(ca_stats, digits = 2, caption = "Gesamtergebnis der Reliabilitätsanalyse für subjektive Anwendungsfelder")
+kable(ca$item.stats, digits = 2, caption = "Item-Statistiken der Reliabilitätsanalyse für subjektive Anwendungsfelder")
 
 # Korrelation zwischen den Akzeptanz-Items sollte hoch sein
 correlation_matrix <- cor(obj_daten, use = "complete.obs")
