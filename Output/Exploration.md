@@ -2,231 +2,458 @@
 > source("InstallPackages.R")
 
 > source("Read_Data.R")
+[1] "Daten werden geladen..."
 
-> ### Analysen zur Verteilung bezüglich der Geschlechter
-> # Statistiken nach Geschlecht
-> daten %>% group_by(Geschlecht) %>% skim(Akzeptanz)
-── Data Summary ────────────────────────
-                           Values    
-Name                       Piped data
-Number of rows             375       
-Number of columns          24        
-_______________________              
-Column type frequency:               
-  numeric                  1         
-________________________             
-Group variables            Geschlecht
+> # Analysefunktion
+> fn_Akzeptanz_Analyse <- function(daten, var) {
++   cat("# Statistiken für", deparse(substitute(var)), "\n")
++   
++   if (!is.null(daten[[var]])) {
++     stats <- daten %>% group_by(!!sym(var)) %>%
++       summarise(
++         N = n(),
++         Perc = n() / nrow(daten) * 100,
++         M = mean(Akzeptanz, na.rm = TRUE)
++       )
++     print(kable(stats, caption = "Häufigkeiten", digits = 2), "\n")
++   }
++   
++   ## Analyseformel zusammensetzen
++   formula <- as.formula(paste("Akzeptanz", var, sep = " ~ "))  
++ 
++   ## Lineares Modell erstellen
++   model <- lm(formula, data = daten)  # Regressionmodell
++   
++   cat("\n## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test\n")
++   bp_test <- bptest(model)
++   print(bp_test)
++ 
++   ## Falls Heteroskedastizität vorliegt, robuste Standardfehler und robuste ANOVA verwenden
++   if (bp_test$p.value < 0.05) {
++     cat("\n## Robuste Standardfehler:")
++     robust_se <- coeftest(model, vcov = vcovHC(model, type = "HC3"))
++     print(kable(as .... [TRUNCATED] 
 
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-  skim_variable Geschlecht n_missing complete_rate mean    sd p0  p25  p50 p75 p100 hist 
-1 Akzeptanz     weiblich           0             1 3.25 1.02   1 2.67 3.33   4 5    ▂▃▇▇▅
-2 Akzeptanz     männlich           0             1 3.21 1.13   1 2.33 3.33   4 5    ▅▅▇▇▆
-3 Akzeptanz     divers             0             1 3.67 0.943  3 3.33 3.67   4 4.33 ▇▁▁▁▇
-
-> daten %>% group_by(Geschlecht, Gruppe) %>% skim(Akzeptanz)
-── Data Summary ────────────────────────
-                           Values            
-Name                       Piped data        
-Number of rows             375               
-Number of columns          24                
-_______________________                      
-Column type frequency:                       
-  numeric                  1                 
-________________________                     
-Group variables            Geschlecht, Gruppe
-
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-   skim_variable Geschlecht Gruppe                    n_missing complete_rate mean     sd   p0  p25  p50  p75 p100 hist 
- 1 Akzeptanz     weiblich   Objektiv - Mit Maßnahme           0             1 3.78  0.822 1.33 3.33 4    4.33 5    ▁▂▅▇▇
- 2 Akzeptanz     weiblich   Objektiv - Ohne Maßnahme          0             1 3.71  0.657 1.67 3.33 4    4    5    ▁▂▅▇▁
- 3 Akzeptanz     weiblich   Subjektiv - Mit Maßnahme          0             1 2.70  1.01  1    2    3    3.08 5    ▃▃▇▂▂
- 4 Akzeptanz     weiblich   Subjektiv - Ohne Maßnahme         0             1 2.55  0.916 1    2    2.67 3.33 4    ▅▇▅▇▅
- 5 Akzeptanz     männlich   Objektiv - Mit Maßnahme           0             1 3.94  0.748 2    3.33 4    4.67 5    ▁▃▃▇▆
- 6 Akzeptanz     männlich   Objektiv - Ohne Maßnahme          0             1 3.82  0.809 1.33 3.33 4    4.33 5    ▂▁▃▇▆
- 7 Akzeptanz     männlich   Subjektiv - Mit Maßnahme          0             1 2.56  1.02  1    1.75 2.67 3.25 5    ▆▅▇▃▁
- 8 Akzeptanz     männlich   Subjektiv - Ohne Maßnahme         0             1 2.62  1.08  1    2    2.67 3.5  5    ▇▇▇▆▂
- 9 Akzeptanz     divers     Objektiv - Ohne Maßnahme          0             1 4.33 NA     4.33 4.33 4.33 4.33 4.33 ▁▁▇▁▁
-10 Akzeptanz     divers     Subjektiv - Ohne Maßnahme         0             1 3    NA     3    3    3    3    3    ▁▁▇▁▁
-
-> ### Analysen zur Verteilung bezüglich der Bildungsabschlüsse
-> # Statistiken nach Bildungsabschluss
-> daten %>% group_by(Bildungsabschluss) %>% skim(Akzeptanz)
-── Data Summary ────────────────────────
-                           Values           
-Name                       Piped data       
-Number of rows             375              
-Number of columns          24               
-_______________________                     
-Column type frequency:                      
-  numeric                  1                
-________________________                    
-Group variables            Bildungsabschluss
-
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-  skim_variable Bildungsabschluss                   n_missing complete_rate mean     sd   p0  p25  p50  p75 p100 hist 
-1 Akzeptanz     Volks- oder Hauptschulabschluss             0             1 4.33 NA     4.33 4.33 4.33 4.33 4.33 ▁▁▇▁▁
-2 Akzeptanz     Mittlere Reife (Realschulabschluss)         0             1 3.32  1.10  1    2.67 3.33 4    4.67 ▂▁▃▂▇
-3 Akzeptanz     Abitur oder Fachabitur                      0             1 3.22  1.04  1    2.67 3.33 4    5    ▂▂▇▇▃
-4 Akzeptanz     Hochschulabschluss                          0             1 3.23  1.11  1    2.33 3.33 4    5    ▃▅▇▇▆
-5 Akzeptanz     Promotion oder Habilitation                 0             1 2.62  0.705 2    2.17 2.33 2.83 4    ▇▂▂▁▂
-
-> daten %>% group_by(Bildungsabschluss, Gruppe) %>% skim(Akzeptanz)
-── Data Summary ────────────────────────
-                           Values                   
-Name                       Piped data               
-Number of rows             375                      
-Number of columns          24                       
-_______________________                             
-Column type frequency:                              
-  numeric                  1                        
-________________________                            
-Group variables            Bildungsabschluss, Gruppe
-
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-   skim_variable Bildungsabschluss                   Gruppe                    n_missing complete_rate mean     sd   p0  p25
- 1 Akzeptanz     Volks- oder Hauptschulabschluss     Objektiv - Mit Maßnahme           0             1 4.33 NA     4.33 4.33
- 2 Akzeptanz     Mittlere Reife (Realschulabschluss) Objektiv - Mit Maßnahme           0             1 4.15  0.626 3    4   
- 3 Akzeptanz     Mittlere Reife (Realschulabschluss) Objektiv - Ohne Maßnahme          0             1 3.6   0.723 2.67 3   
- 4 Akzeptanz     Mittlere Reife (Realschulabschluss) Subjektiv - Mit Maßnahme          0             1 2.28  1.06  1    1.33
- 5 Akzeptanz     Mittlere Reife (Realschulabschluss) Subjektiv - Ohne Maßnahme         0             1 2.95  1.03  1.33 2.33
- 6 Akzeptanz     Abitur oder Fachabitur              Objektiv - Mit Maßnahme           0             1 3.76  0.876 1.33 3.25
- 7 Akzeptanz     Abitur oder Fachabitur              Objektiv - Ohne Maßnahme          0             1 3.8   0.585 2    3.33
- 8 Akzeptanz     Abitur oder Fachabitur              Subjektiv - Mit Maßnahme          0             1 2.71  0.929 1    2.33
- 9 Akzeptanz     Abitur oder Fachabitur              Subjektiv - Ohne Maßnahme         0             1 2.71  1.04  1    2   
-10 Akzeptanz     Hochschulabschluss                  Objektiv - Mit Maßnahme           0             1 3.90  0.731 2    3.33
-11 Akzeptanz     Hochschulabschluss                  Objektiv - Ohne Maßnahme          0             1 3.78  0.798 1.33 3.33
-12 Akzeptanz     Hochschulabschluss                  Subjektiv - Mit Maßnahme          0             1 2.62  1.10  1    1.67
-13 Akzeptanz     Hochschulabschluss                  Subjektiv - Ohne Maßnahme         0             1 2.45  0.984 1    2   
-14 Akzeptanz     Promotion oder Habilitation         Objektiv - Mit Maßnahme           0             1 3    NA     3    3   
-15 Akzeptanz     Promotion oder Habilitation         Subjektiv - Mit Maßnahme          0             1 2.5   0.236 2.33 2.42
-16 Akzeptanz     Promotion oder Habilitation         Subjektiv - Ohne Maßnahme         0             1 2.58  0.957 2    2   
-    p50  p75 p100 hist 
- 1 4.33 4.33 4.33 ▁▁▇▁▁
- 2 4.33 4.67 4.67 ▃▁▃▂▇
- 3 4    4    4.33 ▇▁▁▇▃
- 4 2.5  3.17 3.33 ▇▁▃▃▇
- 5 3    3.83 4    ▂▂▂▂▇
- 6 3.83 4.33 5    ▂▂▃▇▇
- 7 4    4    5    ▁▁▅▇▁
- 8 3    3    5    ▂▂▇▂▁
- 9 3    3.33 5    ▅▂▇▅▁
-10 4    4.33 5    ▁▂▃▇▃
-11 4    4.33 5    ▁▂▃▇▆
-12 2.67 3.67 5    ▇▅▇▆▂
-13 2    3    5    ▆▇▇▃▁
-14 3    3    3    ▁▁▇▁▁
-15 2.5  2.58 2.67 ▇▁▁▁▇
-16 2.17 2.75 4    ▇▁▁▁▂
-
-> ### Analysen zur Verteilung bezüglich der Berufserfahrung
-> # Statistiken nach Berufserfahrung
-> daten %>% group_by(Berufserfahrung) %>% skim(Akzeptanz)
-── Data Summary ────────────────────────
-                           Values         
-Name                       Piped data     
-Number of rows             375            
-Number of columns          24             
-_______________________                   
-Column type frequency:                    
-  numeric                  1              
-________________________                  
-Group variables            Berufserfahrung
-
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-  skim_variable Berufserfahrung    n_missing complete_rate mean    sd   p0  p25  p50  p75 p100 hist 
-1 Akzeptanz     keine                      0             1 3.05 0.932 1.67 2.33 3.67 3.67 4    ▃▁▂▁▇
-2 Akzeptanz     weniger als 1 Jahr         0             1 3.22 0.750 2    3.08 3.33 3.33 4.33 ▂▁▇▁▂
-3 Akzeptanz     1-5 Jahre                  0             1 3.25 1.04  1    2.83 3.33 4    5    ▃▁▇▇▃
-4 Akzeptanz     5-10 Jahre                 0             1 3.32 1.06  1    2.67 3.33 4    5    ▂▁▇▆▃
-5 Akzeptanz     mehr als 10 Jahre          0             1 3.21 1.11  1    2.33 3.33 4    5    ▃▅▇▇▆
-
-> daten %>% group_by(Berufserfahrung, Gruppe) %>% skim(Akzeptanz)
-── Data Summary ────────────────────────
-                           Values                 
-Name                       Piped data             
-Number of rows             375                    
-Number of columns          24                     
-_______________________                           
-Column type frequency:                            
-  numeric                  1                      
-________________________                          
-Group variables            Berufserfahrung, Gruppe
-
-── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────
-   skim_variable Berufserfahrung    Gruppe                    n_missing complete_rate mean     sd   p0  p25  p50  p75 p100
- 1 Akzeptanz     keine              Objektiv - Mit Maßnahme           0             1 3.67 NA     3.67 3.67 3.67 3.67 3.67
- 2 Akzeptanz     keine              Objektiv - Ohne Maßnahme          0             1 4    NA     4    4    4    4    4   
- 3 Akzeptanz     keine              Subjektiv - Mit Maßnahme          0             1 2.67  1.41  1.67 2.17 2.67 3.17 3.67
- 4 Akzeptanz     keine              Subjektiv - Ohne Maßnahme         0             1 2.78  0.839 2    2.33 2.67 3.17 3.67
- 5 Akzeptanz     weniger als 1 Jahr Objektiv - Mit Maßnahme           0             1 3.33 NA     3.33 3.33 3.33 3.33 3.33
- 6 Akzeptanz     weniger als 1 Jahr Objektiv - Ohne Maßnahme          0             1 3.67  0.577 3.33 3.33 3.33 3.83 4.33
- 7 Akzeptanz     weniger als 1 Jahr Subjektiv - Ohne Maßnahme         0             1 2.5   0.707 2    2.25 2.5  2.75 3   
- 8 Akzeptanz     1-5 Jahre          Objektiv - Mit Maßnahme           0             1 3.82  0.546 2.67 3.58 3.83 4    5   
- 9 Akzeptanz     1-5 Jahre          Objektiv - Ohne Maßnahme          0             1 3.88  0.552 2.67 3.67 4    4    5   
-10 Akzeptanz     1-5 Jahre          Subjektiv - Mit Maßnahme          0             1 2.78  1.06  1    2.17 3    3.08 5   
-11 Akzeptanz     1-5 Jahre          Subjektiv - Ohne Maßnahme         0             1 2.56  1.13  1    1.5  2.83 3.5  4   
-12 Akzeptanz     5-10 Jahre         Objektiv - Mit Maßnahme           0             1 4.25  0.698 3    3.67 4.5  4.75 5   
-13 Akzeptanz     5-10 Jahre         Objektiv - Ohne Maßnahme          0             1 3.36  0.767 1.67 3    3.33 4    4.33
-14 Akzeptanz     5-10 Jahre         Subjektiv - Mit Maßnahme          0             1 2.73  1.18  1    1.67 3.17 3.67 4   
-15 Akzeptanz     5-10 Jahre         Subjektiv - Ohne Maßnahme         0             1 2.73  0.813 1    2.67 2.67 3.25 4   
-16 Akzeptanz     mehr als 10 Jahre  Objektiv - Mit Maßnahme           0             1 3.81  0.852 1.33 3.33 4    4.33 5   
-17 Akzeptanz     mehr als 10 Jahre  Objektiv - Ohne Maßnahme          0             1 3.83  0.774 1.33 3.67 4    4.33 5   
-18 Akzeptanz     mehr als 10 Jahre  Subjektiv - Mit Maßnahme          0             1 2.54  0.965 1    2    2.67 3    5   
-19 Akzeptanz     mehr als 10 Jahre  Subjektiv - Ohne Maßnahme         0             1 2.58  1.04  1    2    2.33 3.33 5   
-   hist 
- 1 ▁▁▇▁▁
- 2 ▁▁▇▁▁
- 3 ▇▁▁▁▇
- 4 ▇▇▁▁▇
- 5 ▁▁▇▁▁
- 6 ▇▁▁▁▃
- 7 ▇▁▁▁▇
- 8 ▂▂▇▂▂
- 9 ▁▂▇▂▂
-10 ▃▁▇▂▂
-11 ▇▅▂▆▇
-12 ▂▂▁▁▇
-13 ▂▂▃▆▇
-14 ▆▁▂▃▇
-15 ▂▂▇▆▂
-16 ▁▂▃▆▇
-17 ▁▁▂▇▅
-18 ▅▆▇▂▂
-19 ▇▇▇▅▁
-
-> ### Analysen zur Einschätzung der Objektivität bzw. Subjektivität der Anwendungsfelder
-> # Korrelationsanalyse zwischen Anwendungsfeld und objektiv-subjektiv-Einschätzung
-> cor.test(as.numeric(daten$Anwendungsfeld), as.numeric(daten$objektiv_subjektiv), method = "kendall")
-
-	Kendall's rank correlation tau
-
-data:  as.numeric(daten$Anwendungsfeld) and as.numeric(daten$objektiv_subjektiv)
-z = 14.079, p-value < 2.2e-16
-alternative hypothesis: true tau is not equal to 0
-sample estimates:
-     tau 
-0.728029 
+> # Analyse der Akzeptanz in Abhängigkeit von verschiedenen Variablen
+> fn_Akzeptanz_Analyse(daten, "GenKI_Erfahrung")
+# Statistiken für "GenKI_Erfahrung" 
 
 
-> # Anzahl übereinstimmender Werte ermitteln
-> fn_analyse_uebereinstimmung <- function(daten) {
-+   daten %>% summarise(
-+     gleich = sum(Anwendungsfeld == objektiv_subjektiv),
-+     ungleich = sum(Anwendungsfeld != objektiv_subjektiv),
-+     uebereinstimmung = round((gleich / nrow(daten)) * 100.0,2))
-+ }
+Table: Häufigkeiten
 
-> # Gesamt
-> fn_analyse_uebereinstimmung(daten)
-  gleich ungleich uebereinstimmung
-1    324       51             86.4
+|GenKI_Erfahrung |   N|  Perc|    M|
+|:---------------|---:|-----:|----:|
+|sehr gering     |  49| 13.07| 3.12|
+|gering          |  95| 25.33| 3.21|
+|mittel          | 145| 38.67| 3.24|
+|hoch            |  69| 18.40| 3.29|
+|sehr hoch       |  17|  4.53| 3.29|
 
-> # Objektive Anwendungsfelder
-> fn_analyse_uebereinstimmung(daten %>% filter(Anwendungsfeld == "Objektiv"))
-  gleich ungleich uebereinstimmung
-1    168       23            87.96
+## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
-> # Subjektive Anwendungsfelder
-> fn_analyse_uebereinstimmung(daten %>% filter(Anwendungsfeld == "Subjektiv"))
-  gleich ungleich uebereinstimmung
-1    156       28            84.78
+	studentized Breusch-Pagan test
+
+data:  model
+BP = 6.2066, df = 4, p-value = 0.1842
+
+
+## Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
+### Modell-Koeffizienten
+
+
+Table: Modell-Koeffizienten
+
+|                         | coef(model)|
+|:------------------------|-----------:|
+|(Intercept)              |       3.116|
+|GenKI_Erfahrunggering    |       0.091|
+|GenKI_Erfahrungmittel    |       0.121|
+|GenKI_Erfahrunghoch      |       0.179|
+|GenKI_Erfahrungsehr hoch |       0.178|
+
+### Zusammenfassung des Modells
+
+Table: Zusammenfassung des ANOVA-Modells
+
+|Parameter       | Sum_Squares|  df| Mean_Square|    F|    p|
+|:---------------|-----------:|---:|-----------:|----:|----:|
+|GenKI_Erfahrung |        1.05|   4|        0.26| 0.23| 0.92|
+|Residuals       |      432.24| 370|        1.17|   NA|   NA|
+
+### Effektgrößen
+
+Table: Effektgrößen der ANOVA
+
+|Parameter       | Eta2|   CI| CI_low| CI_high|
+|:---------------|----:|----:|------:|-------:|
+|GenKI_Erfahrung |    0| 0.95|      0|       1|
+
+> fn_Akzeptanz_Analyse(daten, "Geschlecht")
+# Statistiken für "Geschlecht" 
+
+
+Table: Häufigkeiten
+
+|Geschlecht |   N|  Perc|    M|
+|:----------|---:|-----:|----:|
+|weiblich   | 175| 46.67| 3.25|
+|männlich   | 198| 52.80| 3.21|
+|divers     |   2|  0.53| 3.67|
+
+## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
+
+	studentized Breusch-Pagan test
+
+data:  model
+BP = 3.7033, df = 2, p-value = 0.157
+
+
+## Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
+### Modell-Koeffizienten
+
+
+Table: Modell-Koeffizienten
+
+|                   | coef(model)|
+|:------------------|-----------:|
+|(Intercept)        |       3.246|
+|Geschlechtmännlich |      -0.040|
+|Geschlechtdivers   |       0.421|
+
+### Zusammenfassung des Modells
+
+Table: Zusammenfassung des ANOVA-Modells
+
+|Parameter  | Sum_Squares|  df| Mean_Square|    F|    p|
+|:----------|-----------:|---:|-----------:|----:|----:|
+|Geschlecht |        0.54|   2|        0.27| 0.23| 0.79|
+|Residuals  |      432.75| 372|        1.16|   NA|   NA|
+
+### Effektgrößen
+
+Table: Effektgrößen der ANOVA
+
+|Parameter  | Eta2|   CI| CI_low| CI_high|
+|:----------|----:|----:|------:|-------:|
+|Geschlecht |    0| 0.95|      0|       1|
+
+> fn_Akzeptanz_Analyse(daten, "Bildungsabschluss")
+# Statistiken für "Bildungsabschluss" 
+
+
+Table: Häufigkeiten
+
+|Bildungsabschluss                   |   N|  Perc|    M|
+|:-----------------------------------|---:|-----:|----:|
+|Volks- oder Hauptschulabschluss     |   1|  0.27| 4.33|
+|Mittlere Reife (Realschulabschluss) |  27|  7.20| 3.32|
+|Abitur oder Fachabitur              | 144| 38.40| 3.22|
+|Hochschulabschluss                  | 196| 52.27| 3.23|
+|Promotion oder Habilitation         |   7|  1.87| 2.62|
+
+## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
+
+	studentized Breusch-Pagan test
+
+data:  model
+BP = 3.8439, df = 4, p-value = 0.4275
+
+
+## Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
+### Modell-Koeffizienten
+
+
+Table: Modell-Koeffizienten
+
+|                                                     | coef(model)|
+|:----------------------------------------------------|-----------:|
+|(Intercept)                                          |       4.333|
+|BildungsabschlussMittlere Reife (Realschulabschluss) |      -1.012|
+|BildungsabschlussAbitur oder Fachabitur              |      -1.113|
+|BildungsabschlussHochschulabschluss                  |      -1.099|
+|BildungsabschlussPromotion oder Habilitation         |      -1.714|
+
+### Zusammenfassung des Modells
+
+Table: Zusammenfassung des ANOVA-Modells
+
+|Parameter         | Sum_Squares|  df| Mean_Square|    F|    p|
+|:-----------------|-----------:|---:|-----------:|----:|----:|
+|Bildungsabschluss |        4.07|   4|        1.02| 0.88| 0.48|
+|Residuals         |      429.22| 370|        1.16|   NA|   NA|
+
+### Effektgrößen
+
+Table: Effektgrößen der ANOVA
+
+|Parameter         | Eta2|   CI| CI_low| CI_high|
+|:-----------------|----:|----:|------:|-------:|
+|Bildungsabschluss | 0.01| 0.95|      0|       1|
+
+> fn_Akzeptanz_Analyse(daten, "Berufserfahrung")
+# Statistiken für "Berufserfahrung" 
+
+
+Table: Häufigkeiten
+
+|Berufserfahrung    |   N|  Perc|    M|
+|:------------------|---:|-----:|----:|
+|keine              |   7|  1.87| 3.05|
+|weniger als 1 Jahr |   6|  1.60| 3.22|
+|1-5 Jahre          |  75| 20.00| 3.25|
+|5-10 Jahre         |  43| 11.47| 3.32|
+|mehr als 10 Jahre  | 244| 65.07| 3.21|
+
+## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
+
+	studentized Breusch-Pagan test
+
+data:  model
+BP = 3.2715, df = 4, p-value = 0.5135
+
+
+## Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
+### Modell-Koeffizienten
+
+
+Table: Modell-Koeffizienten
+
+|                                  | coef(model)|
+|:---------------------------------|-----------:|
+|(Intercept)                       |       3.048|
+|Berufserfahrungweniger als 1 Jahr |       0.175|
+|Berufserfahrung1-5 Jahre          |       0.206|
+|Berufserfahrung5-10 Jahre         |       0.270|
+|Berufserfahrungmehr als 10 Jahre  |       0.160|
+
+### Zusammenfassung des Modells
+
+Table: Zusammenfassung des ANOVA-Modells
+
+|Parameter       | Sum_Squares|  df| Mean_Square|    F|    p|
+|:---------------|-----------:|---:|-----------:|----:|----:|
+|Berufserfahrung |        0.72|   4|        0.18| 0.15| 0.96|
+|Residuals       |      432.57| 370|        1.17|   NA|   NA|
+
+### Effektgrößen
+
+Table: Effektgrößen der ANOVA
+
+|Parameter       | Eta2|   CI| CI_low| CI_high|
+|:---------------|----:|----:|------:|-------:|
+|Berufserfahrung |    0| 0.95|      0|       1|
+
+> fn_Akzeptanz_Analyse(daten, "Berufsstatus")
+# Statistiken für "Berufsstatus" 
+
+
+Table: Häufigkeiten
+
+|Berufsstatus       |   N| Perc|    M|
+|:------------------|---:|----:|----:|
+|nicht erwerbstätig |  12|  3.2| 3.47|
+|erwerbstätig       | 291| 77.6| 3.28|
+|im Studium         |  63| 16.8| 3.01|
+|in der Ausbildung  |   9|  2.4| 2.56|
+
+## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
+
+	studentized Breusch-Pagan test
+
+data:  model
+BP = 4.3073, df = 3, p-value = 0.2301
+
+
+## Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
+### Modell-Koeffizienten
+
+
+Table: Modell-Koeffizienten
+
+|                              | coef(model)|
+|:-----------------------------|-----------:|
+|(Intercept)                   |       3.472|
+|Berufsstatuserwerbstätig      |      -0.188|
+|Berufsstatusim Studium        |      -0.462|
+|Berufsstatusin der Ausbildung |      -0.917|
+
+### Zusammenfassung des Modells
+
+Table: Zusammenfassung des ANOVA-Modells
+
+|Parameter    | Sum_Squares|  df| Mean_Square|    F|    p|
+|:------------|-----------:|---:|-----------:|----:|----:|
+|Berufsstatus |        8.68|   3|        2.89| 2.53| 0.06|
+|Residuals    |      424.61| 371|        1.14|   NA|   NA|
+
+### Effektgrößen
+
+Table: Effektgrößen der ANOVA
+
+|Parameter    | Eta2|   CI| CI_low| CI_high|
+|:------------|----:|----:|------:|-------:|
+|Berufsstatus | 0.02| 0.95|      0|       1|
+
+> fn_Akzeptanz_Analyse(daten, "Alter")
+# Statistiken für "Alter" 
+
+
+Table: Häufigkeiten
+
+| Alter|  N| Perc|    M|
+|-----:|--:|----:|----:|
+|    18|  4| 1.07| 3.25|
+|    19|  7| 1.87| 2.33|
+|    20|  8| 2.13| 3.50|
+|    21| 12| 3.20| 3.25|
+|    22|  9| 2.40| 3.04|
+|    23|  7| 1.87| 3.57|
+|    24| 12| 3.20| 3.39|
+|    25| 14| 3.73| 3.45|
+|    26|  9| 2.40| 2.48|
+|    27| 16| 4.27| 3.27|
+|    28|  7| 1.87| 3.29|
+|    29|  6| 1.60| 3.61|
+|    30|  9| 2.40| 3.56|
+|    31|  7| 1.87| 2.71|
+|    32| 13| 3.47| 3.62|
+|    33|  5| 1.33| 3.60|
+|    34|  9| 2.40| 3.19|
+|    35|  7| 1.87| 2.38|
+|    36| 14| 3.73| 3.14|
+|    37|  5| 1.33| 3.27|
+|    38| 11| 2.93| 3.52|
+|    39|  9| 2.40| 2.78|
+|    40| 10| 2.67| 3.27|
+|    41|  6| 1.60| 3.94|
+|    42|  7| 1.87| 3.52|
+|    43|  6| 1.60| 3.50|
+|    44|  8| 2.13| 4.08|
+|    45| 11| 2.93| 3.52|
+|    46| 11| 2.93| 3.48|
+|    47|  6| 1.60| 3.28|
+|    48|  8| 2.13| 2.50|
+|    49|  5| 1.33| 3.53|
+|    50|  9| 2.40| 3.78|
+|    51|  8| 2.13| 3.12|
+|    52| 11| 2.93| 2.73|
+|    53|  7| 1.87| 2.71|
+|    54|  4| 1.07| 2.08|
+|    55|  3| 0.80| 2.89|
+|    56| 12| 3.20| 2.83|
+|    57|  7| 1.87| 2.57|
+|    58|  4| 1.07| 2.00|
+|    59|  6| 1.60| 3.78|
+|    60|  6| 1.60| 3.56|
+|    61|  3| 0.80| 4.00|
+|    62|  3| 0.80| 3.89|
+|    63|  3| 0.80| 3.22|
+|    64|  4| 1.07| 3.25|
+|    65|  2| 0.53| 2.67|
+|    66|  2| 0.53| 4.00|
+|    67|  1| 0.27| 3.00|
+|    68|  1| 0.27| 4.00|
+|    78|  1| 0.27| 3.00|
+
+## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
+
+	studentized Breusch-Pagan test
+
+data:  model
+BP = 0.32741, df = 1, p-value = 0.5672
+
+
+## Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
+### Modell-Koeffizienten
+
+
+Table: Modell-Koeffizienten
+
+|            | coef(model)|
+|:-----------|-----------:|
+|(Intercept) |       3.291|
+|Alter       |      -0.002|
+
+### Zusammenfassung des Modells
+
+Table: Zusammenfassung des ANOVA-Modells
+
+|Parameter | Sum_Squares|  df| Mean_Square|    F|   p|
+|:---------|-----------:|---:|-----------:|----:|---:|
+|Alter     |        0.17|   1|        0.17| 0.15| 0.7|
+|Residuals |      433.12| 373|        1.16|   NA|  NA|
+
+### Effektgrößen
+
+Table: Effektgrößen der ANOVA
+
+|Parameter | Eta2|   CI| CI_low| CI_high|
+|:---------|----:|----:|------:|-------:|
+|Alter     |    0| 0.95|      0|       1|
+
+> # Kombiniertes Modell
+> fn_Akzeptanz_Analyse(daten, "GenKI_Erfahrung + Geschlecht + Bildungsabschluss + Berufserfahrung + Berufsstatus + Alter")
+# Statistiken für "GenKI_Erfahrung + Geschlecht + Bildungsabschluss + Berufserfahrung + Berufsstatus + Alter" 
+
+## Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
+
+	studentized Breusch-Pagan test
+
+data:  model
+BP = 17.589, df = 18, p-value = 0.483
+
+
+## Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
+### Modell-Koeffizienten
+
+
+Table: Modell-Koeffizienten
+
+|                                                     | coef(model)|
+|:----------------------------------------------------|-----------:|
+|(Intercept)                                          |       4.613|
+|GenKI_Erfahrunggering                                |       0.170|
+|GenKI_Erfahrungmittel                                |       0.191|
+|GenKI_Erfahrunghoch                                  |       0.229|
+|GenKI_Erfahrungsehr hoch                             |       0.312|
+|Geschlechtmännlich                                   |      -0.064|
+|Geschlechtdivers                                     |       0.303|
+|BildungsabschlussMittlere Reife (Realschulabschluss) |      -1.156|
+|BildungsabschlussAbitur oder Fachabitur              |      -1.245|
+|BildungsabschlussHochschulabschluss                  |      -1.309|
+|BildungsabschlussPromotion oder Habilitation         |      -1.933|
+|Berufserfahrungweniger als 1 Jahr                    |       0.339|
+|Berufserfahrung1-5 Jahre                             |       0.316|
+|Berufserfahrung5-10 Jahre                            |       0.129|
+|Berufserfahrungmehr als 10 Jahre                     |       0.035|
+|Berufsstatuserwerbstätig                             |      -0.181|
+|Berufsstatusim Studium                               |      -0.716|
+|Berufsstatusin der Ausbildung                        |      -1.216|
+|Alter                                                |      -0.002|
+
+### Zusammenfassung des Modells
+
+Table: Zusammenfassung des ANOVA-Modells
+
+|Parameter         | Sum_Squares|  df| Mean_Square|    F|    p|
+|:-----------------|-----------:|---:|-----------:|----:|----:|
+|GenKI_Erfahrung   |        1.05|   4|        0.26| 0.23| 0.92|
+|Geschlecht        |        0.63|   2|        0.32| 0.27| 0.76|
+|Bildungsabschluss |        4.41|   4|        1.10| 0.95| 0.43|
+|Berufserfahrung   |        0.65|   4|        0.16| 0.14| 0.97|
+|Berufsstatus      |       14.77|   3|        4.92| 4.26| 0.01|
+|Alter             |        0.06|   1|        0.06| 0.05| 0.82|
+|Residuals         |      411.72| 356|        1.16|   NA|   NA|
+
+### Effektgrößen
+
+Table: Effektgrößen der ANOVA
+
+|Parameter         | Eta2_partial|   CI| CI_low| CI_high|
+|:-----------------|------------:|----:|------:|-------:|
+|GenKI_Erfahrung   |         0.00| 0.95|   0.00|       1|
+|Geschlecht        |         0.00| 0.95|   0.00|       1|
+|Bildungsabschluss |         0.01| 0.95|   0.00|       1|
+|Berufserfahrung   |         0.00| 0.95|   0.00|       1|
+|Berufsstatus      |         0.03| 0.95|   0.01|       1|
+|Alter             |         0.00| 0.95|   0.00|       1|

@@ -4,11 +4,11 @@
 > source("Read_Data.R")
 [1] "Daten werden geladen..."
 
-> ### Standard-ANCOVA
-> # ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
+> # Standard-ANCOVA
+> ## ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
 > ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
 
-> # Koeefizienten des Modells ausgeben
+> ## Koeefizienten des Modells ausgeben
 > coef_df <- coef(ancova_model)
 
 > kable(coef_df, digits = 2, caption = "ANCOVA Koeffizienten")
@@ -24,71 +24,87 @@ Table: ANCOVA Koeffizienten
 |Einstellung_KI                                           |  0.61|
 |AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme | -0.03|
 
-> # Zusammenfassung des Modells 
-> model_parameters(ancova_model, eta_squared = "partial")
-Parameter                           | Sum_Squares |  df | Mean_Square |      F |      p
----------------------------------------------------------------------------------------
-Anwendungsfeld                      |      137.15 |   1 |      137.15 | 210.58 | < .001
-Vertrauensmassnahmen                |        0.30 |   1 |        0.30 |   0.47 | 0.496 
-Einstellung_KI                      |       54.83 |   1 |       54.83 |  84.18 | < .001
-Anwendungsfeld:Vertrauensmassnahmen |        0.02 |   1 |        0.02 |   0.03 | 0.869 
-Residuals                           |      240.99 | 370 |        0.65 |        |       
+> ## Zusammenfassung des Modells 
+> mp <- model_parameters(ancova_model, eta_squared = "partial")
 
-Anova Table (Type 1 tests)
+> kable(mp, digits = 2, caption = "Zusammenfassung des ANCOVA-Modells")
 
-> # Effektgrößen 
-> eta_squared(ancova_model, partial = TRUE)
-# Effect Size for ANOVA (Type I)
 
-Parameter                           | Eta2 (partial) |       95% CI
--------------------------------------------------------------------
-Anwendungsfeld                      |           0.36 | [0.30, 1.00]
-Vertrauensmassnahmen                |       1.26e-03 | [0.00, 1.00]
-Einstellung_KI                      |           0.19 | [0.13, 1.00]
-Anwendungsfeld:Vertrauensmassnahmen |       7.41e-05 | [0.00, 1.00]
+Table: Zusammenfassung des ANCOVA-Modells
 
-- One-sided CIs: upper bound fixed at [1.00].
-> ### Robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)
+|Parameter                           | Sum_Squares|  df| Mean_Square|      F|    p|
+|:-----------------------------------|-----------:|---:|-----------:|------:|----:|
+|Anwendungsfeld                      |      137.15|   1|      137.15| 210.58| 0.00|
+|Vertrauensmassnahmen                |        0.30|   1|        0.30|   0.47| 0.50|
+|Einstellung_KI                      |       54.83|   1|       54.83|  84.18| 0.00|
+|Anwendungsfeld:Vertrauensmassnahmen |        0.02|   1|        0.02|   0.03| 0.87|
+|Residuals                           |      240.99| 370|        0.65|     NA|   NA|
+
+> ## Effektgrößen 
+> eff_es <- eta_squared(ancova_model, partial = TRUE)
+
+> kable(eff_es, digits = 2, caption = "Effektgrößen der ANCOVA")
+
+
+Table: Effektgrößen der ANCOVA
+
+|Parameter                           | Eta2_partial|   CI| CI_low| CI_high|
+|:-----------------------------------|------------:|----:|------:|-------:|
+|Anwendungsfeld                      |         0.36| 0.95|   0.30|       1|
+|Vertrauensmassnahmen                |         0.00| 0.95|   0.00|       1|
+|Einstellung_KI                      |         0.19| 0.95|   0.13|       1|
+|Anwendungsfeld:Vertrauensmassnahmen |         0.00| 0.95|   0.00|       1|
+
+> # Robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)
 > robust_ancova <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
 
 > anova_robust <- car::Anova(robust_ancova, type = "III", white.adjust = TRUE)
 
-> # Zusammenfassung des Modells 
-> model_parameters(robust_ancova, eta_squared = "partial")
-Parameter                                                        | Coefficient |   SE |         95% CI | t(370) |      p
-------------------------------------------------------------------------------------------------------------------------
-(Intercept)                                                      |        1.58 | 0.26 | [ 1.07,  2.08] |   6.18 | < .001
-Anwendungsfeld [Subjektiv]                                       |       -1.20 | 0.12 | [-1.43, -0.97] | -10.19 | < .001
-Vertrauensmassnahmen [Mit Maßnahme]                              |    2.71e-03 | 0.12 | [-0.23,  0.23] |   0.02 | 0.982 
-Einstellung KI                                                   |        0.61 | 0.07 | [ 0.48,  0.75] |   9.17 | < .001
-Anwendungsfeld [Subjektiv] × Vertrauensmassnahmen [Mit Maßnahme] |       -0.03 | 0.17 | [-0.36,  0.30] |  -0.17 | 0.869 
+> ## Zusammenfassung des Modells 
+> mpr <- model_parameters(robust_ancova, eta_squared = "partial")
 
-> # Effektgrößen
-> eta_squared(robust_ancova, partial = TRUE)
-# Effect Size for ANOVA (Type I)
+> kable(mpr, digits = 2, caption = "Zusammenfassung des robusten ANCOVA-Modells")
 
-Parameter                           | Eta2 (partial) |       95% CI
--------------------------------------------------------------------
-Anwendungsfeld                      |           0.36 | [0.30, 1.00]
-Vertrauensmassnahmen                |       1.26e-03 | [0.00, 1.00]
-Einstellung_KI                      |           0.19 | [0.13, 1.00]
-Anwendungsfeld:Vertrauensmassnahmen |       7.41e-05 | [0.00, 1.00]
 
-- One-sided CIs: upper bound fixed at [1.00].
-> ### Bootstrapping
-> # Funktion für das Bootstrapping der ANCOVA-Koeffizienten
+Table: Zusammenfassung des robusten ANCOVA-Modells
+
+|Parameter                                                | Coefficient|   SE|   CI| CI_low| CI_high|      t| df_error|    p|
+|:--------------------------------------------------------|-----------:|----:|----:|------:|-------:|------:|--------:|----:|
+|(Intercept)                                              |        1.58| 0.26| 0.95|   1.07|    2.08|   6.18|      370| 0.00|
+|AnwendungsfeldSubjektiv                                  |       -1.20| 0.12| 0.95|  -1.43|   -0.97| -10.19|      370| 0.00|
+|VertrauensmassnahmenMit Maßnahme                         |        0.00| 0.12| 0.95|  -0.23|    0.23|   0.02|      370| 0.98|
+|Einstellung_KI                                           |        0.61| 0.07| 0.95|   0.48|    0.75|   9.17|      370| 0.00|
+|AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme |       -0.03| 0.17| 0.95|  -0.36|    0.30|  -0.17|      370| 0.87|
+
+> ## Effektgrößen
+> eff_esr <- eta_squared(robust_ancova, partial = TRUE)
+
+> kable(eff_esr, digits = 2, caption = "Effektgrößen der robusten ANCOVA")
+
+
+Table: Effektgrößen der robusten ANCOVA
+
+|Parameter                           | Eta2_partial|   CI| CI_low| CI_high|
+|:-----------------------------------|------------:|----:|------:|-------:|
+|Anwendungsfeld                      |         0.36| 0.95|   0.30|       1|
+|Vertrauensmassnahmen                |         0.00| 0.95|   0.00|       1|
+|Einstellung_KI                      |         0.19| 0.95|   0.13|       1|
+|Anwendungsfeld:Vertrauensmassnahmen |         0.00| 0.95|   0.00|       1|
+
+> # Bootstrapping
+> ## Funktion für das Bootstrapping der ANCOVA-Koeffizienten
 > boot_ancova <- function(data, indices) {
 +   sampled_data <- data[indices, ]  # Ziehe Bootstrap-Stichprobe
 +   model <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = sampled_data)
 +   return(coef(model))  # Rückgabe der Koeffizienten
 + }
 
-> # Bootstrapping mit 1000 Wiederholungen
+> ## Bootstrapping mit 1000 Wiederholungen
 > set.seed(123)  # Für Reproduzierbarkeit
 
 > boot_results <- boot(data = daten, statistic = boot_ancova, R = 1000)
 
-> # Ausgabe der Bootstrapped-Konfidenzintervalle
+> ## Ausgabe der Bootstrapped-Konfidenzintervalle
 > print(boot.ci(boot_results, type = "perc"))
 BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
 Based on 1000 bootstrap replicates
@@ -101,10 +117,10 @@ Level     Percentile
 95%   ( 1.103,  2.080 )  
 Calculations and Intervals on Original Scale
 
-> # Prädiktornamen aus dem Modell extrahieren
+> ## Prädiktornamen aus dem Modell extrahieren
 > predictor_names <- names(coef(lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)))
 
-> # Ausgabe der Bootstrapped-Konfidenzintervalle für alle Prädiktoren mit Namen
+> ## Ausgabe der Bootstrapped-Konfidenzintervalle für alle Prädiktoren mit Namen
 > boot_ci_results <- lapply(1:length(boot_results$t0), function(i) {
 +   ci <- boot.ci(boot_results, type = "perc", index = i)
 +   list(
@@ -114,7 +130,7 @@ Calculations and Intervals on Original Scale
 +   )
 + })
 
-> # Konfidenzintervalle als Dataframe anzeigen
+> ## Konfidenzintervalle anzeigen
 > boot_ci_df <- do.call(rbind, lapply(boot_ci_results, as.data.frame))
 
 > kable(boot_ci_df, digits = 2, caption = "Bootstrapped Konfidenzintervalle")
@@ -130,65 +146,11 @@ Table: Bootstrapped Konfidenzintervalle
 |Einstellung_KI                                           |        0.48|       0.74|
 |AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme |       -0.37|       0.32|
 
-> # Visualisierung der Bootstrap-Schätzwerte
+> ## Visualisierung der Bootstrap-Schätzwerte
 > hist(boot_results$t[, 2], main = "Bootstrap-Verteilung für Anwendungsfeld", xlab = "Koeffizient", col = "lightblue", border = "black")
 
-> ###
-> # Correlation zwischen Akzeptanz und Einstellung_KI ermitteln (H4)
-> daten %>% with(cor.test(Einstellung_KI, Akzeptanz, method = "kendall"))
-
-	Kendall's rank correlation tau
-
-data:  Einstellung_KI and Akzeptanz
-z = 6.8454, p-value = 7.627e-12
-alternative hypothesis: true tau is not equal to 0
-sample estimates:
-      tau 
-0.2525058 
-
-
-> daten %>% filter(Anwendungsfeld == "Objektiv") %>% with(cor.test(Einstellung_KI, Akzeptanz, method = "kendall"))
-
-	Kendall's rank correlation tau
-
-data:  Einstellung_KI and Akzeptanz
-z = 7.9842, p-value = 1.415e-15
-alternative hypothesis: true tau is not equal to 0
-sample estimates:
-      tau 
-0.4212254 
-
-
-> daten %>% filter(Anwendungsfeld == "Subjektiv") %>% with(cor.test(Einstellung_KI, Akzeptanz, method = "kendall"))
-
-	Kendall's rank correlation tau
-
-data:  Einstellung_KI and Akzeptanz
-z = 4.2613, p-value = 2.033e-05
-alternative hypothesis: true tau is not equal to 0
-sample estimates:
-      tau 
-0.2266471 
-
-
-> # Post-hoc Tests für die kategorialen Prädiktoren (falls nötig) mit Tukey HSD durchführen
-> TukeyHSD(ancova_model, which = c("Anwendungsfeld", "Vertrauensmassnahmen"))
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
-
-$Anwendungsfeld
-                        diff       lwr       upr p adj
-Subjektiv-Objektiv -1.209737 -1.373667 -1.045807     0
-
-$Vertrauensmassnahmen
-                                 diff        lwr      upr     p adj
-Mit Maßnahme-Ohne Maßnahme 0.05634024 -0.1075755 0.220256 0.4995397
-
-
-> ### Prüfung der Voraussetzungen für die ANCOVA
-> # Normalverteilung der Residuen prüfen
+> # Prüfung der Voraussetzungen für die ANCOVA
+> ## Normalverteilung der Residuen prüfen
 > shapiro.test(residuals(ancova_model))
 
 	Shapiro-Wilk normality test
@@ -197,44 +159,28 @@ data:  residuals(ancova_model)
 W = 0.99308, p-value = 0.0821
 
 
-> qqnorm(residuals(ancova_model))
+> ## QQ-Plot der Residuen
+> ggqqplot(
++   residuals(ancova_model), 
++      conf.int = TRUE, 
++      conf.int.fill = "lightgray",
++   ) +
++   theme(
++     axis.title.x = element_text(size = 24),  
++     axis.title.y = element_text(size = 24),  
++     axis.text = element_text(size = 20)      
++   ) +
++   labs(
++     title = "QQ-Plot der Residuen", 
++     x = "Theoretische Quantile", 
++     y = "Residuen"
++   )
 
-> qqline(residuals(ancova_model))
-
-> # Homogenität der Varianzen prüfen
-> leveneTest(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
+> ## Homogenität der Varianzen prüfen
+> leveneTest(residuals(ancova_model) ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
 Levene's Test for Homogeneity of Variance (center = median)
        Df F value    Pr(>F)    
-group   3  7.7782 4.753e-05 ***
+group   3  11.363 3.804e-07 ***
       371                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-> leveneTest(Akzeptanz ~ Anwendungsfeld, data = daten)
-Levene's Test for Homogeneity of Variance (center = median)
-       Df F value    Pr(>F)    
-group   1  21.808 4.211e-06 ***
-      373                      
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-> leveneTest(Akzeptanz ~ Vertrauensmassnahmen, data = daten)
-Levene's Test for Homogeneity of Variance (center = median)
-       Df F value Pr(>F)
-group   1  0.0058 0.9395
-      373               
-
-> # grafische Darstellung Korrelation zwischen Einstellung_KI und Akzeptanz
-> ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Anwendungsfeld, shape = Anwendungsfeld, linetype = Anwendungsfeld)) +
-+   geom_point(alpha = 0.7, size = 2) +  # Punkte etwas größer für bessere Sichtbarkeit
-+   geom_smooth(method = "lm", se = FALSE) +
-+   scale_color_manual(values = c("Objektiv" = "red", "Subjektiv" = "blue")) +
-+   scale_shape_manual(values = c("Objektiv" = 4, "Subjektiv" = 3)) +  # 4 = X, 3 = +
-+   scale_linetype_manual(values = c("Objektiv" = "dotted", "Subjektiv" = "solid")) +  # Unterschiedliche Linien
-+   labs(title = "Zusammenhang zwischen Einstellung_KI und Akzeptanz nach Anwendungsfeld",
-+        x = "Einstellung_KI",
-+        y = "Akzeptanz",
-+        color = "Anwendungsfeld",
-+        shape = "Anwendungsfeld",
-+        linetype = "Anwendungsfeld") +
-+   theme_minimal()

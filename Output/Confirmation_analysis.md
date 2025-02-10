@@ -4,8 +4,40 @@
 > source("Read_Data.R")
 [1] "Daten werden geladen..."
 
-> ### Analysen zur Einschätzung der Objektivität bzw. Subjektivität der Anwendungsfelder
-> # Korrelationsanalyse zwischen Anwendungsfeld und objektiv-subjektiv-Einschätzung
+> # Analysen zur Einschätzung der Objektivität bzw. Subjektivität der Anwendungsfelder
+> table_val <- table(daten$Anwendungsfeld, daten$objektiv_subjektiv)
+
+> ## Umwandlung in DataFrame mit Prozentwerten innerhalb jedes Anwendungsfelds
+> table_df <- as.data.frame(table_val) %>%
++   group_by(Var1) %>%  # Gruppierung nach Anwendungsfeld
++   mutate(Prozent = round(Freq / sum(Freq) * 100, 2)) %>%
++   arrange(Var1)  # Sortierung nach Anwendungsfeld
+
+> ## Tabelle ausgeben mit Anwendungsfeld, Einschätzung, Häufigkeit und Prozentanteil
+> kable(table_df, 
++       col.names = c("Anwendungsfeld", "Einschätzung", "Häufigkeit", "Prozent"),
++       caption = "Kreuztabelle der Übereinstimmung von Anwendungsfeld und objektiv-subjektiv-Einschätzung")
+
+
+Table: Kreuztabelle der Übereinstimmung von Anwendungsfeld und objektiv-subjektiv-Einschätzung
+
+|Anwendungsfeld |Einschätzung | Häufigkeit| Prozent|
+|:--------------|:------------|----------:|-------:|
+|Objektiv       |Objektiv     |        168|   87.96|
+|Objektiv       |Subjektiv    |         23|   12.04|
+|Subjektiv      |Objektiv     |         28|   15.22|
+|Subjektiv      |Subjektiv    |        156|   84.78|
+
+> ## Chi-Quadrat-Test zur Überprüfung der Verteilung
+> chisq.test(table_val)
+
+	Pearson's Chi-squared test with Yates' continuity correction
+
+data:  table_val
+X-squared = 195.85, df = 1, p-value < 2.2e-16
+
+
+> ## Korrelationsanalyse zwischen Anwendungsfeld und objektiv-subjektiv-Einschätzung
 > cor.test(as.numeric(daten$Anwendungsfeld), as.numeric(daten$objektiv_subjektiv), method = "kendall")
 
 	Kendall's rank correlation tau
@@ -18,25 +50,72 @@ sample estimates:
 0.728029 
 
 
-> # Anzahl übereinstimmender Werte ermitteln
-> fn_analyse_uebereinstimmung <- function(daten) {
-+   daten %>% summarise(
-+     gleich = sum(Anwendungsfeld == objektiv_subjektiv),
-+     ungleich = sum(Anwendungsfeld != objektiv_subjektiv),
-+     uebereinstimmung = round((gleich / nrow(daten)) * 100.0,2))
-+ }
+> # Cronbach's Alpha, um zu prüfen, ob die Items zur Messung der Akzeptanz konsistent sind. Werte über 0.7 gelten als akzeptabel.
+> ## Objektive Anwendungsfelder
+> obj_daten <- daten %>% filter(Anwendungsfeld == "Objektiv") %>% select(starts_with("Akzeptanz_O"))
 
-> # Gesamt
-> fn_analyse_uebereinstimmung(daten)
-  gleich ungleich uebereinstimmung
-1    324       51             86.4
+> ca <- alpha(obj_daten)
 
-> # Objektive Anwendungsfelder
-> fn_analyse_uebereinstimmung(daten %>% filter(Anwendungsfeld == "Objektiv"))
-  gleich ungleich uebereinstimmung
-1    168       23            87.96
+> ### Konfidenzintervall ergänzen
+> ca_stats <- ca$total %>% mutate(
++   CI_lower = raw_alpha - 1.96 * ase,
++   CI_upper = raw_alpha + 1.96 * ase,
++   df = nrow(obj_daten) - 1
++ )
 
-> # Subjektive Anwendungsfelder
-> fn_analyse_uebereinstimmung(daten %>% filter(Anwendungsfeld == "Subjektiv"))
-  gleich ungleich uebereinstimmung
-1    156       28            84.78
+> kable(ca_stats, digits = 2, caption = "Gesamtergebnis der Reliabilitätsanalyse für objektive Anwendungsfelder")
+
+
+Table: Gesamtergebnis der Reliabilitätsanalyse für objektive Anwendungsfelder
+
+|   | raw_alpha| std.alpha| G6(smc)| average_r|  S/N|  ase| mean|   sd| median_r| CI_lower| CI_upper|  df|
+|:--|---------:|---------:|-------:|---------:|----:|----:|----:|----:|--------:|--------:|--------:|---:|
+|   |      0.71|      0.71|    0.63|      0.45| 2.44| 0.04| 3.82| 0.76|     0.47|     0.63|     0.78| 190|
+
+> ## Subjektive Anwendungsfelder
+> subj_daten <- daten %>% filter(Anwendungsfeld == "Subjektiv") %>% select(starts_with("Akzeptanz_S"))
+
+> ca <- alpha(subj_daten)
+
+> ### Konfidenzintervall ergänzen
+> ca_stats <- ca$total %>% mutate(
++   CI_lower = raw_alpha - 1.96 * ase,
++   CI_upper = raw_alpha + 1.96 * ase,
++   df = nrow(subj_daten) - 1
++ )
+
+> kable(ca_stats, digits = 2, caption = "Gesamtergebnis der Reliabilitätsanalyse für subjektive Anwendungsfelder")
+
+
+Table: Gesamtergebnis der Reliabilitätsanalyse für subjektive Anwendungsfelder
+
+|   | raw_alpha| std.alpha| G6(smc)| average_r|  S/N|  ase| mean|   sd| median_r| CI_lower| CI_upper|  df|
+|:--|---------:|---------:|-------:|---------:|----:|----:|----:|----:|--------:|--------:|--------:|---:|
+|   |      0.83|      0.83|    0.77|      0.61| 4.76| 0.02| 2.61| 1.01|     0.62|     0.78|     0.87| 183|
+
+> # Korrelation zwischen den Akzeptanz-Items sollte hoch sein
+> correlation_matrix <- cor(obj_daten, use = "complete.obs")
+
+> kable(correlation_matrix, digits = 2, caption = "Korrelationsmatrix der Akzeptanz-Items (Objektive Anwendungsfelder)")
+
+
+Table: Korrelationsmatrix der Akzeptanz-Items (Objektive Anwendungsfelder)
+
+|             | Akzeptanz_O1| Akzeptanz_O2| Akzeptanz_O3|
+|:------------|------------:|------------:|------------:|
+|Akzeptanz_O1 |         1.00|         0.50|         0.47|
+|Akzeptanz_O2 |         0.50|         1.00|         0.37|
+|Akzeptanz_O3 |         0.47|         0.37|         1.00|
+
+> correlation_matrix <- cor(subj_daten, use = "complete.obs")
+
+> kable(correlation_matrix, digits = 2, caption = "Korrelationsmatrix der Akzeptanz-Items (Subjektive Anwendungsfelder)")
+
+
+Table: Korrelationsmatrix der Akzeptanz-Items (Subjektive Anwendungsfelder)
+
+|             | Akzeptanz_S1| Akzeptanz_S2| Akzeptanz_S3|
+|:------------|------------:|------------:|------------:|
+|Akzeptanz_S1 |         1.00|         0.68|         0.62|
+|Akzeptanz_S2 |         0.68|         1.00|         0.54|
+|Akzeptanz_S3 |         0.62|         0.54|         1.00|
