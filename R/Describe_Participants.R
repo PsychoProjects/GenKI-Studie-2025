@@ -48,7 +48,7 @@ alter_statistik <- daten %>%
   ) 
 kable(alter_statistik, caption = "Statistiken zum Alter", digits = 2)
 
-# Aufteilung nach Altersgruppen
+## Aufteilung nach Altersgruppen
 altersgruppen <- cut(daten$Alter, 
                      breaks = c(0, 18, 20, 30, 40, 50, 60, 70, 80, 90, 100), 
                      right = FALSE) %>% table() 
@@ -73,4 +73,19 @@ berufserfahrungsstatistik <- daten %>% group_by(Berufserfahrung) %>%
   ) 
 kable(berufserfahrungsstatistik, caption = "Statistiken zur Berufserfahrung", digits = 2)
 
+# Statistiken nach Erfahrung mit GenKI
+genki_statistik <- daten %>% group_by(GenKI_Erfahrung) %>% 
+  summarise(
+    Anzahl = n(),
+    Anteil = round(n() / nrow(daten) * 100, digits = 2)
+  )
+kable(genki_statistik, caption = "Statistiken zur Erfahrung mit GenKI", digits = 2)
+
+## Histogramm der Verteilung der GenKI-Erfahrung
+ggplot(genki_statistik, aes(x = GenKI_Erfahrung, y = Anzahl)) +
+  geom_bar(stat = "identity", fill = "grey80", color = "black") + 
+  theme_minimal() +  # Minimalistisches Design
+  labs(title = "Verteilung der GenKI-Erfahrung",
+       x = "GenKI-Erfahrung",
+       y = "Anzahl")
 

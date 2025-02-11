@@ -1,0 +1,7 @@
+{
+    "scm.alwaysShowRepositories": true,
+    "scm.defaultViewMode": "tree",
+    "explorer.compactFolders": true,
+    "window.autoDetectColorScheme": false,
+    "workbench.settings.openDefaultKeybindings": true
+}
