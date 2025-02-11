@@ -81,7 +81,7 @@ Table: Robuste Standardfehler
 |GenKI_Erfahrunghoch      |    0.179|      0.198|   0.904|    0.366|
 |GenKI_Erfahrungsehr hoch |    0.178|      0.383|   0.467|    0.641|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -136,7 +136,7 @@ Table: Robuste Standardfehler
 |Geschlechtmännlich |   -0.040|      0.112|  -0.362|    0.718|
 |Geschlechtdivers   |    0.421|      0.946|   0.445|    0.657|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -196,7 +196,7 @@ Table: Robuste Standardfehler
 |Berufserfahrung5-10 Jahre         |    0.270|      0.414|   0.653|    0.514|
 |Berufserfahrungmehr als 10 Jahre  |    0.160|      0.387|   0.414|    0.679|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -253,7 +253,7 @@ Table: Robuste Standardfehler
 |Berufsstatusim Studium        |   -0.462|      0.238|  -1.941|    0.053|
 |Berufsstatusin der Ausbildung |   -0.917|      0.460|  -1.995|    0.047|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -356,7 +356,7 @@ Table: Robuste Standardfehler
 |(Intercept) |    3.291|      0.165|  19.945|    0.000|
 |Alter       |   -0.002|      0.004|  -0.407|    0.684|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -423,7 +423,7 @@ Table: Robuste Standardfehler
 |GenKI_Erfahrungsehr hoch |    0.374|      0.348|   1.073|    0.284|
 |AnwendungsfeldSubjektiv  |   -1.223|      0.093| -13.090|    0.000|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -492,7 +492,7 @@ Table: Robuste Standardfehler
 |Geschlechtmännlich       |   -0.054|      0.114|  -0.469|    0.640|
 |Geschlechtdivers         |    0.410|      0.949|   0.432|    0.666|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -554,7 +554,7 @@ Table: Robuste Standardfehler
 |GenKI_Erfahrunghoch      |    0.618|      0.126|   4.903|    0.000|
 |GenKI_Erfahrungsehr hoch |    1.038|      0.169|   6.156|    0.000|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -609,7 +609,7 @@ Table: Robuste Standardfehler
 |Geschlechtmännlich |    0.251|      0.064|   3.934|    0.000|
 |Geschlechtdivers   |   -0.605|      0.826|  -0.732|    0.464|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -669,7 +669,7 @@ Table: Robuste Standardfehler
 |Berufserfahrung5-10 Jahre         |   -0.021|      0.166|  -0.126|    0.899|
 |Berufserfahrungmehr als 10 Jahre  |   -0.095|      0.143|  -0.667|    0.505|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -726,7 +726,7 @@ Table: Robuste Standardfehler
 |Berufsstatusim Studium        |    0.148|      0.192|   0.775|    0.439|
 |Berufsstatusin der Ausbildung |    0.442|      0.202|   2.183|    0.030|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -829,7 +829,7 @@ Table: Robuste Standardfehler
 |(Intercept) |    3.738|      0.100|  37.542|    0.000|
 |Alter       |   -0.002|      0.003|  -0.881|    0.379|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 
@@ -840,8 +840,8 @@ Table: Robuste ANOVA-Ergebnisse
 |Residuals   | 373|       NA|     NA|    NA|
 
 > ## Kombiniertes Modell
-> fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung +  Geschlecht")
-## Statistiken für Einstellung_KI  ~  GenKI_Erfahrung +  Geschlecht 
+> fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung + Geschlecht")
+## Statistiken für Einstellung_KI  ~  GenKI_Erfahrung + Geschlecht 
 
 
 Table: Prädiktoren
@@ -898,7 +898,7 @@ Table: Robuste Standardfehler
 |Geschlechtmännlich       |    0.200|      0.061|   3.275|    0.001|
 |Geschlechtdivers         |   -0.681|      0.827|  -0.824|    0.411|
 
-### Robuste ANOVA-Ergebnisse:
+### Ergebnisse der robusten ANOVA:
 
 Table: Robuste ANOVA-Ergebnisse
 

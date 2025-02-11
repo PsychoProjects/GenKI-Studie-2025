@@ -51,7 +51,7 @@ fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
     )
     print(kable(robust_se_df, digits = 3, caption = "Robuste Standardfehler"))
     
-    cat("\n### Robuste ANOVA-Ergebnisse:")
+    cat("\n### Ergebnisse der robusten ANOVA:")
     robust_anova <- Anova(model, type = "III", white.adjust = TRUE)
  
     ### ANOVA-Ergebnisse in Dataframe umwandeln
@@ -107,6 +107,6 @@ fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufsstatus")
 fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Alter")
 
 ## Kombiniertes Modell
-fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung +  Geschlecht")
+fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung + Geschlecht")
 
 
