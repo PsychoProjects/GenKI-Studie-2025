@@ -8,35 +8,39 @@
 > fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
 +   cat("## Statistiken für", resp_var, " ~ ", input_var, "\n")
 +   
-+   if (!is.null(daten[[input_var]])) {
-+     stats <- daten %>% group_by(!!sym(input_var)) %>%
++   ## Prädiktoren aufteilen (unterstützt sowohl "+" als auch "*")
++   input_vars <- unlist(strsplit(input_var, " \\+|\\* "))  # Trennung durch "+" oder "*"
++   input_vars <- unique(trimws(input_vars))  # Entfernt doppelte & überflüssige Leerzeichen
++   
++   print(kable(input_vars, caption = "Prädiktoren", col.names = c("Prädiktor")))
++   
++   ## Gruppierte Statistik berechnen
++   if (all(input_vars %in% colnames(daten))) {
++     stats <- daten %>% 
++       group_by(across(all_of(input_vars), .names = "{col}")) %>% 
 +       summarise(
 +         N = n(),
 +         Perc = n() / nrow(daten) * 100,
-+         M = mean(!!sym(resp_var), na.rm = TRUE)
++         M = mean(!!sym(resp_var), na.rm = TRUE),
++         .groups = "drop"
 +       )
 +     print(kable(stats, caption = "Häufigkeiten", digits = 2), "\n")
-+   }
++   }  
 +   
 +   ## Analyseformel zusammensetzen
-+   formula <- as.formula(paste(resp_var, input_var, sep = " ~ "))  
-+ 
-+   ## Lineares Modell erstellen
-+   model <- lm(formula, data = daten)  # Regressionmodell
-+   
-+   cat("\n### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test\n")
-+   bp_test <- bptest(model)
-+   print(bp_test)
-+ 
-+   ## Falls Heteroskedastizität vorliegt, robuste Standardfehler und robuste ANOVA verwenden
-+   if (bp_test$p.value < 0.05) {
-+     cat("\n### Robuste Standardfehler:")
-+     robust_se <- coeftest(model, vcov = vcovHC( .... [TRUNCATED] 
++   formula <- as.formula(paste(resp_var, input_var, sep = "  ..." ... [TRUNCATED] 
 
 > # Akzeptanz-Analysen
 > ## Analyse der Akzeptanz in Abhängigkeit von verschiedenen Variablen
 > fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung")
 ## Statistiken für Akzeptanz  ~  GenKI_Erfahrung 
+
+
+Table: Prädiktoren
+
+|Prädiktor       |
+|:---------------|
+|GenKI_Erfahrung |
 
 
 Table: Häufigkeiten
@@ -49,6 +53,14 @@ Table: Häufigkeiten
 |hoch            |  69| 18.40| 3.29|
 |sehr hoch       |  17|  4.53| 3.29|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.95982, p-value = 1.311e-08
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -57,39 +69,37 @@ data:  model
 BP = 6.2066, df = 4, p-value = 0.1842
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                         | Estimate| Std..Error| t.value| Pr...t..|
+|:------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)              |    3.116|      0.155|  20.082|    0.000|
+|GenKI_Erfahrunggering    |    0.091|      0.188|   0.486|    0.627|
+|GenKI_Erfahrungmittel    |    0.121|      0.180|   0.671|    0.502|
+|GenKI_Erfahrunghoch      |    0.179|      0.198|   0.904|    0.366|
+|GenKI_Erfahrungsehr hoch |    0.178|      0.383|   0.467|    0.641|
 
-|                         | coef(model)|
-|:------------------------|-----------:|
-|(Intercept)              |        3.12|
-|GenKI_Erfahrunggering    |        0.09|
-|GenKI_Erfahrungmittel    |        0.12|
-|GenKI_Erfahrunghoch      |        0.18|
-|GenKI_Erfahrungsehr hoch |        0.18|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter       | Sum_Squares|  df| Mean_Square|     F|     p|
-|:---------------|-----------:|---:|-----------:|-----:|-----:|
-|GenKI_Erfahrung |       1.052|   4|       0.263| 0.225| 0.924|
-|Residuals       |     432.237| 370|       1.168|    NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter       |  Eta2|   CI| CI_low| CI_high|
-|:---------------|-----:|----:|------:|-------:|
-|GenKI_Erfahrung | 0.002| 0.95|      0|       1|
+|Var             |  Df|       F| Pr(>F)|  Eta2|
+|:---------------|---:|-------:|------:|-----:|
+|(Intercept)     |   1| 403.303|  0.000|    NA|
+|GenKI_Erfahrung |   4|   0.225|  0.924| 0.002|
+|Residuals       | 370|      NA|     NA|    NA|
 
 > fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Geschlecht")
 ## Statistiken für Akzeptanz  ~  Geschlecht 
+
+
+Table: Prädiktoren
+
+|Prädiktor  |
+|:----------|
+|Geschlecht |
 
 
 Table: Häufigkeiten
@@ -100,6 +110,14 @@ Table: Häufigkeiten
 |männlich   | 198| 52.80| 3.21|
 |divers     |   2|  0.53| 3.67|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.95639, p-value = 4.227e-09
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -108,90 +126,36 @@ data:  model
 BP = 3.7033, df = 2, p-value = 0.157
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                   | Estimate| Std..Error| t.value| Pr...t..|
+|:------------------|--------:|----------:|-------:|--------:|
+|(Intercept)        |    3.246|      0.077|  42.095|    0.000|
+|Geschlechtmännlich |   -0.040|      0.112|  -0.362|    0.718|
+|Geschlechtdivers   |    0.421|      0.946|   0.445|    0.657|
 
-|                   | coef(model)|
-|:------------------|-----------:|
-|(Intercept)        |        3.25|
-|Geschlechtmännlich |       -0.04|
-|Geschlechtdivers   |        0.42|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
+|Var         |  Df|        F| Pr(>F)|  Eta2|
+|:-----------|---:|--------:|------:|-----:|
+|(Intercept) |   1| 1772.030|   0.00|    NA|
+|Geschlecht  |   2|    0.174|   0.84| 0.001|
+|Residuals   | 372|       NA|     NA|    NA|
 
-|Parameter  | Sum_Squares|  df| Mean_Square|     F|     p|
-|:----------|-----------:|---:|-----------:|-----:|-----:|
-|Geschlecht |       0.540|   2|       0.270| 0.232| 0.793|
-|Residuals  |     432.749| 372|       1.163|    NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter  |  Eta2|   CI| CI_low| CI_high|
-|:----------|-----:|----:|------:|-------:|
-|Geschlecht | 0.001| 0.95|      0|       1|
-
-> fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Bildungsabschluss")
-## Statistiken für Akzeptanz  ~  Bildungsabschluss 
-
-
-Table: Häufigkeiten
-
-|Bildungsabschluss                   |   N|  Perc|    M|
-|:-----------------------------------|---:|-----:|----:|
-|Volks- oder Hauptschulabschluss     |   1|  0.27| 4.33|
-|Mittlere Reife (Realschulabschluss) |  27|  7.20| 3.32|
-|Abitur oder Fachabitur              | 144| 38.40| 3.22|
-|Hochschulabschluss                  | 196| 52.27| 3.23|
-|Promotion oder Habilitation         |   7|  1.87| 2.62|
-
-### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
-
-	studentized Breusch-Pagan test
-
-data:  model
-BP = 3.8439, df = 4, p-value = 0.4275
-
-
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
-
-
-Table: Modell-Koeffizienten
-
-|                                                     | coef(model)|
-|:----------------------------------------------------|-----------:|
-|(Intercept)                                          |        4.33|
-|BildungsabschlussMittlere Reife (Realschulabschluss) |       -1.01|
-|BildungsabschlussAbitur oder Fachabitur              |       -1.11|
-|BildungsabschlussHochschulabschluss                  |       -1.10|
-|BildungsabschlussPromotion oder Habilitation         |       -1.71|
-
-### Zusammenfassung des Modells
-
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter         | Sum_Squares|  df| Mean_Square|     F|     p|
-|:-----------------|-----------:|---:|-----------:|-----:|-----:|
-|Bildungsabschluss |       4.069|   4|       1.017| 0.877| 0.478|
-|Residuals         |     429.220| 370|       1.160|    NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter         |  Eta2|   CI| CI_low| CI_high|
-|:-----------------|-----:|----:|------:|-------:|
-|Bildungsabschluss | 0.009| 0.95|      0|       1|
-
+> #fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Bildungsabschluss")
 > fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Berufserfahrung")
 ## Statistiken für Akzeptanz  ~  Berufserfahrung 
+
+
+Table: Prädiktoren
+
+|Prädiktor       |
+|:---------------|
+|Berufserfahrung |
 
 
 Table: Häufigkeiten
@@ -204,6 +168,14 @@ Table: Häufigkeiten
 |5-10 Jahre         |  43| 11.47| 3.32|
 |mehr als 10 Jahre  | 244| 65.07| 3.21|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.95836, p-value = 8.04e-09
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -212,39 +184,37 @@ data:  model
 BP = 3.2715, df = 4, p-value = 0.5135
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                                  | Estimate| Std..Error| t.value| Pr...t..|
+|:---------------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)                       |    3.048|      0.380|   8.014|    0.000|
+|Berufserfahrungweniger als 1 Jahr |    0.175|      0.507|   0.344|    0.731|
+|Berufserfahrung1-5 Jahre          |    0.206|      0.399|   0.516|    0.606|
+|Berufserfahrung5-10 Jahre         |    0.270|      0.414|   0.653|    0.514|
+|Berufserfahrungmehr als 10 Jahre  |    0.160|      0.387|   0.414|    0.679|
 
-|                                  | coef(model)|
-|:---------------------------------|-----------:|
-|(Intercept)                       |        3.05|
-|Berufserfahrungweniger als 1 Jahr |        0.17|
-|Berufserfahrung1-5 Jahre          |        0.21|
-|Berufserfahrung5-10 Jahre         |        0.27|
-|Berufserfahrungmehr als 10 Jahre  |        0.16|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter       | Sum_Squares|  df| Mean_Square|     F|     p|
-|:---------------|-----------:|---:|-----------:|-----:|-----:|
-|Berufserfahrung |       0.723|   4|       0.181| 0.155| 0.961|
-|Residuals       |     432.565| 370|       1.169|    NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter       |  Eta2|   CI| CI_low| CI_high|
-|:---------------|-----:|----:|------:|-------:|
-|Berufserfahrung | 0.002| 0.95|      0|       1|
+|Var             |  Df|      F| Pr(>F)|  Eta2|
+|:---------------|---:|------:|------:|-----:|
+|(Intercept)     |   1| 64.223|  0.000|    NA|
+|Berufserfahrung |   4|  0.163|  0.957| 0.002|
+|Residuals       | 370|     NA|     NA|    NA|
 
 > fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Berufsstatus")
 ## Statistiken für Akzeptanz  ~  Berufsstatus 
+
+
+Table: Prädiktoren
+
+|Prädiktor    |
+|:------------|
+|Berufsstatus |
 
 
 Table: Häufigkeiten
@@ -256,6 +226,14 @@ Table: Häufigkeiten
 |im Studium         |  63| 16.8| 3.01|
 |in der Ausbildung  |   9|  2.4| 2.56|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.95868, p-value = 8.945e-09
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -264,38 +242,36 @@ data:  model
 BP = 4.3073, df = 3, p-value = 0.2301
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                              | Estimate| Std..Error| t.value| Pr...t..|
+|:-----------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)                   |    3.472|      0.194|  17.913|    0.000|
+|Berufsstatuserwerbstätig      |   -0.188|      0.204|  -0.923|    0.357|
+|Berufsstatusim Studium        |   -0.462|      0.238|  -1.941|    0.053|
+|Berufsstatusin der Ausbildung |   -0.917|      0.460|  -1.995|    0.047|
 
-|                              | coef(model)|
-|:-----------------------------|-----------:|
-|(Intercept)                   |        3.47|
-|Berufsstatuserwerbstätig      |       -0.19|
-|Berufsstatusim Studium        |       -0.46|
-|Berufsstatusin der Ausbildung |       -0.92|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter    | Sum_Squares|  df| Mean_Square|     F|     p|
-|:------------|-----------:|---:|-----------:|-----:|-----:|
-|Berufsstatus |       8.678|   3|       2.893| 2.527| 0.057|
-|Residuals    |     424.611| 371|       1.145|    NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter    | Eta2|   CI| CI_low| CI_high|
-|:------------|----:|----:|------:|-------:|
-|Berufsstatus | 0.02| 0.95|      0|       1|
+|Var          |  Df|       F| Pr(>F)| Eta2|
+|:------------|---:|-------:|------:|----:|
+|(Intercept)  |   1| 320.880|  0.000|   NA|
+|Berufsstatus |   3|   2.461|  0.062| 0.02|
+|Residuals    | 371|      NA|     NA|   NA|
 
 > fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Alter")
 ## Statistiken für Akzeptanz  ~  Alter 
+
+
+Table: Prädiktoren
+
+|Prädiktor |
+|:---------|
+|Alter     |
 
 
 Table: Häufigkeiten
@@ -355,6 +331,14 @@ Table: Häufigkeiten
 |    68|  1| 0.27| 4.00|
 |    78|  1| 0.27| 3.00|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.95704, p-value = 5.221e-09
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -363,135 +347,173 @@ data:  model
 BP = 0.32741, df = 1, p-value = 0.5672
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|            | Estimate| Std..Error| t.value| Pr...t..|
+|:-----------|--------:|----------:|-------:|--------:|
+|(Intercept) |    3.291|      0.165|  19.945|    0.000|
+|Alter       |   -0.002|      0.004|  -0.407|    0.684|
 
-|            | coef(model)|
-|:-----------|-----------:|
-|(Intercept) |        3.29|
-|Alter       |        0.00|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter | Sum_Squares|  df| Mean_Square|     F|   p|
-|:---------|-----------:|---:|-----------:|-----:|---:|
-|Alter     |       0.173|   1|       0.173| 0.149| 0.7|
-|Residuals |     433.116| 373|       1.161|    NA|  NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter | Eta2|   CI| CI_low| CI_high|
-|:---------|----:|----:|------:|-------:|
-|Alter     |    0| 0.95|      0|       1|
+|Var         |  Df|       F| Pr(>F)| Eta2|
+|:-----------|---:|-------:|------:|----:|
+|(Intercept) |   1| 397.789|  0.000|   NA|
+|Alter       |   1|   0.166|  0.684|    0|
+|Residuals   | 373|      NA|     NA|   NA|
 
 > ## Kombiniertes Modell
-> fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung * Anwendungsfeld")
-## Statistiken für Akzeptanz  ~  GenKI_Erfahrung * Anwendungsfeld 
+> fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung + Anwendungsfeld")
+## Statistiken für Akzeptanz  ~  GenKI_Erfahrung + Anwendungsfeld 
+
+
+Table: Prädiktoren
+
+|Prädiktor       |
+|:---------------|
+|GenKI_Erfahrung |
+|Anwendungsfeld  |
+
+
+Table: Häufigkeiten
+
+|GenKI_Erfahrung |Anwendungsfeld |  N|  Perc|    M|
+|:---------------|:--------------|--:|-----:|----:|
+|sehr gering     |Objektiv       | 28|  7.47| 3.69|
+|sehr gering     |Subjektiv      | 21|  5.60| 2.35|
+|gering          |Objektiv       | 48| 12.80| 3.67|
+|gering          |Subjektiv      | 47| 12.53| 2.73|
+|mittel          |Objektiv       | 76| 20.27| 3.94|
+|mittel          |Subjektiv      | 69| 18.40| 2.46|
+|hoch            |Objektiv       | 32|  8.53| 3.85|
+|hoch            |Subjektiv      | 37|  9.87| 2.81|
+|sehr hoch       |Objektiv       |  7|  1.87| 3.90|
+|sehr hoch       |Subjektiv      | 10|  2.67| 2.87|
+
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.98842, p-value = 0.004487
+
 
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
 
 data:  model
-BP = 32.665, df = 9, p-value = 0.0001527
+BP = 25.588, df = 5, p-value = 0.0001073
 
 
-### Robuste Standardfehler:
-t test of coefficients:
+### Lineares Modell mit robusten Standardfehlern:
 
-                                                  Estimate Std. Error t value  Pr(>|t|)    
-(Intercept)                                       3.690476   0.144954 25.4597 < 2.2e-16 ***
-GenKI_Erfahrunggering                            -0.016865   0.195867 -0.0861    0.9314    
-GenKI_Erfahrungmittel                             0.248120   0.163730  1.5154    0.1305    
-GenKI_Erfahrunghoch                               0.163690   0.180442  0.9072    0.3649    
-GenKI_Erfahrungsehr hoch                          0.214286   0.550635  0.3892    0.6974    
-AnwendungsfeldSubjektiv                          -1.341270   0.259591 -5.1669 3.926e-07 ***
-GenKI_Erfahrunggering:AnwendungsfeldSubjektiv     0.398155   0.322204  1.2357    0.2174    
-GenKI_Erfahrungmittel:AnwendungsfeldSubjektiv    -0.133559   0.295179 -0.4525    0.6512    
-GenKI_Erfahrunghoch:AnwendungsfeldSubjektiv       0.297914   0.331499  0.8987    0.3694    
-GenKI_Erfahrungsehr hoch:AnwendungsfeldSubjektiv  0.303175   0.745576  0.4066    0.6845    
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Table: Robuste Standardfehler
 
-### Robuste ANOVA-Ergebnisse:Analysis of Deviance Table (Type III tests)
+|                         | Estimate| Std..Error| t.value| Pr...t..|
+|:------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)              |    3.640|      0.125|  29.089|    0.000|
+|GenKI_Erfahrunggering    |    0.172|      0.155|   1.109|    0.268|
+|GenKI_Erfahrungmittel    |    0.179|      0.140|   1.277|    0.202|
+|GenKI_Erfahrunghoch      |    0.311|      0.161|   1.928|    0.055|
+|GenKI_Erfahrungsehr hoch |    0.374|      0.348|   1.073|    0.284|
+|AnwendungsfeldSubjektiv  |   -1.223|      0.093| -13.090|    0.000|
 
-Response: Akzeptanz
-                                Df        F    Pr(>F)    
-(Intercept)                      1 648.1949 < 2.2e-16 ***
-GenKI_Erfahrung                  4   1.0901    0.3611    
-Anwendungsfeld                   1  26.6965 3.926e-07 ***
-GenKI_Erfahrung:Anwendungsfeld   4   1.5894    0.1765    
-Residuals                      365                       
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+### Robuste ANOVA-Ergebnisse:
 
-> fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung * Geschlecht")
-## Statistiken für Akzeptanz  ~  GenKI_Erfahrung * Geschlecht 
+Table: Robuste ANOVA-Ergebnisse
+
+|Var             |  Df|       F| Pr(>F)|  Eta2|
+|:---------------|---:|-------:|------:|-----:|
+|(Intercept)     |   1| 846.187|  0.000|    NA|
+|GenKI_Erfahrung |   4|   1.020|  0.397| 0.002|
+|Anwendungsfeld  |   1| 171.342|  0.000| 0.322|
+|Residuals       | 369|      NA|     NA|    NA|
+
+> fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung + Geschlecht")
+## Statistiken für Akzeptanz  ~  GenKI_Erfahrung + Geschlecht 
+
+
+Table: Prädiktoren
+
+|Prädiktor       |
+|:---------------|
+|GenKI_Erfahrung |
+|Geschlecht      |
+
+
+Table: Häufigkeiten
+
+|GenKI_Erfahrung |Geschlecht |  N|  Perc|    M|
+|:---------------|:----------|--:|-----:|----:|
+|sehr gering     |weiblich   | 27|  7.20| 3.23|
+|sehr gering     |männlich   | 22|  5.87| 2.97|
+|gering          |weiblich   | 44| 11.73| 3.20|
+|gering          |männlich   | 51| 13.60| 3.22|
+|mittel          |weiblich   | 74| 19.73| 3.18|
+|mittel          |männlich   | 69| 18.40| 3.28|
+|mittel          |divers     |  2|  0.53| 3.67|
+|hoch            |weiblich   | 26|  6.93| 3.41|
+|hoch            |männlich   | 43| 11.47| 3.22|
+|sehr hoch       |weiblich   |  4|  1.07| 3.92|
+|sehr hoch       |männlich   | 13|  3.47| 3.10|
+
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.96182, p-value = 2.606e-08
+
 
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
 
 data:  model
-BP = 12.384, df = 10, p-value = 0.2602
+BP = 9.6532, df = 6, p-value = 0.14
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                         | Estimate| Std..Error| t.value| Pr...t..|
+|:------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)              |    3.140|      0.157|  19.983|    0.000|
+|GenKI_Erfahrunggering    |    0.096|      0.190|   0.507|    0.613|
+|GenKI_Erfahrungmittel    |    0.117|      0.181|   0.644|    0.520|
+|GenKI_Erfahrunghoch      |    0.188|      0.201|   0.939|    0.348|
+|GenKI_Erfahrungsehr hoch |    0.195|      0.384|   0.508|    0.612|
+|Geschlechtmännlich       |   -0.054|      0.114|  -0.469|    0.640|
+|Geschlechtdivers         |    0.410|      0.949|   0.432|    0.666|
 
-|                                            | coef(model)|
-|:-------------------------------------------|-----------:|
-|(Intercept)                                 |        3.23|
-|GenKI_Erfahrunggering                       |       -0.04|
-|GenKI_Erfahrungmittel                       |       -0.05|
-|GenKI_Erfahrunghoch                         |        0.18|
-|GenKI_Erfahrungsehr hoch                    |        0.68|
-|Geschlechtmännlich                          |       -0.26|
-|Geschlechtdivers                            |        0.48|
-|GenKI_Erfahrunggering:Geschlechtmännlich    |        0.28|
-|GenKI_Erfahrungmittel:Geschlechtmännlich    |        0.36|
-|GenKI_Erfahrunghoch:Geschlechtmännlich      |        0.08|
-|GenKI_Erfahrungsehr hoch:Geschlechtmännlich |       -0.55|
-|GenKI_Erfahrunggering:Geschlechtdivers      |          NA|
-|GenKI_Erfahrungmittel:Geschlechtdivers      |          NA|
-|GenKI_Erfahrunghoch:Geschlechtdivers        |          NA|
-|GenKI_Erfahrungsehr hoch:Geschlechtdivers   |          NA|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter                  | Sum_Squares|  df| Mean_Square|     F|     p|
-|:--------------------------|-----------:|---:|-----------:|-----:|-----:|
-|GenKI_Erfahrung            |       1.052|   4|       0.263| 0.224| 0.925|
-|Geschlecht                 |       0.634|   2|       0.317| 0.270| 0.764|
-|GenKI_Erfahrung:Geschlecht |       3.509|   4|       0.877| 0.746| 0.561|
-|Residuals                  |     428.093| 364|       1.176|    NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter                  | Eta2_partial|   CI| CI_low| CI_high|
-|:--------------------------|------------:|----:|------:|-------:|
-|GenKI_Erfahrung            |        0.002| 0.95|      0|       1|
-|Geschlecht                 |        0.001| 0.95|      0|       1|
-|GenKI_Erfahrung:Geschlecht |        0.008| 0.95|      0|       1|
+|Var             |  Df|       F| Pr(>F)|  Eta2|
+|:---------------|---:|-------:|------:|-----:|
+|(Intercept)     |   1| 399.326|  0.000|    NA|
+|GenKI_Erfahrung |   4|   0.241|  0.915| 0.002|
+|Geschlecht      |   2|   0.214|  0.807| 0.001|
+|Residuals       | 368|      NA|     NA|    NA|
 
 > # Einstellungs-Analysen
 > ## Analyse der Einstellung gegenüber KI in Abhängigkeit von verschiedenen Variablen
 > fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung")
 ## Statistiken für Einstellung_KI  ~  GenKI_Erfahrung 
+
+
+Table: Prädiktoren
+
+|Prädiktor       |
+|:---------------|
+|GenKI_Erfahrung |
 
 
 Table: Häufigkeiten
@@ -504,6 +526,14 @@ Table: Häufigkeiten
 |hoch            |  69| 18.40| 3.86|
 |sehr hoch       |  17|  4.53| 4.28|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.97476, p-value = 4.067e-06
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -512,39 +542,37 @@ data:  model
 BP = 9.032, df = 4, p-value = 0.0603
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                         | Estimate| Std..Error| t.value| Pr...t..|
+|:------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)              |    3.247|      0.107|  30.368|    0.000|
+|GenKI_Erfahrunggering    |    0.296|      0.124|   2.383|    0.018|
+|GenKI_Erfahrungmittel    |    0.437|      0.116|   3.775|    0.000|
+|GenKI_Erfahrunghoch      |    0.618|      0.126|   4.903|    0.000|
+|GenKI_Erfahrungsehr hoch |    1.038|      0.169|   6.156|    0.000|
 
-|                         | coef(model)|
-|:------------------------|-----------:|
-|(Intercept)              |        3.25|
-|GenKI_Erfahrunggering    |        0.30|
-|GenKI_Erfahrungmittel    |        0.44|
-|GenKI_Erfahrunghoch      |        0.62|
-|GenKI_Erfahrungsehr hoch |        1.04|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter       | Sum_Squares|  df| Mean_Square|      F|  p|
-|:---------------|-----------:|---:|-----------:|------:|--:|
-|GenKI_Erfahrung |      19.262|   4|       4.816| 14.044|  0|
-|Residuals       |     126.869| 370|       0.343|     NA| NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter       |  Eta2|   CI| CI_low| CI_high|
-|:---------------|-----:|----:|------:|-------:|
-|GenKI_Erfahrung | 0.132| 0.95|  0.077|       1|
+|Var             |  Df|       F| Pr(>F)|  Eta2|
+|:---------------|---:|-------:|------:|-----:|
+|(Intercept)     |   1| 922.238|      0|    NA|
+|GenKI_Erfahrung |   4|  12.591|      0| 0.132|
+|Residuals       | 370|      NA|     NA|    NA|
 
 > fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Geschlecht")
 ## Statistiken für Einstellung_KI  ~  Geschlecht 
+
+
+Table: Prädiktoren
+
+|Prädiktor  |
+|:----------|
+|Geschlecht |
 
 
 Table: Häufigkeiten
@@ -555,6 +583,14 @@ Table: Häufigkeiten
 |männlich   | 198| 52.80| 3.77|
 |divers     |   2|  0.53| 2.92|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.97, p-value = 5.536e-07
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -563,90 +599,36 @@ data:  model
 BP = 0.30703, df = 2, p-value = 0.8577
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                   | Estimate| Std..Error| t.value| Pr...t..|
+|:------------------|--------:|----------:|-------:|--------:|
+|(Intercept)        |    3.522|      0.048|  74.133|    0.000|
+|Geschlechtmännlich |    0.251|      0.064|   3.934|    0.000|
+|Geschlechtdivers   |   -0.605|      0.826|  -0.732|    0.464|
 
-|                   | coef(model)|
-|:------------------|-----------:|
-|(Intercept)        |        3.52|
-|Geschlechtmännlich |        0.25|
-|Geschlechtdivers   |       -0.61|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
+|Var         |  Df|        F| Pr(>F)|  Eta2|
+|:-----------|---:|--------:|------:|-----:|
+|(Intercept) |   1| 5495.727|      0|    NA|
+|Geschlecht  |   2|    8.144|      0| 0.047|
+|Residuals   | 372|       NA|     NA|    NA|
 
-|Parameter  | Sum_Squares|  df| Mean_Square|     F|  p|
-|:----------|-----------:|---:|-----------:|-----:|--:|
-|Geschlecht |       6.929|   2|       3.464| 9.258|  0|
-|Residuals  |     139.203| 372|       0.374|    NA| NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter  |  Eta2|   CI| CI_low| CI_high|
-|:----------|-----:|----:|------:|-------:|
-|Geschlecht | 0.047| 0.95|  0.016|       1|
-
-> fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Bildungsabschluss")
-## Statistiken für Einstellung_KI  ~  Bildungsabschluss 
-
-
-Table: Häufigkeiten
-
-|Bildungsabschluss                   |   N|  Perc|    M|
-|:-----------------------------------|---:|-----:|----:|
-|Volks- oder Hauptschulabschluss     |   1|  0.27| 3.75|
-|Mittlere Reife (Realschulabschluss) |  27|  7.20| 3.79|
-|Abitur oder Fachabitur              | 144| 38.40| 3.61|
-|Hochschulabschluss                  | 196| 52.27| 3.67|
-|Promotion oder Habilitation         |   7|  1.87| 3.45|
-
-### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
-
-	studentized Breusch-Pagan test
-
-data:  model
-BP = 2.4998, df = 4, p-value = 0.6447
-
-
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
-
-
-Table: Modell-Koeffizienten
-
-|                                                     | coef(model)|
-|:----------------------------------------------------|-----------:|
-|(Intercept)                                          |        3.75|
-|BildungsabschlussMittlere Reife (Realschulabschluss) |        0.04|
-|BildungsabschlussAbitur oder Fachabitur              |       -0.14|
-|BildungsabschlussHochschulabschluss                  |       -0.08|
-|BildungsabschlussPromotion oder Habilitation         |       -0.30|
-
-### Zusammenfassung des Modells
-
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter         | Sum_Squares|  df| Mean_Square|     F|    p|
-|:-----------------|-----------:|---:|-----------:|-----:|----:|
-|Bildungsabschluss |       1.195|   4|       0.299| 0.763| 0.55|
-|Residuals         |     144.936| 370|       0.392|    NA|   NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter         |  Eta2|   CI| CI_low| CI_high|
-|:-----------------|-----:|----:|------:|-------:|
-|Bildungsabschluss | 0.008| 0.95|      0|       1|
-
+> #fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Bildungsabschluss")
 > fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufserfahrung")
 ## Statistiken für Einstellung_KI  ~  Berufserfahrung 
+
+
+Table: Prädiktoren
+
+|Prädiktor       |
+|:---------------|
+|Berufserfahrung |
 
 
 Table: Häufigkeiten
@@ -659,6 +641,14 @@ Table: Häufigkeiten
 |5-10 Jahre         |  43| 11.47| 3.72|
 |mehr als 10 Jahre  | 244| 65.07| 3.64|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.97268, p-value = 1.665e-06
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -667,39 +657,37 @@ data:  model
 BP = 2.3143, df = 4, p-value = 0.6782
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                                  | Estimate| Std..Error| t.value| Pr...t..|
+|:---------------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)                       |    3.738|      0.137|  27.347|    0.000|
+|Berufserfahrungweniger als 1 Jahr |   -0.335|      0.334|  -1.003|    0.316|
+|Berufserfahrung1-5 Jahre          |   -0.086|      0.153|  -0.563|    0.574|
+|Berufserfahrung5-10 Jahre         |   -0.021|      0.166|  -0.126|    0.899|
+|Berufserfahrungmehr als 10 Jahre  |   -0.095|      0.143|  -0.667|    0.505|
 
-|                                  | coef(model)|
-|:---------------------------------|-----------:|
-|(Intercept)                       |        3.74|
-|Berufserfahrungweniger als 1 Jahr |       -0.34|
-|Berufserfahrung1-5 Jahre          |       -0.09|
-|Berufserfahrung5-10 Jahre         |       -0.02|
-|Berufserfahrungmehr als 10 Jahre  |       -0.10|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter       | Sum_Squares|  df| Mean_Square|     F|    p|
-|:---------------|-----------:|---:|-----------:|-----:|----:|
-|Berufserfahrung |       0.627|   4|       0.157| 0.399| 0.81|
-|Residuals       |     145.504| 370|       0.393|    NA|   NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter       |  Eta2|   CI| CI_low| CI_high|
-|:---------------|-----:|----:|------:|-------:|
-|Berufserfahrung | 0.004| 0.95|      0|       1|
+|Var             |  Df|       F| Pr(>F)|  Eta2|
+|:---------------|---:|-------:|------:|-----:|
+|(Intercept)     |   1| 747.884|  0.000|    NA|
+|Berufserfahrung |   4|   0.392|  0.814| 0.004|
+|Residuals       | 370|      NA|     NA|    NA|
 
 > fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufsstatus")
 ## Statistiken für Einstellung_KI  ~  Berufsstatus 
+
+
+Table: Prädiktoren
+
+|Prädiktor    |
+|:------------|
+|Berufsstatus |
 
 
 Table: Häufigkeiten
@@ -711,6 +699,14 @@ Table: Häufigkeiten
 |im Studium         |  63| 16.8| 3.56|
 |in der Ausbildung  |   9|  2.4| 3.85|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.97398, p-value = 2.89e-06
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -719,38 +715,36 @@ data:  model
 BP = 2.5551, df = 3, p-value = 0.4654
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                              | Estimate| Std..Error| t.value| Pr...t..|
+|:-----------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)                   |    3.410|      0.172|  19.835|    0.000|
+|Berufsstatuserwerbstätig      |    0.265|      0.176|   1.509|    0.132|
+|Berufsstatusim Studium        |    0.148|      0.192|   0.775|    0.439|
+|Berufsstatusin der Ausbildung |    0.442|      0.202|   2.183|    0.030|
 
-|                              | coef(model)|
-|:-----------------------------|-----------:|
-|(Intercept)                   |        3.41|
-|Berufsstatuserwerbstätig      |        0.27|
-|Berufsstatusim Studium        |        0.15|
-|Berufsstatusin der Ausbildung |        0.44|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter    | Sum_Squares|  df| Mean_Square|     F|    p|
-|:------------|-----------:|---:|-----------:|-----:|----:|
-|Berufsstatus |       1.771|   3|       0.590| 1.517| 0.21|
-|Residuals    |     144.360| 371|       0.389|    NA|   NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter    |  Eta2|   CI| CI_low| CI_high|
-|:------------|-----:|----:|------:|-------:|
-|Berufsstatus | 0.012| 0.95|      0|       1|
+|Var          |  Df|       F| Pr(>F)|  Eta2|
+|:------------|---:|-------:|------:|-----:|
+|(Intercept)  |   1| 393.413|  0.000|    NA|
+|Berufsstatus |   3|   2.307|  0.076| 0.012|
+|Residuals    | 371|      NA|     NA|    NA|
 
 > fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Alter")
 ## Statistiken für Einstellung_KI  ~  Alter 
+
+
+Table: Prädiktoren
+
+|Prädiktor |
+|:---------|
+|Alter     |
 
 
 Table: Häufigkeiten
@@ -810,6 +804,14 @@ Table: Häufigkeiten
 |    68|  1| 0.27| 2.67|
 |    78|  1| 0.27| 2.58|
 
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.9744, p-value = 3.477e-06
+
+
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
@@ -818,113 +820,91 @@ data:  model
 BP = 2.2329, df = 1, p-value = 0.1351
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|            | Estimate| Std..Error| t.value| Pr...t..|
+|:-----------|--------:|----------:|-------:|--------:|
+|(Intercept) |    3.738|      0.100|  37.542|    0.000|
+|Alter       |   -0.002|      0.003|  -0.881|    0.379|
 
-|            | coef(model)|
-|:-----------|-----------:|
-|(Intercept) |        3.74|
-|Alter       |        0.00|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter | Sum_Squares|  df| Mean_Square|     F|     p|
-|:---------|-----------:|---:|-----------:|-----:|-----:|
-|Alter     |       0.316|   1|       0.316| 0.809| 0.369|
-|Residuals |     145.815| 373|       0.391|    NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter |  Eta2|   CI| CI_low| CI_high|
-|:---------|-----:|----:|------:|-------:|
-|Alter     | 0.002| 0.95|      0|       1|
+|Var         |  Df|        F| Pr(>F)|  Eta2|
+|:-----------|---:|--------:|------:|-----:|
+|(Intercept) |   1| 1409.425|  0.000|    NA|
+|Alter       |   1|    0.777|  0.379| 0.002|
+|Residuals   | 373|       NA|     NA|    NA|
 
 > ## Kombiniertes Modell
-> fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung * Geschlecht")
-## Statistiken für Einstellung_KI  ~  GenKI_Erfahrung * Geschlecht 
+> fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung +  Geschlecht")
+## Statistiken für Einstellung_KI  ~  GenKI_Erfahrung +  Geschlecht 
+
+
+Table: Prädiktoren
+
+|Prädiktor       |
+|:---------------|
+|GenKI_Erfahrung |
+|Geschlecht      |
+
+
+Table: Häufigkeiten
+
+|GenKI_Erfahrung |Geschlecht |  N|  Perc|    M|
+|:---------------|:----------|--:|-----:|----:|
+|sehr gering     |weiblich   | 27|  7.20| 3.12|
+|sehr gering     |männlich   | 22|  5.87| 3.40|
+|gering          |weiblich   | 44| 11.73| 3.34|
+|gering          |männlich   | 51| 13.60| 3.71|
+|mittel          |weiblich   | 74| 19.73| 3.65|
+|mittel          |männlich   | 69| 18.40| 3.74|
+|mittel          |divers     |  2|  0.53| 2.92|
+|hoch            |weiblich   | 26|  6.93| 3.72|
+|hoch            |männlich   | 43| 11.47| 3.95|
+|sehr hoch       |weiblich   |  4|  1.07| 4.44|
+|sehr hoch       |männlich   | 13|  3.47| 4.24|
+
+### Test auf Normalverteilung der Residuen
+
+	Shapiro-Wilk normality test
+
+data:  model$residuals
+W = 0.97343, p-value = 2.288e-06
+
 
 ### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test
 
 	studentized Breusch-Pagan test
 
 data:  model
-BP = 11.599, df = 10, p-value = 0.3128
+BP = 8.5818, df = 6, p-value = 0.1985
 
 
-### Varianzhomogenität liegt vor. Klassische ANOVA wird verwendet.
-### Modell-Koeffizienten
+### Lineares Modell mit robusten Standardfehlern:
 
+Table: Robuste Standardfehler
 
-Table: Modell-Koeffizienten
+|                         | Estimate| Std..Error| t.value| Pr...t..|
+|:------------------------|--------:|----------:|-------:|--------:|
+|(Intercept)              |    3.157|      0.108|  29.137|    0.000|
+|GenKI_Erfahrunggering    |    0.278|      0.122|   2.276|    0.023|
+|GenKI_Erfahrungmittel    |    0.441|      0.114|   3.855|    0.000|
+|GenKI_Erfahrunghoch      |    0.583|      0.125|   4.660|    0.000|
+|GenKI_Erfahrungsehr hoch |    0.975|      0.173|   5.648|    0.000|
+|Geschlechtmännlich       |    0.200|      0.061|   3.275|    0.001|
+|Geschlechtdivers         |   -0.681|      0.827|  -0.824|    0.411|
 
-|                                            | coef(model)|
-|:-------------------------------------------|-----------:|
-|(Intercept)                                 |        3.12|
-|GenKI_Erfahrunggering                       |        0.22|
-|GenKI_Erfahrungmittel                       |        0.53|
-|GenKI_Erfahrunghoch                         |        0.60|
-|GenKI_Erfahrungsehr hoch                    |        1.31|
-|Geschlechtmännlich                          |        0.27|
-|Geschlechtdivers                            |       -0.74|
-|GenKI_Erfahrunggering:Geschlechtmännlich    |        0.09|
-|GenKI_Erfahrungmittel:Geschlechtmännlich    |       -0.19|
-|GenKI_Erfahrunghoch:Geschlechtmännlich      |       -0.05|
-|GenKI_Erfahrungsehr hoch:Geschlechtmännlich |       -0.47|
-|GenKI_Erfahrunggering:Geschlechtdivers      |          NA|
-|GenKI_Erfahrungmittel:Geschlechtdivers      |          NA|
-|GenKI_Erfahrunghoch:Geschlechtdivers        |          NA|
-|GenKI_Erfahrungsehr hoch:Geschlechtdivers   |          NA|
+### Robuste ANOVA-Ergebnisse:
 
-### Zusammenfassung des Modells
+Table: Robuste ANOVA-Ergebnisse
 
-Table: Zusammenfassung des ANOVA-Modells
-
-|Parameter                  | Sum_Squares|  df| Mean_Square|      F|     p|
-|:--------------------------|-----------:|---:|-----------:|------:|-----:|
-|GenKI_Erfahrung            |      19.262|   4|       4.816| 14.564| 0.000|
-|Geschlecht                 |       4.827|   2|       2.413|  7.299| 0.001|
-|GenKI_Erfahrung:Geschlecht |       1.687|   4|       0.422|  1.276| 0.279|
-|Residuals                  |     120.356| 364|       0.331|     NA|    NA|
-
-### Effektgrößen
-
-Table: Effektgrößen der ANOVA
-
-|Parameter                  | Eta2_partial|   CI| CI_low| CI_high|
-|:--------------------------|------------:|----:|------:|-------:|
-|GenKI_Erfahrung            |        0.138| 0.95|  0.082|       1|
-|Geschlecht                 |        0.039| 0.95|  0.011|       1|
-|GenKI_Erfahrung:Geschlecht |        0.014| 0.95|  0.000|       1|
-
-> ### Verteilung der Einstellung nach Geschlecht und GenKI-Erfahrung 
-> stats <- daten %>% filter(Geschlecht != "divers") %>% group_by(Geschlecht, GenKI_Erfahrung) %>%
-+     summarise(
-+       N = n(),
-+       Perc = n() / nrow(daten) * 100,
-+       M = mean(Einstellung_KI, na.rm = TRUE)
-+     )
-
-> print(kable(stats, caption = "Häufigkeiten", digits = 2), "\n")
-
-
-Table: Häufigkeiten
-
-|Geschlecht |GenKI_Erfahrung |  N|  Perc|    M|
-|:----------|:---------------|--:|-----:|----:|
-|weiblich   |sehr gering     | 27|  7.20| 3.12|
-|weiblich   |gering          | 44| 11.73| 3.34|
-|weiblich   |mittel          | 74| 19.73| 3.65|
-|weiblich   |hoch            | 26|  6.93| 3.72|
-|weiblich   |sehr hoch       |  4|  1.07| 4.44|
-|männlich   |sehr gering     | 22|  5.87| 3.40|
-|männlich   |gering          | 51| 13.60| 3.71|
-|männlich   |mittel          | 69| 18.40| 3.74|
-|männlich   |hoch            | 43| 11.47| 3.95|
-|männlich   |sehr hoch       | 13|  3.47| 4.24|
+|Var             |  Df|       F| Pr(>F)|  Eta2|
+|:---------------|---:|-------:|------:|-----:|
+|(Intercept)     |   1| 848.981|  0.000|    NA|
+|GenKI_Erfahrung |   4|  11.025|  0.000| 0.132|
+|Geschlecht      |   2|   5.799|  0.003| 0.033|
+|Residuals       | 368|      NA|     NA|    NA|
