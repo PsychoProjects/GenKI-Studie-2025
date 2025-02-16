@@ -17,8 +17,11 @@ fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
       group_by(across(all_of(input_vars), .names = "{col}")) %>% 
       summarise(
         N = n(),
-        Perc = n() / nrow(daten) * 100,
+        Prozent = n() / nrow(daten) * 100,
         M = mean(!!sym(resp_var), na.rm = TRUE),
+        SD = sd(!!sym(resp_var), na.rm = TRUE),
+        KI_von = tryCatch(t.test(!!sym(resp_var))$conf.int[1], error = function(e) NA),
+        KI_bis = tryCatch(t.test(!!sym(resp_var))$conf.int[2], error = function(e) NA),
         .groups = "drop"
       )
     print(kable(stats, caption = "Häufigkeiten", digits = 2), "\n")
