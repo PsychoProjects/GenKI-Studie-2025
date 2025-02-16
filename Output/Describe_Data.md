@@ -5,7 +5,7 @@
 [1] "Daten werden geladen..."
 
 > # Akzeptanz-Analysen
-> ## Deskriptive Statistiken für jede Gruppe
+> ## Deskriptive Statistiken gesamt
 > daten %>%
 +   summarise(
 +     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
@@ -17,10 +17,10 @@
 +     Minimum = min(Akzeptanz, na.rm = TRUE),
 +     Maximum = max(Akzeptanz, na.rm = TRUE),
 +     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Akzeptanz je Gruppe", digits = 2)
++   ) %>% kable(caption = "Statistiken zur Akzeptanz", digits = 2)
 
 
-Table: Statistiken zur Akzeptanz je Gruppe
+Table: Statistiken zur Akzeptanz
 
 | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
 |----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
@@ -185,7 +185,7 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 > print(bar_plot)
 
 > # Einstellungs-Analysen
-> ## Deskriptive Statistiken für jede Gruppe
+> ## Deskriptive Statistiken gesamt
 > daten %>%
 +   summarise(
 +     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
@@ -197,10 +197,10 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 +     Minimum = min(Einstellung_KI, na.rm = TRUE),
 +     Maximum = max(Einstellung_KI, na.rm = TRUE),
 +     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
++   ) %>% kable(caption = "Statistiken zur Einstellung_KI", digits = 2)
 
 
-Table: Statistiken zur Einstellung_KI je Gruppe
+Table: Statistiken zur Einstellung_KI
 
 | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
 |----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
