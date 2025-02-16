@@ -4,11 +4,19 @@
 > source("Read_Data.R")
 [1] "Daten werden geladen..."
 
+> result <- t.test(daten$Akzeptanz)
+
+> mittelwert <- result$estimate
+
+> ci <- result$conf.int
+
 > # Deskriptive Statistiken
 > ## Deskriptive Statistiken für jede Gruppe
 > daten %>% group_by(Gruppe) %>%
 +   summarise(
 +     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
++     KI_von = t.test(Akzeptanz)$conf.int[1],
++     KI_bis = t.test(Akzeptanz)$conf.int[2],
 +     Median = median(Akzeptanz, na.rm = TRUE),
 +     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
 +     Varianz = var(Akzeptanz, na.rm = TRUE),
@@ -20,17 +28,20 @@
 
 Table: Statistiken zur Akzeptanz je Gruppe
 
-|Gruppe                    | Mittelwert| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
-|:-------------------------|----------:|------:|------------------:|-------:|-------:|-------:|------:|
-|Objektiv - Mit Maßnahme   |       3.86|   4.00|               0.79|    0.62|    1.33|       5|    107|
-|Objektiv - Ohne Maßnahme  |       3.77|   4.00|               0.73|    0.53|    1.33|       5|     84|
-|Subjektiv - Mit Maßnahme  |       2.63|   2.67|               1.01|    1.02|    1.00|       5|     78|
-|Subjektiv - Ohne Maßnahme |       2.60|   2.67|               1.01|    1.02|    1.00|       5|    106|
+|Gruppe                    | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:-------------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Objektiv - Mit Maßnahme   |       3.86|   3.71|   4.01|   4.00|               0.79|    0.62|    1.33|       5|    107|
+|Objektiv - Ohne Maßnahme  |       3.77|   3.62|   3.93|   4.00|               0.73|    0.53|    1.33|       5|     84|
+|Subjektiv - Mit Maßnahme  |       2.63|   2.40|   2.86|   2.67|               1.01|    1.02|    1.00|       5|     78|
+|Subjektiv - Ohne Maßnahme |       2.60|   2.40|   2.79|   2.67|               1.01|    1.02|    1.00|       5|    106|
 
 > ## Deskriptive Statistiken für jedes Anwendungsfeld
 > daten %>% group_by(Anwendungsfeld) %>%
 +   summarise(
 +     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
++     KI_von = t.test(Akzeptanz)$conf.int[1],
++     KI_bis = t.test(Akzeptanz)$conf.int[2],
++     Konfidenzintervall = mean_cl_boot(Akzeptanz, conf = 0.95)$conf.int,
 +     Median = median(Akzeptanz, na.rm = TRUE),
 +     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
 +     Varianz = var(Akzeptanz, na.rm = TRUE),
@@ -42,15 +53,17 @@ Table: Statistiken zur Akzeptanz je Gruppe
 
 Table: Statistiken zur Akzeptanz je Anwendungsfeld
 
-|Anwendungsfeld | Mittelwert| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
-|:--------------|----------:|------:|------------------:|-------:|-------:|-------:|------:|
-|Objektiv       |       3.82|   4.00|               0.76|    0.58|    1.33|       5|    191|
-|Subjektiv      |       2.61|   2.67|               1.01|    1.02|    1.00|       5|    184|
+|Anwendungsfeld | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:--------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Objektiv       |       3.82|   3.71|   3.93|   4.00|               0.76|    0.58|    1.33|       5|    191|
+|Subjektiv      |       2.61|   2.46|   2.76|   2.67|               1.01|    1.02|    1.00|       5|    184|
 
 > ## Deskrptive Statistiken für die Maßnahmen
 > daten %>% group_by(Vertrauensmassnahmen) %>%
 +   summarise(
 +     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
++     KI_von = t.test(Akzeptanz)$conf.int[1],
++     KI_bis = t.test(Akzeptanz)$conf.int[2],
 +     Median = median(Akzeptanz, na.rm = TRUE),
 +     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
 +     Varianz = var(Akzeptanz, na.rm = TRUE),
@@ -62,10 +75,10 @@ Table: Statistiken zur Akzeptanz je Anwendungsfeld
 
 Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 
-|Vertrauensmassnahmen | Mittelwert| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
-|:--------------------|----------:|------:|------------------:|-------:|-------:|-------:|------:|
-|Ohne Maßnahme        |       3.12|   3.33|               1.07|    1.14|       1|       5|    190|
-|Mit Maßnahme         |       3.34|   3.33|               1.07|    1.16|       1|       5|    185|
+|Vertrauensmassnahmen | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:--------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Ohne Maßnahme        |       3.12|   2.96|   3.27|   3.33|               1.07|    1.14|       1|       5|    190|
+|Mit Maßnahme         |       3.34|   3.18|   3.49|   3.33|               1.07|    1.16|       1|       5|    185|
 
 > # Grafische Aufbereitung
 > ## Histogramm der Verteilung der Akzeptanz mit Normalverteilungsanpassung
@@ -73,7 +86,7 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 +   geom_histogram(aes(y = ..density..), bins = 20, fill = "lightblue", color = "black") +
 +   stat_function(fun = dnorm, 
 +                 args = list(mean = mean(daten$Akzeptanz), sd = sd(daten$Akzeptanz)), 
-+                 color = "darkblue", size = 1) +
++                 color = "darkblue", linewidth = 1) +
 +   labs(title = "Histogramm der Verteilung der Akzeptanz",
 +        x = "Akzeptanz", y = "Dichte") +
 +   theme_minimal()

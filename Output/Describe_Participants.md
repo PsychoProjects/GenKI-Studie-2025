@@ -14,6 +14,8 @@
 > gruppen_statistik <- gruppen_groessen %>% 
 +   summarise(
 +     Mittelwert = mean(Freq),
++     KI_von = t.test(Freq)$conf.int[1],
++     KI_bis = t.test(Freq)$conf.int[2],
 +     Median = median(Freq),
 +     Standardabweichung = sd(Freq),
 +     Minimum = min(Freq),
@@ -26,9 +28,9 @@
 
 Table: Statistiken zur Gruppengröße
 
-| Mittelwert| Median| Standardabweichung| Minimum| Maximum| Relation|
-|----------:|------:|------------------:|-------:|-------:|--------:|
-|      93.75|     95|              14.93|      78|     107|     1.37|
+| Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Minimum| Maximum| Relation|
+|----------:|------:|------:|------:|------------------:|-------:|-------:|--------:|
+|      93.75|  69.99| 117.51|     95|              14.93|      78|     107|     1.37|
 
 > # Aufteilung nach Geschlecht
 > geschlechter_statisik <- daten %>% group_by(Geschlecht) %>%
@@ -92,6 +94,8 @@ Table: Statistiken zum Bildungsabschluss
 > alter_statistik <- daten %>% 
 +   summarise(
 +     Mittelwert = mean(Alter, na.rm = TRUE),
++     KI_von = t.test(Alter)$conf.int[1],
++     KI_bis = t.test(Alter)$conf.int[2],
 +     Median = median(Alter, na.rm = TRUE),
 +     Standardabweichung = sd(Alter, na.rm = TRUE),
 +     Minimum = min(Alter, na.rm = TRUE),
@@ -103,11 +107,11 @@ Table: Statistiken zum Bildungsabschluss
 
 Table: Statistiken zum Alter
 
-| Mittelwert| Median| Standardabweichung| Minimum| Maximum|
-|----------:|------:|------------------:|-------:|-------:|
-|      39.14|     38|              13.12|      18|      78|
+| Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Minimum| Maximum|
+|----------:|------:|------:|------:|------------------:|-------:|-------:|
+|      39.14|  37.81|  40.47|     38|              13.12|      18|      78|
 
-> # Aufteilung nach Altersgruppen
+> ## Aufteilung nach Altersgruppen
 > altersgruppen <- cut(daten$Alter, 
 +                      breaks = c(0, 18, 20, 30, 40, 50, 60, 70, 80, 90, 100), 
 +                      right = FALSE) %>% table() 
@@ -172,3 +176,31 @@ Table: Statistiken zur Berufserfahrung
 |1-5 Jahre          |     75|  20.00|
 |5-10 Jahre         |     43|  11.47|
 |mehr als 10 Jahre  |    244|  65.07|
+
+> # Statistiken nach Erfahrung mit GenKI
+> genki_statistik <- daten %>% group_by(GenKI_Erfahrung) %>% 
++   summarise(
++     Anzahl = n(),
++     Anteil = round(n() / nrow(daten) * 100, digits = 2)
++   )
+
+> kable(genki_statistik, caption = "Statistiken zur Erfahrung mit GenKI", digits = 2)
+
+
+Table: Statistiken zur Erfahrung mit GenKI
+
+|GenKI_Erfahrung | Anzahl| Anteil|
+|:---------------|------:|------:|
+|sehr gering     |     49|  13.07|
+|gering          |     95|  25.33|
+|mittel          |    145|  38.67|
+|hoch            |     69|  18.40|
+|sehr hoch       |     17|   4.53|
+
+> ## Histogramm der Verteilung der GenKI-Erfahrung
+> ggplot(genki_statistik, aes(x = GenKI_Erfahrung, y = Anzahl)) +
++   geom_bar(stat = "identity", fill = "grey80", color = "black") + 
++   theme_minimal() +  # Minimalistisches Design
++   labs(title = "Verteilung der GenKI-Erfahrung",
++        x = "GenKI-Erfahrung",
++        y = "Anzahl")

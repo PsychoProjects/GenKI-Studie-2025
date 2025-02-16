@@ -1,11 +1,17 @@
 source("InstallPackages.R")
 source("Read_Data.R")
 
+result <- t.test(daten$Akzeptanz)
+mittelwert <- result$estimate
+ci <- result$conf.int
+
 # Deskriptive Statistiken
 ## Deskriptive Statistiken für jede Gruppe
 daten %>% group_by(Gruppe) %>%
   summarise(
     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
+    KI_von = t.test(Akzeptanz)$conf.int[1],
+    KI_bis = t.test(Akzeptanz)$conf.int[2],
     Median = median(Akzeptanz, na.rm = TRUE),
     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
     Varianz = var(Akzeptanz, na.rm = TRUE),
@@ -18,6 +24,9 @@ daten %>% group_by(Gruppe) %>%
 daten %>% group_by(Anwendungsfeld) %>%
   summarise(
     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
+    KI_von = t.test(Akzeptanz)$conf.int[1],
+    KI_bis = t.test(Akzeptanz)$conf.int[2],
+    Konfidenzintervall = mean_cl_boot(Akzeptanz, conf = 0.95)$conf.int,
     Median = median(Akzeptanz, na.rm = TRUE),
     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
     Varianz = var(Akzeptanz, na.rm = TRUE),
@@ -30,6 +39,8 @@ daten %>% group_by(Anwendungsfeld) %>%
 daten %>% group_by(Vertrauensmassnahmen) %>%
   summarise(
     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
+    KI_von = t.test(Akzeptanz)$conf.int[1],
+    KI_bis = t.test(Akzeptanz)$conf.int[2],
     Median = median(Akzeptanz, na.rm = TRUE),
     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
     Varianz = var(Akzeptanz, na.rm = TRUE),
@@ -44,7 +55,7 @@ ggplot(daten, aes(x = Akzeptanz)) +
   geom_histogram(aes(y = ..density..), bins = 20, fill = "lightblue", color = "black") +
   stat_function(fun = dnorm, 
                 args = list(mean = mean(daten$Akzeptanz), sd = sd(daten$Akzeptanz)), 
-                color = "darkblue", size = 1) +
+                color = "darkblue", linewidth = 1) +
   labs(title = "Histogramm der Verteilung der Akzeptanz",
        x = "Akzeptanz", y = "Dichte") +
   theme_minimal()

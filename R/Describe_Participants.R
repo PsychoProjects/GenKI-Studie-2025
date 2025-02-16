@@ -10,6 +10,8 @@ gruppen_groessen <- table(daten$Gruppe) %>% as.data.frame()
 gruppen_statistik <- gruppen_groessen %>% 
   summarise(
     Mittelwert = mean(Freq),
+    KI_von = t.test(Freq)$conf.int[1],
+    KI_bis = t.test(Freq)$conf.int[2],
     Median = median(Freq),
     Standardabweichung = sd(Freq),
     Minimum = min(Freq),
@@ -41,6 +43,8 @@ kable(bildungsabschluss_statistik, caption = "Statistiken zum Bildungsabschluss"
 alter_statistik <- daten %>% 
   summarise(
     Mittelwert = mean(Alter, na.rm = TRUE),
+    KI_von = t.test(Alter)$conf.int[1],
+    KI_bis = t.test(Alter)$conf.int[2],
     Median = median(Alter, na.rm = TRUE),
     Standardabweichung = sd(Alter, na.rm = TRUE),
     Minimum = min(Alter, na.rm = TRUE),
