@@ -1,11 +1,21 @@
 source("InstallPackages.R")
 source("Read_Data.R")
 
-result <- t.test(daten$Akzeptanz)
-mittelwert <- result$estimate
-ci <- result$conf.int
+# Akzeptanz-Analysen
+## Deskriptive Statistiken für jede Gruppe
+daten %>%
+  summarise(
+    Mittelwert = mean(Akzeptanz, na.rm = TRUE),
+    KI_von = t.test(Akzeptanz)$conf.int[1],
+    KI_bis = t.test(Akzeptanz)$conf.int[2],
+    Median = median(Akzeptanz, na.rm = TRUE),
+    Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
+    Varianz = var(Akzeptanz, na.rm = TRUE),
+    Minimum = min(Akzeptanz, na.rm = TRUE),
+    Maximum = max(Akzeptanz, na.rm = TRUE),
+    Anzahl = n()
+  ) %>% kable(caption = "Statistiken zur Akzeptanz je Gruppe", digits = 2)
 
-# Deskriptive Statistiken
 ## Deskriptive Statistiken für jede Gruppe
 daten %>% group_by(Gruppe) %>%
   summarise(
@@ -132,3 +142,61 @@ bar_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
        x = "Gruppe", y = "Mittelwert von Akzeptanz") +
   theme_minimal()
 print(bar_plot)
+
+# Einstellungs-Analysen
+## Deskriptive Statistiken für jede Gruppe
+daten %>%
+  summarise(
+    Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
+    KI_von = t.test(Einstellung_KI)$conf.int[1],
+    KI_bis = t.test(Einstellung_KI)$conf.int[2],
+    Median = median(Einstellung_KI, na.rm = TRUE),
+    Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
+    Varianz = var(Einstellung_KI, na.rm = TRUE),
+    Minimum = min(Einstellung_KI, na.rm = TRUE),
+    Maximum = max(Einstellung_KI, na.rm = TRUE),
+    Anzahl = n()
+  ) %>% kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
+
+## Deskriptive Statistiken für jede Gruppe
+daten %>% group_by(Gruppe) %>%
+  summarise(
+    Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
+    KI_von = t.test(Einstellung_KI)$conf.int[1],
+    KI_bis = t.test(Einstellung_KI)$conf.int[2],
+    Median = median(Einstellung_KI, na.rm = TRUE),
+    Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
+    Varianz = var(Einstellung_KI, na.rm = TRUE),
+    Minimum = min(Einstellung_KI, na.rm = TRUE),
+    Maximum = max(Einstellung_KI, na.rm = TRUE),
+    Anzahl = n()
+  ) %>% kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
+
+## Deskriptive Statistiken für jedes Anwendungsfeld
+daten %>% group_by(Anwendungsfeld) %>%
+  summarise(
+    Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
+    KI_von = t.test(Einstellung_KI)$conf.int[1],
+    KI_bis = t.test(Einstellung_KI)$conf.int[2],
+    Konfidenzintervall = mean_cl_boot(Einstellung_KI, conf = 0.95)$conf.int,
+    Median = median(Einstellung_KI, na.rm = TRUE),
+    Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
+    Varianz = var(Einstellung_KI, na.rm = TRUE),
+    Minimum = min(Einstellung_KI, na.rm = TRUE),
+    Maximum = max(Einstellung_KI, na.rm = TRUE),
+    Anzahl = n()
+  ) %>% kable(caption = "Statistiken zur Einstellung_KI je Anwendungsfeld", digits = 2)
+
+## Deskrptive Statistiken für die Maßnahmen
+daten %>% group_by(Vertrauensmassnahmen) %>%
+  summarise(
+    Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
+    KI_von = t.test(Einstellung_KI)$conf.int[1],
+    KI_bis = t.test(Einstellung_KI)$conf.int[2],
+    Median = median(Einstellung_KI, na.rm = TRUE),
+    Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
+    Varianz = var(Einstellung_KI, na.rm = TRUE),
+    Minimum = min(Einstellung_KI, na.rm = TRUE),
+    Maximum = max(Einstellung_KI, na.rm = TRUE),
+    Anzahl = n()
+  ) %>% kable(caption = "Statistiken zur Einstellung_KI je Vertrauensmaßnahme", digits = 2)

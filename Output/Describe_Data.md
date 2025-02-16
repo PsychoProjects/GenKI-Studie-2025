@@ -4,13 +4,28 @@
 > source("Read_Data.R")
 [1] "Daten werden geladen..."
 
-> result <- t.test(daten$Akzeptanz)
+> # Akzeptanz-Analysen
+> ## Deskriptive Statistiken für jede Gruppe
+> daten %>%
++   summarise(
++     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
++     KI_von = t.test(Akzeptanz)$conf.int[1],
++     KI_bis = t.test(Akzeptanz)$conf.int[2],
++     Median = median(Akzeptanz, na.rm = TRUE),
++     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
++     Varianz = var(Akzeptanz, na.rm = TRUE),
++     Minimum = min(Akzeptanz, na.rm = TRUE),
++     Maximum = max(Akzeptanz, na.rm = TRUE),
++     Anzahl = n()
++   ) %>% kable(caption = "Statistiken zur Akzeptanz je Gruppe", digits = 2)
 
-> mittelwert <- result$estimate
 
-> ci <- result$conf.int
+Table: Statistiken zur Akzeptanz je Gruppe
 
-> # Deskriptive Statistiken
+| Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|       3.23|   3.12|   3.34|   3.33|               1.08|    1.16|       1|       5|    375|
+
 > ## Deskriptive Statistiken für jede Gruppe
 > daten %>% group_by(Gruppe) %>%
 +   summarise(
@@ -168,3 +183,94 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 +   theme_minimal()
 
 > print(bar_plot)
+
+> # Einstellungs-Analysen
+> ## Deskriptive Statistiken für jede Gruppe
+> daten %>%
++   summarise(
++     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
++     KI_von = t.test(Einstellung_KI)$conf.int[1],
++     KI_bis = t.test(Einstellung_KI)$conf.int[2],
++     Median = median(Einstellung_KI, na.rm = TRUE),
++     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
++     Varianz = var(Einstellung_KI, na.rm = TRUE),
++     Minimum = min(Einstellung_KI, na.rm = TRUE),
++     Maximum = max(Einstellung_KI, na.rm = TRUE),
++     Anzahl = n()
++   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI je Gruppe
+
+| Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|       3.65|   3.59|   3.71|   3.75|               0.63|    0.39|    1.17|       5|    375|
+
+> ## Deskriptive Statistiken für jede Gruppe
+> daten %>% group_by(Gruppe) %>%
++   summarise(
++     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
++     KI_von = t.test(Einstellung_KI)$conf.int[1],
++     KI_bis = t.test(Einstellung_KI)$conf.int[2],
++     Median = median(Einstellung_KI, na.rm = TRUE),
++     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
++     Varianz = var(Einstellung_KI, na.rm = TRUE),
++     Minimum = min(Einstellung_KI, na.rm = TRUE),
++     Maximum = max(Einstellung_KI, na.rm = TRUE),
++     Anzahl = n()
++   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI je Gruppe
+
+|Gruppe                    | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:-------------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Objektiv - Mit Maßnahme   |       3.70|   3.59|   3.82|   3.75|               0.61|    0.38|    2.00|    5.00|    107|
+|Objektiv - Ohne Maßnahme  |       3.57|   3.43|   3.71|   3.58|               0.64|    0.42|    1.17|    4.83|     84|
+|Subjektiv - Mit Maßnahme  |       3.71|   3.56|   3.85|   3.75|               0.64|    0.41|    1.50|    5.00|     78|
+|Subjektiv - Ohne Maßnahme |       3.62|   3.50|   3.73|   3.75|               0.61|    0.37|    1.83|    4.92|    106|
+
+> ## Deskriptive Statistiken für jedes Anwendungsfeld
+> daten %>% group_by(Anwendungsfeld) %>%
++   summarise(
++     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
++     KI_von = t.test(Einstellung_KI)$conf.int[1],
++     KI_bis = t.test(Einstellung_KI)$conf.int[2],
++     Konfidenzintervall = mean_cl_boot(Einstellung_KI, conf = 0.95)$conf.int,
++     Median = median(Einstellung_KI, na.rm = TRUE),
++     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
++     Varianz = var(Einstellung_KI, na.rm = TRUE),
++     Minimum = min(Einstellung_KI, na.rm = TRUE),
++     Maximum = max(Einstellung_KI, na.rm = TRUE),
++     Anzahl = n()
++   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Anwendungsfeld", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI je Anwendungsfeld
+
+|Anwendungsfeld | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:--------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Objektiv       |       3.65|   3.56|   3.74|   3.67|               0.63|    0.40|    1.17|       5|    191|
+|Subjektiv      |       3.65|   3.56|   3.75|   3.75|               0.62|    0.39|    1.50|       5|    184|
+
+> ## Deskrptive Statistiken für die Maßnahmen
+> daten %>% group_by(Vertrauensmassnahmen) %>%
++   summarise(
++     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
++     KI_von = t.test(Einstellung_KI)$conf.int[1],
++     KI_bis = t.test(Einstellung_KI)$conf.int[2],
++     Median = median(Einstellung_KI, na.rm = TRUE),
++     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
++     Varianz = var(Einstellung_KI, na.rm = TRUE),
++     Minimum = min(Einstellung_KI, na.rm = TRUE),
++     Maximum = max(Einstellung_KI, na.rm = TRUE),
++     Anzahl = n()
++   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Vertrauensmaßnahme", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI je Vertrauensmaßnahme
+
+|Vertrauensmassnahmen | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:--------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Ohne Maßnahme        |       3.60|   3.51|   3.69|   3.67|               0.62|    0.39|    1.17|    4.92|    190|
+|Mit Maßnahme         |       3.71|   3.62|   3.80|   3.75|               0.62|    0.39|    1.50|    5.00|    185|
