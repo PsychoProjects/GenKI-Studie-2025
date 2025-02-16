@@ -2,7 +2,7 @@ source("InstallPackages.R")
 source("Read_Data.R")
 
 # Akzeptanz-Analysen
-## Deskriptive Statistiken für jede Gruppe
+## Deskriptive Statistiken gesamt
 daten %>%
   summarise(
     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
@@ -14,7 +14,7 @@ daten %>%
     Minimum = min(Akzeptanz, na.rm = TRUE),
     Maximum = max(Akzeptanz, na.rm = TRUE),
     Anzahl = n()
-  ) %>% kable(caption = "Statistiken zur Akzeptanz je Gruppe", digits = 2)
+  ) %>% kable(caption = "Statistiken zur Akzeptanz", digits = 2)
 
 ## Deskriptive Statistiken für jede Gruppe
 daten %>% group_by(Gruppe) %>%
@@ -144,7 +144,7 @@ bar_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
 print(bar_plot)
 
 # Einstellungs-Analysen
-## Deskriptive Statistiken für jede Gruppe
+## Deskriptive Statistiken gesamt
 daten %>%
   summarise(
     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
@@ -156,7 +156,7 @@ daten %>%
     Minimum = min(Einstellung_KI, na.rm = TRUE),
     Maximum = max(Einstellung_KI, na.rm = TRUE),
     Anzahl = n()
-  ) %>% kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
+  ) %>% kable(caption = "Statistiken zur Einstellung_KI", digits = 2)
 
 ## Deskriptive Statistiken für jede Gruppe
 daten %>% group_by(Gruppe) %>%
