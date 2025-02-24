@@ -1,6 +1,7 @@
 source("InstallPackages.R")
 source("Read_Data.R")
 
+
 # Analysen zur Einschätzung der Objektivität bzw. Subjektivität der Anwendungsfelder
 table_val <- table(daten$Anwendungsfeld, daten$objektiv_subjektiv)
 
@@ -16,7 +17,11 @@ kable(table_df,
       caption = "Kreuztabelle der Übereinstimmung von Anwendungsfeld und objektiv-subjektiv-Einschätzung")
 
 ## Chi-Quadrat-Test zur Überprüfung der Verteilung
-chisq.test(table_val)
+chitest <- chisq.test(table_val) 
+print(chitest)
+
+### Effektstärke Cramer's V berechnen
+cramers_v(chitest)
 
 ## Korrelationsanalyse zwischen Anwendungsfeld und objektiv-subjektiv-Einschätzung
 cor.test(as.numeric(daten$Anwendungsfeld), as.numeric(daten$objektiv_subjektiv), method = "kendall")

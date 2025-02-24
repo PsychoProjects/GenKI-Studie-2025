@@ -29,7 +29,9 @@ Table: Kreuztabelle der Übereinstimmung von Anwendungsfeld und objektiv-subjekt
 |Subjektiv      |Subjektiv    |        156|   84.78|
 
 > ## Chi-Quadrat-Test zur Überprüfung der Verteilung
-> chisq.test(table_val)
+> chitest <- chisq.test(table_val) 
+
+> print(chitest)
 
 	Pearson's Chi-squared test with Yates' continuity correction
 
@@ -37,6 +39,13 @@ data:  table_val
 X-squared = 195.85, df = 1, p-value < 2.2e-16
 
 
+> ### Effektstärke Cramer's V berechnen
+> cramers_v(chitest)
+Cramer's V (adj.) |       95% CI
+--------------------------------
+0.73              | [0.64, 1.00]
+
+- One-sided CIs: upper bound fixed at [1.00].
 > ## Korrelationsanalyse zwischen Anwendungsfeld und objektiv-subjektiv-Einschätzung
 > cor.test(as.numeric(daten$Anwendungsfeld), as.numeric(daten$objektiv_subjektiv), method = "kendall")
 
