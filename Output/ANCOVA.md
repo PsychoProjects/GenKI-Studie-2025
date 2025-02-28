@@ -6,23 +6,10 @@
 
 > # Standard-ANCOVA
 > ## ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
-> ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
+> 
+> model_def <- as.formula("Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI")
 
-> ## Koeefizienten des Modells ausgeben
-> coef_df <- coef(ancova_model)
-
-> kable(coef_df, digits = 2, caption = "ANCOVA Koeffizienten")
-
-
-Table: ANCOVA Koeffizienten
-
-|                                                         |     x|
-|:--------------------------------------------------------|-----:|
-|(Intercept)                                              |  1.58|
-|AnwendungsfeldSubjektiv                                  | -1.20|
-|VertrauensmassnahmenMit Maßnahme                         |  0.00|
-|Einstellung_KI                                           |  0.61|
-|AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme | -0.03|
+> ancova_model <- aov(model_def, data = daten) 
 
 > ## Zusammenfassung des Modells 
 > mp <- model_parameters(ancova_model, eta_squared = "partial")
@@ -55,8 +42,24 @@ Table: Effektgrößen der ANCOVA
 |Einstellung_KI                      |         0.19| 0.95|   0.13|       1|
 |Anwendungsfeld:Vertrauensmassnahmen |         0.00| 0.95|   0.00|       1|
 
+> ## Koeefizienten des Modells ausgeben
+> coef_df <- coef(ancova_model)
+
+> kable(coef_df, digits = 2, caption = "ANCOVA Koeffizienten")
+
+
+Table: ANCOVA Koeffizienten
+
+|                                                         |     x|
+|:--------------------------------------------------------|-----:|
+|(Intercept)                                              |  1.58|
+|AnwendungsfeldSubjektiv                                  | -1.20|
+|VertrauensmassnahmenMit Maßnahme                         |  0.00|
+|Einstellung_KI                                           |  0.61|
+|AnwendungsfeldSubjektiv:VertrauensmassnahmenMit Maßnahme | -0.03|
+
 > # Robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)
-> robust_ancova <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
+> robust_ancova <- lm(model_def, data = daten)
 
 > anova_robust <- car::Anova(robust_ancova, type = "III", white.adjust = TRUE)
 
@@ -95,7 +98,7 @@ Table: Effektgrößen der robusten ANCOVA
 > ## Funktion für das Bootstrapping der ANCOVA-Koeffizienten
 > boot_ancova <- function(data, indices) {
 +   sampled_data <- data[indices, ]  # Ziehe Bootstrap-Stichprobe
-+   model <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = sampled_data)
++   model <- lm(model_def, data = sampled_data)
 +   return(coef(model))  # Rückgabe der Koeffizienten
 + }
 
@@ -118,7 +121,7 @@ Level     Percentile
 Calculations and Intervals on Original Scale
 
 > ## Prädiktornamen aus dem Modell extrahieren
-> predictor_names <- names(coef(lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)))
+> predictor_names <- names(coef(lm(model_def, data = daten)))
 
 > ## Ausgabe der Bootstrapped-Konfidenzintervalle für alle Prädiktoren mit Namen
 > boot_ci_results <- lapply(1:length(boot_results$t0), function(i) {

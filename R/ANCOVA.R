@@ -3,11 +3,9 @@ source("Read_Data.R")
 
 # Standard-ANCOVA
 ## ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
-ancova_model <- aov(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten) 
 
-## Koeefizienten des Modells ausgeben
-coef_df <- coef(ancova_model)
-kable(coef_df, digits = 2, caption = "ANCOVA Koeffizienten")
+model_def <- as.formula("Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI")
+ancova_model <- aov(model_def, data = daten) 
 
 ## Zusammenfassung des Modells 
 mp <- model_parameters(ancova_model, eta_squared = "partial")
@@ -17,8 +15,12 @@ kable(mp, digits = 2, caption = "Zusammenfassung des ANCOVA-Modells")
 eff_es <- eta_squared(ancova_model, partial = TRUE)
 kable(eff_es, digits = 2, caption = "Effektgrößen der ANCOVA")
 
+## Koeefizienten des Modells ausgeben
+coef_df <- coef(ancova_model)
+kable(coef_df, digits = 2, caption = "ANCOVA Koeffizienten")
+
 # Robuste ANCOVA mit heteroskedastizitätsrobusten Standardfehlern (HC3)
-robust_ancova <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)
+robust_ancova <- lm(model_def, data = daten)
 anova_robust <- car::Anova(robust_ancova, type = "III", white.adjust = TRUE)
 
 ## Zusammenfassung des Modells 
@@ -33,7 +35,7 @@ kable(eff_esr, digits = 2, caption = "Effektgrößen der robusten ANCOVA")
 ## Funktion für das Bootstrapping der ANCOVA-Koeffizienten
 boot_ancova <- function(data, indices) {
   sampled_data <- data[indices, ]  # Ziehe Bootstrap-Stichprobe
-  model <- lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = sampled_data)
+  model <- lm(model_def, data = sampled_data)
   return(coef(model))  # Rückgabe der Koeffizienten
 }
 
@@ -45,7 +47,7 @@ boot_results <- boot(data = daten, statistic = boot_ancova, R = 1000)
 print(boot.ci(boot_results, type = "perc"))
 
 ## Prädiktornamen aus dem Modell extrahieren
-predictor_names <- names(coef(lm(Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI, data = daten)))
+predictor_names <- names(coef(lm(model_def, data = daten)))
 
 ## Ausgabe der Bootstrapped-Konfidenzintervalle für alle Prädiktoren mit Namen
 boot_ci_results <- lapply(1:length(boot_results$t0), function(i) {
