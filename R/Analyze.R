@@ -5,15 +5,15 @@ run_script("Describe_Participants")
 run_script("Describe_Data")
 
 # Ergebnis-Teil
-## Hypothesen
+## Hypothesen-Tests
 run_script("ANCOVA")
 run_script("H4-Analysis")
 
-## Confirmatorische Analyse
+## Validitäts-Analysen
 run_script("Validity")
 run_script("Attari-12")
 
-## Explorative Analyse
+## Explorative Analysen
 run_script("Anwendungsfeld_Gruppenvergleich")
 run_script("Exploration")
 

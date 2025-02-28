@@ -9,6 +9,8 @@ num_groups <- 4 # 2x2 design
 # Stichprobengröße je Gruppe
 sample_size <- pwr.anova.test(k = num_groups, f = effect_size, sig.level = alpha, power = power)
 
-# Output the total sample size
-cat("Stichprobengröße:", ceiling(sample_size$n * num_groups), "\n")
-cat("Stichprobengröße je Gruppe:", ceiling(sample_size$n), "\n")
+stichprobe_df <- data.frame(
+  Parameter = c("Gesamt", "Pro Gruppe"),
+  Wert = c(ceiling(sample_size$n * num_groups), ceiling(sample_size$n))
+)
+kable(stichprobe_df, col.names = c("Bereich", "Benötigte Stichprobengröße"))
