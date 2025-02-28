@@ -8,7 +8,7 @@ run_script <- function(filename) {
   pdfFilename <- paste0(filename, ".pdf")
   pdfFilename <- file.path(getwd(), "../Output", pdfFilename)
   
-  pdf(pdfFilename, width = 16, height = 10)
+  pdf(pdfFilename, width = 8, height = 6)
   sink(destFilename)
   source(sourcefilename, echo=TRUE, max.deparse.length=1024)
   sink()

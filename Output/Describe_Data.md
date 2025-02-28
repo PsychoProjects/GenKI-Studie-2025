@@ -208,7 +208,8 @@ Table: Statistiken zur Einstellung_KI je Vertrauensmaßnahme
 > ## Boxplot zur Visualisierung der Verteilung der Akzeptanz in den vier Gruppen
 > box_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
 +   geom_boxplot() +
-+   scale_x_discrete(labels = c("O1", "o0", "s1", "S0")) +
++   stat_summary(fun = mean, geom = "point", shape = 4, size = 4, color = "black") +  # Mittelwert als rotes "X"
++   scale_x_discrete(labels = c("o1", "o0", "s1", "s0")) +
 +   labs(title = "Verteilung der Akzeptanz in den vier Gruppen",
 +        x = "Gruppe", y = "Akzeptanz") +
 +   theme_minimal()
