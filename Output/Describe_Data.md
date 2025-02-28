@@ -5,19 +5,29 @@
 [1] "Daten werden geladen..."
 
 > # Akzeptanz-Analysen
+> conf_int_low <- function(x) t.test(x, conf.level = 0.95)$conf.int[1]
+
+> conf_int_high <- function(x) t.test(x, conf.level = 0.95)$conf.int[2]
+
+> berechne_statistiken <- function(df, variable) {
++   df %>%
++     summarise(
++       Mittelwert = mean({{ variable }}, na.rm = TRUE),
++       KI_von = conf_int_low({{ variable }}),
++       KI_bis = conf_int_high({{ variable }}),
++       Median = median({{ variable }}, na.rm = TRUE),
++       Standardabweichung = sd({{ variable }}, na.rm = TRUE),
++       Varianz = var({{ variable }}, na.rm = TRUE),
++       Minimum = min({{ variable }}, na.rm = TRUE),
++       Maximum = max({{ variable }}, na.rm = TRUE),
++       Anzahl = n()
++     )
++ }
+
 > ## Deskriptive Statistiken gesamt
 > daten %>%
-+   summarise(
-+     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
-+     KI_von = t.test(Akzeptanz)$conf.int[1],
-+     KI_bis = t.test(Akzeptanz)$conf.int[2],
-+     Median = median(Akzeptanz, na.rm = TRUE),
-+     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
-+     Varianz = var(Akzeptanz, na.rm = TRUE),
-+     Minimum = min(Akzeptanz, na.rm = TRUE),
-+     Maximum = max(Akzeptanz, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Akzeptanz", digits = 2)
++   berechne_statistiken(Akzeptanz) %>%
++   kable(caption = "Statistiken zur Akzeptanz", digits = 2)
 
 
 Table: Statistiken zur Akzeptanz
@@ -27,18 +37,10 @@ Table: Statistiken zur Akzeptanz
 |       3.23|   3.12|   3.34|   3.33|               1.08|    1.16|       1|       5|    375|
 
 > ## Deskriptive Statistiken für jede Gruppe
-> daten %>% group_by(Gruppe) %>%
-+   summarise(
-+     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
-+     KI_von = t.test(Akzeptanz)$conf.int[1],
-+     KI_bis = t.test(Akzeptanz)$conf.int[2],
-+     Median = median(Akzeptanz, na.rm = TRUE),
-+     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
-+     Varianz = var(Akzeptanz, na.rm = TRUE),
-+     Minimum = min(Akzeptanz, na.rm = TRUE),
-+     Maximum = max(Akzeptanz, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Akzeptanz je Gruppe", digits = 2)
+> daten %>%
++   group_by(Gruppe) %>%
++   berechne_statistiken(Akzeptanz) %>%
++   kable(caption = "Statistiken zur Akzeptanz je Gruppe", digits = 2)
 
 
 Table: Statistiken zur Akzeptanz je Gruppe
@@ -51,19 +53,10 @@ Table: Statistiken zur Akzeptanz je Gruppe
 |Subjektiv - Ohne Maßnahme |       2.60|   2.40|   2.79|   2.67|               1.01|    1.02|    1.00|       5|    106|
 
 > ## Deskriptive Statistiken für jedes Anwendungsfeld
-> daten %>% group_by(Anwendungsfeld) %>%
-+   summarise(
-+     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
-+     KI_von = t.test(Akzeptanz)$conf.int[1],
-+     KI_bis = t.test(Akzeptanz)$conf.int[2],
-+     Konfidenzintervall = mean_cl_boot(Akzeptanz, conf = 0.95)$conf.int,
-+     Median = median(Akzeptanz, na.rm = TRUE),
-+     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
-+     Varianz = var(Akzeptanz, na.rm = TRUE),
-+     Minimum = min(Akzeptanz, na.rm = TRUE),
-+     Maximum = max(Akzeptanz, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Akzeptanz je Anwendungsfeld", digits = 2)
+> daten %>%
++   group_by(Anwendungsfeld) %>%
++   berechne_statistiken(Akzeptanz) %>%
++   kable(caption = "Statistiken zur Akzeptanz je Anwendungsfeld", digits = 2)
 
 
 Table: Statistiken zur Akzeptanz je Anwendungsfeld
@@ -73,19 +66,11 @@ Table: Statistiken zur Akzeptanz je Anwendungsfeld
 |Objektiv       |       3.82|   3.71|   3.93|   4.00|               0.76|    0.58|    1.33|       5|    191|
 |Subjektiv      |       2.61|   2.46|   2.76|   2.67|               1.01|    1.02|    1.00|       5|    184|
 
-> ## Deskrptive Statistiken für die Maßnahmen
-> daten %>% group_by(Vertrauensmassnahmen) %>%
-+   summarise(
-+     Mittelwert = mean(Akzeptanz, na.rm = TRUE),
-+     KI_von = t.test(Akzeptanz)$conf.int[1],
-+     KI_bis = t.test(Akzeptanz)$conf.int[2],
-+     Median = median(Akzeptanz, na.rm = TRUE),
-+     Standardabweichung = sd(Akzeptanz, na.rm = TRUE),
-+     Varianz = var(Akzeptanz, na.rm = TRUE),
-+     Minimum = min(Akzeptanz, na.rm = TRUE),
-+     Maximum = max(Akzeptanz, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Akzeptanz je Vertrauensmaßnahme", digits = 2)
+> ## Deskriptive Statistiken für die Maßnahmen
+> daten %>% 
++   group_by(Vertrauensmassnahmen) %>%
++   berechne_statistiken(Akzeptanz) %>%
++   kable(caption = "Statistiken zur Akzeptanz je Vertrauensmaßnahme", digits = 2)
 
 
 Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
@@ -95,10 +80,67 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 |Ohne Maßnahme        |       3.12|   2.96|   3.27|   3.33|               1.07|    1.14|       1|       5|    190|
 |Mit Maßnahme         |       3.34|   3.18|   3.49|   3.33|               1.07|    1.16|       1|       5|    185|
 
+> # Einstellungs-Analysen
+> ## Deskriptive Statistiken gesamt
+> daten %>%
++   berechne_statistiken(Einstellung_KI) %>%
++   kable(caption = "Statistiken zur Einstellung_KI", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI
+
+| Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|       3.65|   3.59|   3.71|   3.75|               0.63|    0.39|    1.17|       5|    375|
+
+> ## Deskriptive Statistiken für jede Gruppe
+> daten %>% 
++   group_by(Gruppe) %>%
++   berechne_statistiken(Einstellung_KI) %>%
++   kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI je Gruppe
+
+|Gruppe                    | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:-------------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Objektiv - Mit Maßnahme   |       3.70|   3.59|   3.82|   3.75|               0.61|    0.38|    2.00|    5.00|    107|
+|Objektiv - Ohne Maßnahme  |       3.57|   3.43|   3.71|   3.58|               0.64|    0.42|    1.17|    4.83|     84|
+|Subjektiv - Mit Maßnahme  |       3.71|   3.56|   3.85|   3.75|               0.64|    0.41|    1.50|    5.00|     78|
+|Subjektiv - Ohne Maßnahme |       3.62|   3.50|   3.73|   3.75|               0.61|    0.37|    1.83|    4.92|    106|
+
+> ## Deskriptive Statistiken für jedes Anwendungsfeld
+> daten %>% 
++   group_by(Anwendungsfeld) %>%
++   berechne_statistiken(Einstellung_KI) %>%
++   kable(caption = "Statistiken zur Einstellung_KI je Anwendungsfeld", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI je Anwendungsfeld
+
+|Anwendungsfeld | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:--------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Objektiv       |       3.65|   3.56|   3.74|   3.67|               0.63|    0.40|    1.17|       5|    191|
+|Subjektiv      |       3.65|   3.56|   3.75|   3.75|               0.62|    0.39|    1.50|       5|    184|
+
+> ## Deskrptive Statistiken für die Maßnahmen
+> daten %>% 
++   group_by(Vertrauensmassnahmen) %>%
++   berechne_statistiken(Einstellung_KI) %>%
++   kable(caption = "Statistiken zur Einstellung_KI je Vertrauensmaßnahme", digits = 2)
+
+
+Table: Statistiken zur Einstellung_KI je Vertrauensmaßnahme
+
+|Vertrauensmassnahmen | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
+|:--------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
+|Ohne Maßnahme        |       3.60|   3.51|   3.69|   3.67|               0.62|    0.39|    1.17|    4.92|    190|
+|Mit Maßnahme         |       3.71|   3.62|   3.80|   3.75|               0.62|    0.39|    1.50|    5.00|    185|
+
 > # Grafische Aufbereitung
 > ## Histogramm der Verteilung der Akzeptanz mit Normalverteilungsanpassung
 > ggplot(daten, aes(x = Akzeptanz)) +
-+   geom_histogram(aes(y = ..density..), bins = 20, fill = "lightblue", color = "black") +
++   geom_histogram(aes(y = after_stat(density)), bins = 20, fill = "lightblue", color = "black") +
 +   stat_function(fun = dnorm, 
 +                 args = list(mean = mean(daten$Akzeptanz), sd = sd(daten$Akzeptanz)), 
 +                 color = "darkblue", linewidth = 1) +
@@ -110,7 +152,7 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 > daten %>%
 +   group_by(Anwendungsfeld) %>%
 +   ggplot(aes(x = Akzeptanz)) +
-+   geom_histogram(aes(y = ..density..), bins = 20, fill = "lightblue", color = "black") +
++   geom_histogram(aes(y = after_stat(density)), bins = 20, fill = "lightblue", color = "black") +
 +   stat_function(fun = dnorm, 
 +                 args = list(mean = mean(daten$Akzeptanz), sd = sd(daten$Akzeptanz)), 
 +                 color = "darkblue", lwd = 1) +
@@ -123,7 +165,7 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 > daten %>%
 +   group_by(Gruppe) %>%
 +   ggplot(aes(x = Akzeptanz)) +
-+   geom_histogram(aes(y = ..density..), bins = 20, fill = "lightblue", color = "black") +
++   geom_histogram(aes(y = after_stat(density)), bins = 20, fill = "lightblue", color = "black") +
 +   stat_function(fun = dnorm, 
 +                 args = list(mean = mean(daten$Akzeptanz), sd = sd(daten$Akzeptanz)), 
 +                 color = "darkblue", lwd = 1) +
@@ -183,94 +225,3 @@ Table: Statistiken zur Akzeptanz je Vertrauensmaßnahme
 +   theme_minimal()
 
 > print(bar_plot)
-
-> # Einstellungs-Analysen
-> ## Deskriptive Statistiken gesamt
-> daten %>%
-+   summarise(
-+     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
-+     KI_von = t.test(Einstellung_KI)$conf.int[1],
-+     KI_bis = t.test(Einstellung_KI)$conf.int[2],
-+     Median = median(Einstellung_KI, na.rm = TRUE),
-+     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
-+     Varianz = var(Einstellung_KI, na.rm = TRUE),
-+     Minimum = min(Einstellung_KI, na.rm = TRUE),
-+     Maximum = max(Einstellung_KI, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Einstellung_KI", digits = 2)
-
-
-Table: Statistiken zur Einstellung_KI
-
-| Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
-|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
-|       3.65|   3.59|   3.71|   3.75|               0.63|    0.39|    1.17|       5|    375|
-
-> ## Deskriptive Statistiken für jede Gruppe
-> daten %>% group_by(Gruppe) %>%
-+   summarise(
-+     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
-+     KI_von = t.test(Einstellung_KI)$conf.int[1],
-+     KI_bis = t.test(Einstellung_KI)$conf.int[2],
-+     Median = median(Einstellung_KI, na.rm = TRUE),
-+     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
-+     Varianz = var(Einstellung_KI, na.rm = TRUE),
-+     Minimum = min(Einstellung_KI, na.rm = TRUE),
-+     Maximum = max(Einstellung_KI, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Gruppe", digits = 2)
-
-
-Table: Statistiken zur Einstellung_KI je Gruppe
-
-|Gruppe                    | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
-|:-------------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
-|Objektiv - Mit Maßnahme   |       3.70|   3.59|   3.82|   3.75|               0.61|    0.38|    2.00|    5.00|    107|
-|Objektiv - Ohne Maßnahme  |       3.57|   3.43|   3.71|   3.58|               0.64|    0.42|    1.17|    4.83|     84|
-|Subjektiv - Mit Maßnahme  |       3.71|   3.56|   3.85|   3.75|               0.64|    0.41|    1.50|    5.00|     78|
-|Subjektiv - Ohne Maßnahme |       3.62|   3.50|   3.73|   3.75|               0.61|    0.37|    1.83|    4.92|    106|
-
-> ## Deskriptive Statistiken für jedes Anwendungsfeld
-> daten %>% group_by(Anwendungsfeld) %>%
-+   summarise(
-+     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
-+     KI_von = t.test(Einstellung_KI)$conf.int[1],
-+     KI_bis = t.test(Einstellung_KI)$conf.int[2],
-+     Konfidenzintervall = mean_cl_boot(Einstellung_KI, conf = 0.95)$conf.int,
-+     Median = median(Einstellung_KI, na.rm = TRUE),
-+     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
-+     Varianz = var(Einstellung_KI, na.rm = TRUE),
-+     Minimum = min(Einstellung_KI, na.rm = TRUE),
-+     Maximum = max(Einstellung_KI, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Anwendungsfeld", digits = 2)
-
-
-Table: Statistiken zur Einstellung_KI je Anwendungsfeld
-
-|Anwendungsfeld | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
-|:--------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
-|Objektiv       |       3.65|   3.56|   3.74|   3.67|               0.63|    0.40|    1.17|       5|    191|
-|Subjektiv      |       3.65|   3.56|   3.75|   3.75|               0.62|    0.39|    1.50|       5|    184|
-
-> ## Deskrptive Statistiken für die Maßnahmen
-> daten %>% group_by(Vertrauensmassnahmen) %>%
-+   summarise(
-+     Mittelwert = mean(Einstellung_KI, na.rm = TRUE),
-+     KI_von = t.test(Einstellung_KI)$conf.int[1],
-+     KI_bis = t.test(Einstellung_KI)$conf.int[2],
-+     Median = median(Einstellung_KI, na.rm = TRUE),
-+     Standardabweichung = sd(Einstellung_KI, na.rm = TRUE),
-+     Varianz = var(Einstellung_KI, na.rm = TRUE),
-+     Minimum = min(Einstellung_KI, na.rm = TRUE),
-+     Maximum = max(Einstellung_KI, na.rm = TRUE),
-+     Anzahl = n()
-+   ) %>% kable(caption = "Statistiken zur Einstellung_KI je Vertrauensmaßnahme", digits = 2)
-
-
-Table: Statistiken zur Einstellung_KI je Vertrauensmaßnahme
-
-|Vertrauensmassnahmen | Mittelwert| KI_von| KI_bis| Median| Standardabweichung| Varianz| Minimum| Maximum| Anzahl|
-|:--------------------|----------:|------:|------:|------:|------------------:|-------:|-------:|-------:|------:|
-|Ohne Maßnahme        |       3.60|   3.51|   3.69|   3.67|               0.62|    0.39|    1.17|    4.92|    190|
-|Mit Maßnahme         |       3.71|   3.62|   3.80|   3.75|               0.62|    0.39|    1.50|    5.00|    185|

@@ -67,6 +67,9 @@ kable(boot_ci_df, digits = 2, caption = "Bootstrapped Konfidenzintervalle")
 hist(boot_results$t[, 2], main = "Bootstrap-Verteilung für Anwendungsfeld", xlab = "Koeffizient", col = "lightblue", border = "black")
 
 # Prüfung der Voraussetzungen für die ANCOVA
+## Homogenität der Varianzen prüfen
+leveneTest(residuals(ancova_model) ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
+
 ## Normalverteilung der Residuen prüfen
 shapiro.test(residuals(ancova_model))
 
@@ -86,8 +89,5 @@ ggqqplot(
     x = "Theoretische Quantile", 
     y = "Residuen"
   )
-
-## Homogenität der Varianzen prüfen
-leveneTest(residuals(ancova_model) ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
 
 

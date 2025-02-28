@@ -153,6 +153,15 @@ Table: Bootstrapped Konfidenzintervalle
 > hist(boot_results$t[, 2], main = "Bootstrap-Verteilung für Anwendungsfeld", xlab = "Koeffizient", col = "lightblue", border = "black")
 
 > # Prüfung der Voraussetzungen für die ANCOVA
+> ## Homogenität der Varianzen prüfen
+> leveneTest(residuals(ancova_model) ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
+Levene's Test for Homogeneity of Variance (center = median)
+       Df F value    Pr(>F)    
+group   3  11.363 3.804e-07 ***
+      371                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
 > ## Normalverteilung der Residuen prüfen
 > shapiro.test(residuals(ancova_model))
 
@@ -178,12 +187,3 @@ W = 0.99308, p-value = 0.0821
 +     x = "Theoretische Quantile", 
 +     y = "Residuen"
 +   )
-
-> ## Homogenität der Varianzen prüfen
-> leveneTest(residuals(ancova_model) ~ Anwendungsfeld * Vertrauensmassnahmen, data = daten)
-Levene's Test for Homogeneity of Variance (center = median)
-       Df F value    Pr(>F)    
-group   3  11.363 3.804e-07 ***
-      371                      
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
