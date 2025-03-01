@@ -38,7 +38,7 @@ fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
   print(sw_test)
 
   cat("\n### Überprüfung der Varianzhomogenität mit Breusch-Pagan-Test\n")
-  bp_test <- bptest(model)
+  bp_test <- lmtest::bptest(model)
   print(bp_test)
 
   ## Falls Heteroskedastizität vorliegt, robuste Standardfehler und robuste ANOVA verwenden
@@ -55,7 +55,7 @@ fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
     print(kable(robust_se_df, digits = 3, caption = "Robuste Standardfehler"))
     
     cat("\n### Ergebnisse der robusten ANOVA:")
-    robust_anova <- Anova(model, type = "III", white.adjust = TRUE)
+    robust_anova <- car::Anova(model, type = "III", white.adjust = TRUE)
  
     ### ANOVA-Ergebnisse in Dataframe umwandeln
     robust_anova_df <- as.data.frame(robust_anova)
@@ -91,7 +91,6 @@ fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
 ## Analyse der Akzeptanz in Abhängigkeit von verschiedenen Variablen
 fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung")
 fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Geschlecht")
-#fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Bildungsabschluss")
 fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Berufserfahrung")
 fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Berufsstatus")
 fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Alter")
@@ -104,7 +103,6 @@ fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung + Geschlecht")
 ## Analyse der Einstellung gegenüber KI in Abhängigkeit von verschiedenen Variablen
 fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung")
 fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Geschlecht")
-#fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Bildungsabschluss")
 fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufserfahrung")
 fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufsstatus")
 fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Alter")

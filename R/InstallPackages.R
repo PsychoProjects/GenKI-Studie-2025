@@ -9,33 +9,28 @@ load_packages <- function(packages) {
 
 load_packages(
   c(
-    "boot",
-    "car",
-    "dplyr",
-    "effectsize",
-    "ggplot2",
+    "boot",       # boot(), boot.ci() 
+    "car",        # Anova() 
+    "dplyr", 
+    "effectsize", # eta_squared() 
+    "ggplot2", 
     "ggpubr",
-    "gridExtra",
-    "Hmisc",
     "kableExtra",
     "knitr",
-    "lmtest",
-    "lsr",
-    "magrittr",
-#    "MASS",
-    "moments",
-    "parameters",
-    "pROC",
-    "psych",
-    "pwr",
-    "readr",
-    "RVAideMemoire",
-    "sandwich",
-    "skimr",
-    "stringr",
-    "tibble",
-    "tidyr",
-    "tidyverse",
-    "WRS2"
+    "lmtest",     # bptest() 
+    "lsr",        # CohensD
+    "magrittr", 
+    "moments",    # skewness(), kurtosis()
+    "parameters", # model_parameters() 
+    "psych",      # alpha()
+    "pwr",        # pwr.anova.test() 
+    "readr", 
+    "sandwich",   # vcovHC() 
+    "skimr",      # skim() 
+    "stringr", 
+    "tibble", 
+    "tidyr", 
+    "tidyverse"
   )
 )
+
