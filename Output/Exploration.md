@@ -142,7 +142,6 @@ Table: Robuste ANOVA-Ergebnisse
 |Geschlecht  |   2|    0.174|   0.84| 0.001|
 |Residuals   | 372|       NA|     NA|    NA|
 
-> #fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Bildungsabschluss")
 > fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Berufserfahrung")
 ## Statistiken für Akzeptanz  ~  Berufserfahrung 
 
@@ -615,7 +614,6 @@ Table: Robuste ANOVA-Ergebnisse
 |Geschlecht  |   2|    8.144|      0| 0.047|
 |Residuals   | 372|       NA|     NA|    NA|
 
-> #fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Bildungsabschluss")
 > fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufserfahrung")
 ## Statistiken für Einstellung_KI  ~  Berufserfahrung 
 

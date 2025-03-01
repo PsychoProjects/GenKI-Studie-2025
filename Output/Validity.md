@@ -9,7 +9,7 @@
 
 > ## Umwandlung in DataFrame mit Prozentwerten innerhalb jedes Anwendungsfelds
 > table_df <- as.data.frame(table_val) %>%
-+   group_by(Var1) %>%  # Gruppierung nach Anwendungsfeld
++   group_by(Var1) %>%
 +   mutate(Prozent = round(Freq / sum(Freq) * 100, 2)) %>%
 +   arrange(Var1)  # Sortierung nach Anwendungsfeld
 
@@ -40,12 +40,11 @@ X-squared = 195.85, df = 1, p-value < 2.2e-16
 
 
 > ### Effektstärke Cramer's V berechnen
-> cramers_v(chitest)
+> cramers_v(chitest, alternative = "two.sided")
 Cramer's V (adj.) |       95% CI
 --------------------------------
-0.73              | [0.64, 1.00]
+0.73              | [0.63, 0.83]
 
-- One-sided CIs: upper bound fixed at [1.00].
 > ## Korrelationsanalyse zwischen Anwendungsfeld und objektiv-subjektiv-Einschätzung
 > cor.test(as.numeric(daten$Anwendungsfeld), as.numeric(daten$objektiv_subjektiv), method = "kendall")
 
@@ -72,6 +71,7 @@ sample estimates:
 +   df = nrow(obj_daten) - 1
 + )
 
+> ### Ausgabe der Ergebnisse
 > kable(ca_stats, digits = 2, caption = "Gesamtergebnis der Reliabilitätsanalyse für objektive Anwendungsfelder")
 
 
@@ -104,6 +104,7 @@ Table: Item-Statistiken der Reliabilitätsanalyse für objektive Anwendungsfelde
 +   df = nrow(subj_daten) - 1
 + )
 
+> ### Ausgabe der Ergebnisse
 > kable(ca_stats, digits = 2, caption = "Gesamtergebnis der Reliabilitätsanalyse für subjektive Anwendungsfelder")
 
 
@@ -150,3 +151,59 @@ Table: Korrelationsmatrix der Akzeptanz-Items (Subjektive Anwendungsfelder)
 |Akzeptanz_S1 |         1.00|         0.68|         0.62|
 |Akzeptanz_S2 |         0.68|         1.00|         0.54|
 |Akzeptanz_S3 |         0.62|         0.54|         1.00|
+
+> # Faktorenanalyse
+> ## EFA für objektive Anwendungsfelder
+> ofa <- fa(daten %>% 
++             filter(Anwendungsfeld == "Objektiv") %>% 
++             select(starts_with("Akzeptanz_O")), 
++           nfactors = 1, fm = "ml", rotate = "none")    
+
+> ## EFA für subjektive Anwendungsfelder
+> sfa <- fa(daten %>% 
++             filter(Anwendungsfeld == "Subjektiv") %>% 
++             select(starts_with("Akzeptanz_S")),
++           nfactors = 1, fm = "ml", rotate = "none")
+
+> ## Ausgabe der Faktorladungen und Varianzaufklärung
+> kable(ofa$loadings, digits = 2, caption = "Faktorladungen der EFA für objektive Anwendungsfelder")
+
+
+Table: Faktorladungen der EFA für objektive Anwendungsfelder
+
+|             |  ML1|
+|:------------|----:|
+|Akzeptanz_O1 | 0.80|
+|Akzeptanz_O2 | 0.63|
+|Akzeptanz_O3 | 0.59|
+
+> kable(ofa$Vaccounted, digits = 2, caption = "Varianzaufklärung der EFA für objektive Anwendungsfelder")
+
+
+Table: Varianzaufklärung der EFA für objektive Anwendungsfelder
+
+|               |  ML1|
+|:--------------|----:|
+|SS loadings    | 1.38|
+|Proportion Var | 0.46|
+
+> kable(sfa$loadings, digits = 2, caption = "Faktorladungen der EFA für subjektive Anwendungsfelder")
+
+
+Table: Faktorladungen der EFA für subjektive Anwendungsfelder
+
+|             |  ML1|
+|:------------|----:|
+|Akzeptanz_S1 | 0.88|
+|Akzeptanz_S2 | 0.77|
+|Akzeptanz_S3 | 0.70|
+
+> kable(sfa$Vaccounted, digits = 2, caption = "Varianzaufklärung der EFA für subjektive Anwendungsfelder")
+
+
+Table: Varianzaufklärung der EFA für subjektive Anwendungsfelder
+
+|               |  ML1|
+|:--------------|----:|
+|SS loadings    | 1.87|
+|Proportion Var | 0.62|
