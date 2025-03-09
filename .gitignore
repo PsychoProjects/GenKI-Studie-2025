@@ -1,5 +1,5 @@
 .Rhistory
 .Rproj.user
 .RData
-.md
-.pdf
+*.md
+*.pdf
