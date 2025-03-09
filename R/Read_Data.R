@@ -25,7 +25,19 @@ daten$Vertrauensmassnahmen <- factor(rohdaten$c_0003,
   labels = c("Ohne Maßnahme", "Mit Maßnahme"))
 
 # für die Darstellung in Grafiken wird eine neue Spalte 'Gruppe' erstellt
-daten$Gruppe <- paste(daten$Anwendungsfeld, daten$Vertrauensmassnahmen, sep = " - ") 
+daten$Gruppe <- factor(
+  paste0(
+    ifelse(rohdaten$c_0002 == 0, "o", "s"),  # o = Objektiv, s = Subjektiv
+    ifelse(rohdaten$c_0003 == 0, "0", "1")   # 0 = ohne Maßnahme, 1 = mit Maßnahme
+  ),
+  levels = c("o0", "o1", "s0", "s1"),  
+  labels = c(
+    "o0: Objektiv - ohne Maßnahme",
+    "o1: Objektiv - mit Maßnahme",
+    "s0: Subjektiv - ohne Maßnahme",
+    "s1: Subjektiv - mit Maßnahme"
+  )
+)
 
 ### Akzeptanzwerte
 # Akzeptanzwerte übernehmen und -77 durch NA ersetzen 
