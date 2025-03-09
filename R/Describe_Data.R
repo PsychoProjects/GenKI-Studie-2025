@@ -137,7 +137,8 @@ print(gp)
 box_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
   geom_boxplot() +
   stat_summary(fun = mean, geom = "point", shape = 4, size = 4, color = "black") +  # Mittelwert als rotes "X"
-  scale_x_discrete(labels = c("o1", "o0", "s1", "s0")) +
+  scale_fill_manual(values = c("grey70", "grey80", "grey90", "white")) +  # Verschiedene Grautöne
+  scale_x_discrete(labels = c("o0", "o1", "s0", "s1")) +
   labs(title = "Verteilung der Akzeptanz in den vier Gruppen",
        x = "Gruppe", y = "Akzeptanz") +
   theme_minimal()
