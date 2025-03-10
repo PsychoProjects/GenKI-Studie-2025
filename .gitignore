@@ -1,6 +1,4 @@
 .Rhistory
 .Rproj.user
 .RData
-*.md
-*.pdf
 Daten/data_cleaned.csv
