@@ -1,4 +1,5 @@
-
+# Ausgabe in Markdown und PDF Dateien umleiten
+# Quelle: https://stackoverflow.com/questions/34875953/how-to-save-output-to-a-file-in-r
 run_script <- function(filename) {
   sourcefilename <- paste0(filename, ".R")
  

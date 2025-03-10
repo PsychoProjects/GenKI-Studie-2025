@@ -81,9 +81,3 @@ kable(ofa$Vaccounted, digits = 2, caption = "Varianzaufklärung der EFA für obj
 
 kable(sfa$loadings, digits = 2, caption = "Faktorladungen der EFA für subjektive Anwendungsfelder")
 kable(sfa$Vaccounted, digits = 2, caption = "Varianzaufklärung der EFA für subjektive Anwendungsfelder")
-
-
-
-
-
-

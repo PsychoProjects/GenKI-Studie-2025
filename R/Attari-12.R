@@ -11,6 +11,7 @@ ca_stats <- ca$total %>% mutate(
   CI_upper = raw_alpha + 1.96 * ase,
   df = nrow(attari_daten) - 1
 )
+
 ## Extraktion der wichtigsten Werte für die Tabelle
 kable(ca_stats, digits = 2, caption = "Gesamtergebnis der Reliabilitätsanalyse")
 
@@ -33,5 +34,3 @@ ggplot(daten, aes(x = Einstellung_KI)) +
        x = "Einstellung",
        y = "Dichte") +
   theme_minimal()
-
-

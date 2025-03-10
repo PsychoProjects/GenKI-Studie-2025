@@ -2,7 +2,7 @@ source("InstallPackages.R")
 source("Read_Data.R")
 
 # Standard-ANCOVA
-## ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen und Kovariate
+## ANCOVA-Modell erstellen mit 'Akzeptanz' als abhängige Variable, Anwendungsfeld, Vertrauensmassnahmen als Faktoren und Einstellung_KI als Kovariate
 
 model_def <- as.formula("Akzeptanz ~ Anwendungsfeld * Vertrauensmassnahmen + Einstellung_KI")
 ancova_model <- aov(model_def, data = daten) 
@@ -34,9 +34,9 @@ kable(eff_esr, digits = 2, caption = "Effektgrößen der robusten ANCOVA")
 # Bootstrapping
 ## Funktion für das Bootstrapping der ANCOVA-Koeffizienten
 boot_ancova <- function(data, indices) {
-  sampled_data <- data[indices, ]  # Ziehe Bootstrap-Stichprobe
+  sampled_data <- data[indices, ]  
   model <- lm(model_def, data = sampled_data)
-  return(coef(model))  # Rückgabe der Koeffizienten
+  return(coef(model))  
 }
 
 ## Bootstrapping mit 1000 Wiederholungen

@@ -2,6 +2,7 @@ source("InstallPackages.R")
 source("Read_Data.R")
 
 # Akzeptanz-Analysen
+## Hilfsfunktionen für die Berechnung der deskriptiven Statistiken
 conf_int_low <- function(x) t.test(x, conf.level = 0.95)$conf.int[1]
 conf_int_high <- function(x) t.test(x, conf.level = 0.95)$conf.int[2]
 
@@ -114,15 +115,6 @@ gp <- ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz)) +
   theme_minimal()
 print(gp)
 
-## Interaktion zwischen Anwendungsfeld und Vertrauensmassnahmen
-gp <- ggplot(daten, aes(x = Anwendungsfeld, y = Akzeptanz, fill = Vertrauensmassnahmen)) +
-  stat_summary(fun = mean, geom = "bar", position = "dodge") +
-  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", position = position_dodge(width = 0.9), width = 0.2) +
-  labs(title = "Interaktion zwischen Anwendungsfeld und Vertrauensmassnahmen",
-       x = "Anwendungsfeld", y = "Mittelwert von Akzeptanz") +
-  theme_minimal()
-print(gp)
-
 ## Interaktion zwischen Einstellung_KI, Anwendungsfeld und Vertrauensmassnahmen
 gp <- ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Vertrauensmassnahmen)) +
   geom_point() +
@@ -134,23 +126,16 @@ gp <- ggplot(daten, aes(x = Einstellung_KI, y = Akzeptanz, color = Vertrauensmas
 print(gp)
 
 ## Boxplot zur Visualisierung der Verteilung der Akzeptanz in den vier Gruppen
+xlables <- c("o0", "o1", "s0", "s1")
+
 box_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
   geom_boxplot() +
   stat_summary(fun = mean, geom = "point", shape = 4, size = 4, color = "black") +  # Mittelwert als rotes "X"
   scale_fill_manual(values = c("grey70", "grey80", "grey90", "white")) +  # Verschiedene Grautöne
-  scale_x_discrete(labels = c("o0", "o1", "s0", "s1")) +
+  scale_x_discrete(labels = xlables) +
   labs(title = "Verteilung der Akzeptanz in den vier Gruppen",
        x = "Gruppe", y = "Akzeptanz") +
   theme_minimal()
 print(box_plot)
 
-## Barplot zur Visualisierung der Mittelwerte und Konfidenzintervalle der Akzeptanz in den vier Gruppen
-bar_plot <- ggplot(daten, aes(x = Gruppe, y = Akzeptanz, fill = Gruppe)) +
-  stat_summary(fun = mean, geom = "bar", position = "dodge") +
-  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", position = position_dodge(width = 0.9), width = 0.2) +
-  scale_x_discrete(labels = c("O1", "o0", "s1", "S0")) +
-  labs(title = "Mittelwert der Akzeptanz in den vier Gruppen",
-       x = "Gruppe", y = "Mittelwert von Akzeptanz") +
-  theme_minimal()
-print(bar_plot)
 

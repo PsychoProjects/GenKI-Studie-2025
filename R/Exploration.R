@@ -1,8 +1,8 @@
 source("InstallPackages.R")
 source("Read_Data.R")
 
-# Analysefunktion
-fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
+# Hilfsfunktion für die Durchführung der ANOVA-Analysen 
+fn_analyse <- function(daten, resp_var, input_var) {
   cat("## Statistiken für", resp_var, " ~ ", input_var, "\n")
   
   ## Prädiktoren aufteilen (unterstützt sowohl "+" als auch "*")
@@ -89,25 +89,23 @@ fn_Akzeptanz_Analyse <- function(daten, resp_var, input_var) {
 
 # Akzeptanz-Analysen
 ## Analyse der Akzeptanz in Abhängigkeit von verschiedenen Variablen
-fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung")
-fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Geschlecht")
-fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Berufserfahrung")
-fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Berufsstatus")
-fn_Akzeptanz_Analyse(daten, "Akzeptanz", "Alter")
+fn_analyse(daten, "Akzeptanz", "GenKI_Erfahrung")
+fn_analyse(daten, "Akzeptanz", "Geschlecht")
+fn_analyse(daten, "Akzeptanz", "Berufserfahrung")
+fn_analyse(daten, "Akzeptanz", "Berufsstatus")
+fn_analyse(daten, "Akzeptanz", "Alter")
 
 ## Kombiniertes Modell
-fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung + Anwendungsfeld")
-fn_Akzeptanz_Analyse(daten, "Akzeptanz", "GenKI_Erfahrung + Geschlecht")
+fn_analyse(daten, "Akzeptanz", "GenKI_Erfahrung + Anwendungsfeld")
+fn_analyse(daten, "Akzeptanz", "GenKI_Erfahrung + Geschlecht")
 
 # Einstellungs-Analysen
 ## Analyse der Einstellung gegenüber KI in Abhängigkeit von verschiedenen Variablen
-fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung")
-fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Geschlecht")
-fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufserfahrung")
-fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Berufsstatus")
-fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "Alter")
+fn_analyse(daten, "Einstellung_KI", "GenKI_Erfahrung")
+fn_analyse(daten, "Einstellung_KI", "Geschlecht")
+fn_analyse(daten, "Einstellung_KI", "Berufserfahrung")
+fn_analyse(daten, "Einstellung_KI", "Berufsstatus")
+fn_analyse(daten, "Einstellung_KI", "Alter")
 
 ## Kombiniertes Modell
-fn_Akzeptanz_Analyse(daten, "Einstellung_KI", "GenKI_Erfahrung + Geschlecht")
-
-
+fn_analyse(daten, "Einstellung_KI", "GenKI_Erfahrung + Geschlecht")

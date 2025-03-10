@@ -7,15 +7,15 @@ cohensD(Akzeptanz ~ Anwendungsfeld, data = daten)
 # Cohens's d mit Bootstrapping absichern
 ## Funktion zur Berechnung von Cohen's d für Bootstrapping
 cohens_d_boot <- function(data, indices) {
-  sample_data <- data[indices, ]  # Bootstrap-Stichprobe
-  
+  sample_data <- data[indices, ]
+
   d_value <- cohensD(Akzeptanz ~ Anwendungsfeld, data = sample_data)
-  
+
   return(d_value)
 }
 
 ## Bootstrapping mit 1000 Wiederholungen
-set.seed(123)  
+set.seed(123)  # Zwecks Reproduzierbarkeit
 boot_results <- boot(data = daten, statistic = cohens_d_boot, R = 1000)
 
 ## Konfidenzintervall berechnen
@@ -26,5 +26,3 @@ tibble(
   CI_lower = ci$percent[4],
   CI_upper = ci$percent[5]
 ) %>% kable(digits = 2, caption = "Bootstrapped Cohen's d für Anwendungsfeld")
-
-
