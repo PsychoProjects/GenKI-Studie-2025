@@ -7,7 +7,7 @@ alpha <- 0.05 # significance level
 power <- 0.8 # 1-beta
 num_groups <- 4 # 2x2 design
 
-## Benötoigte Stichprobengröße
+## Benötigte Stichprobengröße
 sample_size <- pwr.anova.test(k = num_groups, f = effect_size, sig.level = alpha, power = power)
 
 stichprobe_df <- data.frame(
